@@ -1,0 +1,12 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    {% for role in roles %}
+        <p>{{ role.id }}</p>
+        <p>{{ role.name }}</p>
+    {% endfor %}
+    <form action="/greet" method="post">
+        <input autocomplete="off" autofocus name="name" placeholder="Name" type="text">
+        <button type="submit">Greet</button>
+    </form>
+{% endblock %}
