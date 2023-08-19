@@ -4,7 +4,8 @@ class Role(db.Model):
     __tablename__ = 'role'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(length=14), nullable=False)
+    name = db.Column(db.String(14), nullable=False)
+    login = db.relationship("Login", backref='login', lazy=True)
 
     def __init__(self, name):
         self.name = name
@@ -17,10 +18,10 @@ class Login(db.Model):
     __tablename__ = 'login'
 
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(length=100), nullable=False, unique=True)
-    password = db.Column(db.String(length=36), nullable=False)
+    email = db.Column(db.String(100), nullable=False, unique=True)
+    password = db.Column(db.String(60), nullable=False)
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'), nullable=False)
-    role = db.relationship("Role", backref=db.backref("role", uselist=False))
+    admin_login = db.relationship("Admin", backref='admin_login', lazy=True)
 
     def __init__(self, email, password, role_id):
         self.email = email
@@ -35,10 +36,10 @@ class Admin(db.Model):
     __tablename__ = 'admin'
 
     id = db.Column(db.Uuid, primary_key=True)
-    first_name = db.Column(db.String(length=50), nullable=False)
-    last_name = db.Column(db.String(length=50), nullable=False)
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
     login_id = db.Column(db.Integer, db.ForeignKey('login.id'), nullable=False)
-    login = db.relationship("Login", backref=db.backref("login", uselist=False))
+    
 
     def __init__(self, first_name, last_name, login_id):
         self.first_name = first_name

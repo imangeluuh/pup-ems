@@ -1,38 +1,43 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends 'layout.html' %}
+
+{% block head %}
     <link rel="stylesheet" href="{{ url_for('admin.static', filename='css/style.css') }}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
-    <title>Login</title>
-</head>
-<body>
+    <title>PUP-ESIS Login</title>
+{% endblock %}
+
+{% block content %}
 <div class="container-main overflow-x-hidden">
     <div class="row">
         <div class="col-md-8 side-image d-none d-md-block">
-            <!-------------      image     ------------->
+            <!------------- empty ------------->
         </div>
         <div class="col-md-4 right">
             <div class="input-box">
                 <div class="d-flex justify-content-center">
-                    <img src=" url_for('app.static', filename='images/PUPLogo.png')" alt="" class="logo">
+                    <img src="{{ url_for('static', filename='images/PUPLogo.png')}}" alt="" class="mb-4" width="100rem">
                 </div>
-                <header>Admin Login</header>
-                <div class="input-field">
-                    <input type="text" class="input" id="email" required="" autocomplete="off">
-                    <label for="email">Email</label> 
-                </div> 
-                <div class="input-field">
-                    <input type="password" class="input" id="pass" required="">
-                    <label for="pass">Password</label>
-                </div> 
-                <div class="input-field">
-                    <input type="submit" class="submit" value="Sign Up">
-                </div> 
+                <header><strong>PUP-ESIS</strong> Admin Module</header>
+                <form action="" method="post">
+                    {{ form.hidden_tag() }}
+                    <div class="input-field">
+                        {{ form.email(class="input") }}
+                        {{ form.email.label(class="label") }}
+                        <!-- <input type="text" class="input" id="email" required="" autocomplete="off"> -->
+                        <!-- <label for="email">Email</label>  -->
+                    </div> 
+                    <div class="input-field">
+                        {{ form.password(class="input") }}
+                        {{ form.password.label(class="label") }}
+                        <!-- <input type="password" class="input" id="pass" required="">
+                        <label for="pass">Password</label> -->
+                    </div> 
+                    <div class="input-field">
+                        {{ form.submit(class="submit") }}
+                        <!-- <input type="submit" class="submit" value="Sign in"> -->
+                    </div> 
+                </form>
             </div>  
         </div>
     </div>
 </div>
-</body>
-</html>
+{% endblock %}
