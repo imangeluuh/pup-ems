@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('auth.static', filename='css/signin_style.css') }}">
+    <title>PUP-ESIS Login</title>
+{% endblock %}
+
+{% block content %}
+<div class="container-main overflow-x-hidden">
+    <div class="row">
+        <div class="col-md-8 side-image d-none d-md-block">
+            <!------------- empty ------------->
+        </div>
+        <div class="col-md-4 right">
+            <div class="input-box">
+                <div class="d-flex justify-content-center">
+                    <img src="{{ url_for('static', filename='images/PUPLogo.png')}}" alt="" class="mb-4" width="100rem">
+                </div>
+                <header><strong>PUP-ESIS</strong> Participant Module</header>
+                <form action="" method="post">
+                    <div class="input-field">
+                        <input type="text" class="input" id="email" required="" autocomplete="off">
+                        <label for="email">Email</label> 
+                    </div> 
+                    <div class="input-field">
+                        <input type="password" class="input" id="pass" required="">
+                        <label for="pass">Password</label>
+                    </div> 
+                    <div class="input-field">
+                        <input type="submit" class="submit" value="Sign in">
+                    </div> 
+                    <div class="signin pb-3">
+                        <span>Don't have an account yet? <a href="{{ url_for('auth.participantSignup') }}">Register here</a></span>
+                    </div>
+                </form>
+            </div>  
+        </div>
+    </div>
+</div>
+{% endblock %}

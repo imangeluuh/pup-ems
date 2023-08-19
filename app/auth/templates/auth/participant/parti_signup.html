@@ -1,0 +1,74 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('auth.static', filename='css/signup_style.css') }}">
+    <title>PUP-ESIS Signup</title>
+{% endblock %}
+
+{% block content %}
+<div class="container-main overflow-x-hidden">
+    <div class="row">
+        <div class="container main">
+            <div class="right">
+                <div class="input-box w-100 h-100 py-4">
+                    <div class="container h-100">
+                        <header class="m-0 mb-3">Create account</header>
+                        <form action="" method="post" class="row signup-form px-5">
+                            <div class="input-field col-md-4">
+                                <input type="text" class="input mb-3" id="first-name" required="" autocomplete="off">
+                                <label for="first-name">First Name</label> 
+                            </div> 
+                            <div class="input-field col-md-4">
+                                <input type="text" class="input mb-3" id="mid-name" required="" autocomplete="off">
+                                <label for="mid-name">Middle Name</label> 
+                            </div> 
+                            <div class="input-field col-md-4">
+                                <input type="text" class="input mb-3" id="last-name" required="" autocomplete="off">
+                                <label for="last-name">Last Name</label> 
+                            </div> 
+                            <div class="input-field col-md-4">
+                                <input type="text" class="input mb-3" id="contact-details" required="" autocomplete="off">
+                                <label for="contact-details">Contact Number</label> 
+                            </div> 
+                            <div class="input-field col-md-4">
+                                <input type="date" class="input mb-3" id="birthdate" required="" autocomplete="off" >
+                                <label for="birthdate">Date of Birth</label> 
+                            </div> 
+                            <div class="input-field col-md-4">
+                                <select name="gender" id="gender" class="form-select shadow-none">
+                                    <option selected disabled>Gender</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Others">Others</option>
+                                </select>
+                            </div> 
+                            <div class="input-field col-12">
+                                <input type="text" class="input mb-3" id="address" required="" autocomplete="off">
+                                <label for="address">Home Address</label> 
+                            </div> 
+                            <div class="input-field col-12">
+                                <input type="text" class="input mb-3" id="email" required="" autocomplete="off">
+                                <label for="email">Email</label> 
+                            </div> 
+                            <div class="input-field col-12">
+                                <input type="password" class="input mb-3" id="pass1" required="">
+                                <label for="pass1">Password</label>
+                            </div> 
+                            <div class="input-field col-12">
+                                <input type="password" class="input mb-3" id="pass2" required="">
+                                <label for="pass2">Confirm Password</label>
+                            </div> 
+                            <div class="input-field">
+                                <input type="submit" class="submit" value="Sign Up">
+                            </div> 
+                            <div class="signin py-3">
+                                <span>Already have an account? <a href="{{ url_for('auth.participantLogin') }}">Log in here</a></span>
+                            </div>
+                        </form>
+                    </div>
+                </div>  
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
