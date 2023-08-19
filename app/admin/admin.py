@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, url_for, request, redirect
 
-auth = Blueprint('auth', __name__, static_folder="static", template_folder="templates", static_url_path='static')
+admin_bp = Blueprint('admin', __name__, template_folder="templates", static_folder="static", static_url_path='static')
 
-@auth.route('/login', methods=['GET', 'POST'])
+@admin_bp.route('/login', methods=['GET', 'POST'])
 def adminLogin():
     if request.method == "POST":
         email = request.form.get('email')
@@ -12,6 +12,6 @@ def adminLogin():
     return render_template('admin/admin_login.html')
 
 
-@auth.route('/logout')
+@admin_bp.route('/logout')
 def logout():
     return "Use this to log out"
