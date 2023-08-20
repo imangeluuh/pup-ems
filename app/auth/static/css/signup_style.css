@@ -58,7 +58,7 @@
     position: relative;
     padding: 0 10px 0 10px;
 }
-.input, .form-select {
+.input, .form-select, .md-name-input {
     height: 45px;
     width: 100%;
     background: transparent;
@@ -75,23 +75,40 @@
     margin-right: 10px!important;
     background-color: transparent!important;
 }
-.input-box .input-field label{
+.input-box .input-field label, .md-name-label {
     position: absolute;
     top: 10px;
     left: 10px;
     pointer-events: none;
     transition: .5s;
 }
-.input-field input:focus ~ label
+.gender-label {
+    margin-left: 1rem;
+}
+.md-name-input::placeholder, .gender-label {
+    color: transparent;
+}
+.input-field input:focus ~ label, .input-field .form-select:focus ~ .gender-label
 {
 top: -10px;
 font-size: 13px;
 }
-.input-field input:valid ~ label
+.input-field .form-select:focus ~ .gender-label {
+    color: black;
+}
+.input-field .form-select:valid ~ .gender-label, .input-field .form-select:focus ~ .gender-label {
+    margin-left: 0;
+    top: -10px;
+}
+.input-field input:valid ~ .label, .md-name-input:not(:placeholder-shown) ~ label
 {
-top: -10px;
-font-size: 13px;
-color: #5d5076;
+    top: -10px;
+    font-size: 13px;
+    color: #5d5076;
+}
+.selected-not-disabled ~ .gender-label {
+    font-size: 13px;
+    color: #5d5076;
 }
 .input:focus {
     border-bottom: 1px solid #800000;
@@ -99,33 +116,17 @@ color: #5d5076;
 .form-select:focus {
     border-bottom: 1px solid #800000!important;
 }
-/* .input-field .form-select:focus ~ .gender-label {
-    top: -10px;
-    font-size: 13px;
-    z-index: 1;
-}
-.gender-label {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    pointer-events: none;
-    transition: .5s;
-    z-index: -1;
-} */
-/* .input-field .input:focus, .input-field .input:valid{
-border-bottom: 1px solid #800000;
-} */
 .submit{
-border: none;
-outline: none;
-height: 45px;
-background: #ececec;
-border-radius: 5px;
-transition: .4s;
+    border: none;
+    outline: none;
+    height: 45px;
+    background: #ececec;
+    border-radius: 5px;
+    transition: .4s;
 }
 .submit:hover{
-background: rgba(37, 95, 156, 0.937);
-color: #fff;
+    background: rgba(37, 95, 156, 0.937);
+    color: #fff;
 }
 .signup-form {
     height: 90%;
@@ -141,9 +142,9 @@ span a:hover{
     color: #000;
 }
 .signin{
-text-align: center;
-font-size: small;
-margin-top: 25px;
+    text-align: center;
+    font-size: small;
+    margin-top: 25px;
 }
 input[type=date]:required:invalid::-webkit-datetime-edit {
     color: transparent;

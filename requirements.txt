@@ -1,0 +1,9 @@
+Flask
+pyscopg2-binary
+flask-sqlalchemy
+Flask-Migrate
+flask-wtf
+wtforms
+email_validator
+flask_bcrypt
+flask_login

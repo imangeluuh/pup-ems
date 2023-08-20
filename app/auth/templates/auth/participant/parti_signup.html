@@ -3,6 +3,7 @@
 {% block head %}
     <link rel="stylesheet" href="{{ url_for('auth.static', filename='css/signup_style.css') }}">
     <title>PUP-ESIS Signup</title>
+    <script src="{{ url_for('auth.static', filename='js/index.js')}}"></script>
 {% endblock %}
 
 {% block content %}
@@ -12,51 +13,55 @@
             <div class="right">
                 <div class="input-box w-100 h-100 py-4">
                     <div class="container h-100">
-                        <header class="m-0 mb-3">Create account</header>
+                        <header class="m-0 mb-4">Create account</header>
                         <form action="" method="post" class="row signup-form px-5">
+                            {{ form.hidden_tag() }}
                             <div class="input-field col-md-4">
-                                <input type="text" class="input mb-3" id="first-name" required="" autocomplete="off">
-                                <label for="first-name">First Name</label> 
+                                {{ form.first_name(class="input") }}
+                                {{ form.first_name.label(class="label") }}
                             </div> 
                             <div class="input-field col-md-4">
-                                <input type="text" class="input mb-3" id="mid-name" required="" autocomplete="off">
-                                <label for="mid-name">Middle Name</label> 
+                                {{ form.middle_name(class="md-name-input", placeholder=" ") }}
+                                {{ form.middle_name.label(class="md-name-label") }}
                             </div> 
                             <div class="input-field col-md-4">
-                                <input type="text" class="input mb-3" id="last-name" required="" autocomplete="off">
-                                <label for="last-name">Last Name</label> 
+                                {{ form.last_name(class="input") }}
+                                {{ form.last_name.label(class="label") }}
                             </div> 
                             <div class="input-field col-md-4">
-                                <input type="text" class="input mb-3" id="contact-details" required="" autocomplete="off">
-                                <label for="contact-details">Contact Number</label> 
+                                {{ form.contact_details(class="input") }}
+                                {{ form.contact_details.label(class="label") }}
                             </div> 
                             <div class="input-field col-md-4">
-                                <input type="date" class="input mb-3" id="birthdate" required="" autocomplete="off" >
-                                <label for="birthdate">Date of Birth</label> 
+                                {{ form.birthdate(class="input") }}
+                                {{ form.birthdate.label(class="label") }}
                             </div> 
                             <div class="input-field col-md-4">
                                 <select name="gender" id="gender" class="form-select shadow-none">
-                                    <option selected disabled>Gender</option>
-                                    <option value="Female">Female</option>
-                                    <option value="Male">Male</option>
-                                    <option value="Others">Others</option>
+                                {% for option in form.gender %}
+                                    {% if loop.first %}
+                                        <option value="" disabled selected>Gender</option>
+                                    {% endif %}
+                                    {{ option }}
+                                {% endfor %}
                                 </select>
+                                {{ form.gender.label(class="gender-label") }}
                             </div> 
                             <div class="input-field col-12">
-                                <input type="text" class="input mb-3" id="address" required="" autocomplete="off">
-                                <label for="address">Home Address</label> 
+                                {{ form.address(class="input") }}
+                                {{ form.address.label(class="label") }}
                             </div> 
                             <div class="input-field col-12">
-                                <input type="text" class="input mb-3" id="email" required="" autocomplete="off">
-                                <label for="email">Email</label> 
+                                {{ form.email(class="input") }}
+                                {{ form.email.label(class="label") }}
                             </div> 
                             <div class="input-field col-12">
-                                <input type="password" class="input mb-3" id="pass1" required="">
-                                <label for="pass1">Password</label>
+                                {{ form.password1(class="input") }}
+                                {{ form.password1.label(class="label") }}
                             </div> 
                             <div class="input-field col-12">
-                                <input type="password" class="input mb-3" id="pass2" required="">
-                                <label for="pass2">Confirm Password</label>
+                                {{ form.password2(class="input") }}
+                                {{ form.password2.label(class="label") }}
                             </div> 
                             <div class="input-field">
                                 <input type="submit" class="submit" value="Sign Up">

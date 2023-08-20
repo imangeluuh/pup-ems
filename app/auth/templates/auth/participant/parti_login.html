@@ -18,13 +18,14 @@
                 </div>
                 <header><strong>PUP-ESIS</strong> Participant Module</header>
                 <form action="" method="post">
+                    {{ form.hidden_tag() }}
                     <div class="input-field">
-                        <input type="text" class="input" id="email" required="" autocomplete="off">
-                        <label for="email">Email</label> 
+                        {{ form.email(class="input") }}
+                        {{ form.email.label(class="label") }}
                     </div> 
                     <div class="input-field">
-                        <input type="password" class="input" id="pass" required="">
-                        <label for="pass">Password</label>
+                        {{ form.password(class="input") }}
+                        {{ form.password.label(class="label") }}
                     </div> 
                     <div class="input-field">
                         <input type="submit" class="submit" value="Sign in">
