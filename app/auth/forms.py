@@ -1,14 +1,14 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, DateField, SelectField, SubmitField
 from wtforms.validators import Length, EqualTo, Email, DataRequired, ValidationError, Regexp
-from ..models import Participant, Login
+from ..models import Login
 from datetime import datetime, timedelta
 
 class RegisterForm(FlaskForm):
     first_name = StringField(label="First Name", validators=[DataRequired()])
     middle_name = StringField(label="Middle Name")
     last_name = StringField(label="Last Name", validators=[DataRequired()])
-    contact_details = StringField(label="Contact Details", validators=[DataRequired(), Regexp(r'^09\d{9}$')])
+    contact_details = StringField(label="Contact Details", validators=[DataRequired(), Regexp(r'^09\d{9}$', message="Please match the contact number format. 09123456789- 11 numbers only")])
     birthdate = DateField(label="Date of Birth",  validators=[DataRequired()])
     gender = SelectField(label="Gender", choices=[('female', 'Female'),
         ('male', 'Male'),
@@ -27,10 +27,10 @@ class RegisterForm(FlaskForm):
         
     def validate_birthdate(self, birthdate):
         today = datetime.today().date()
-        ten_years_ago = today - timedelta(days=365 * 10)
+        ten_years_ago = today - timedelta(days=365 * 6)
 
         if birthdate.data > ten_years_ago:
-            raise ValidationError("Error Date")
+            raise ValidationError("Invalid date of birth")
         
 class ParticipantLoginForm(FlaskForm):
     email = StringField(label='Email', validators=[Email(), DataRequired()])

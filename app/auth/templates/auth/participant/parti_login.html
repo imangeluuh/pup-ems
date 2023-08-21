@@ -17,6 +17,18 @@
                     <img src="{{ url_for('static', filename='images/PUPLogo.png')}}" alt="" class="mb-4" width="100rem">
                 </div>
                 <header><strong>PUP-ESIS</strong> Participant Module</header>
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-danger rounded-0 py-2 mb-4 d-flex align-items-center">
+                            <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 32 32"><path fill="currentColor" d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2Zm0 26a12 12 0 1 1 12-12a12 12 0 0 1-12 12Z"/><path fill="currentColor" d="M15 8h2v11h-2zm1 14a1.5 1.5 0 1 0 1.5 1.5A1.5 1.5 0 0 0 16 22z"/></svg>
+                            <div>
+                                {{ message }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
                 <form action="" method="post">
                     {{ form.hidden_tag() }}
                     <div class="input-field">
@@ -28,7 +40,7 @@
                         {{ form.password.label(class="label") }}
                     </div> 
                     <div class="input-field">
-                        <input type="submit" class="submit" value="Sign in">
+                        {{ form.submit(class="submit") }}
                     </div> 
                     <div class="signin pb-3">
                         <span>Don't have an account yet? <a href="{{ url_for('auth.participantSignup') }}">Register here</a></span>

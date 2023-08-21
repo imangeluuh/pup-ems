@@ -14,7 +14,22 @@
                 <div class="input-box w-100 h-100 py-4">
                     <div class="container h-100">
                         <header class="m-0 mb-4">Create account</header>
-                        <form action="" method="post" class="row signup-form px-5">
+                        {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                            <div class="alert alert-danger rounded-0 py-2 mb-2 mx-4 d-flex align-items-center">
+                                <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 32 32"><path fill="currentColor" d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2Zm0 26a12 12 0 1 1 12-12a12 12 0 0 1-12 12Z"/><path fill="currentColor" d="M15 8h2v11h-2zm1 14a1.5 1.5 0 1 0 1.5 1.5A1.5 1.5 0 0 0 16 22z"/></svg>
+                                <div>
+                                    <span> It looks like something went wrong during account creation. </span>
+                                    <ul class="m-0">
+                                    {% for message in messages %}
+                                        <li>{{ message|replace('[','')|replace(']','')|replace("'",'') }}</li>
+                                    {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endwith %}
+                        <form action="" method="post" class="row signup-form px-5 mt-4">
                             {{ form.hidden_tag() }}
                             <div class="input-field col-md-4">
                                 {{ form.first_name(class="input") }}

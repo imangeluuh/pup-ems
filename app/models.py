@@ -1,4 +1,9 @@
-from app import db
+from app import db, bcrypt, login_manager
+from flask_login import UserMixin
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Login.query.get(user_id)
 
 class Role(db.Model):
     __tablename__ = 'role'
@@ -7,14 +12,11 @@ class Role(db.Model):
     name = db.Column(db.String(14), nullable=False)
     login = db.relationship("Login", backref='login', lazy=True)
 
-    def __init__(self, name):
-        self.name = name
-
     def __repr__(self):
         return f"{self.name}"
 
 
-class Login(db.Model):
+class Login(db.Model, UserMixin):
     __tablename__ = 'login'
 
     id = db.Column(db.String(36), primary_key=True)
@@ -25,11 +27,16 @@ class Login(db.Model):
     admin_login = db.relationship("Admin", backref='admin_login', lazy=True)
     parti_login = db.relationship("Participant", backref='parti_login', lazy=True)
 
-    def __init__(self, id, email, password, role_id):
-        self.id = id
-        self.email = email
-        self.password = password
-        self.role_id = role_id
+    @property
+    def password_hash(self):
+        return self.password_hash
+    
+    @password_hash.setter
+    def password_hash(self, plain_text_password):
+        self.password = bcrypt.generate_password_hash(plain_text_password).decode('utf-8')
+
+    def check_password_correction(self, attempted_password):
+        return bcrypt.check_password_hash(self.password, attempted_password)
 
     def __repr__(self):
         return f"{self.email}"
@@ -65,18 +72,6 @@ class Participant(db.Model):
     gender = db.Column(db.String(20), nullable=False)
     address = db.Column(db.String(255), nullable=False)
     login_id = db.Column(db.String(36), db.ForeignKey('login.id'), nullable=False)
-
-    def __init__(self, id, first_name, middle_name, last_name, contact_details,
-                    birthdate, gender, address, login_id):
-        self.id = id
-        self.first_name = first_name
-        self.middle_name = middle_name
-        self.last_name = last_name
-        self.contact_details = contact_details
-        self.birthdate = birthdate
-        self.gender = gender
-        self.address = address
-        self.login_id = login_id
 
     def __repr__(self):
         return f"{self.first_name} {self.last_name}"
