@@ -1,4 +1,4 @@
-{% extends 'layout.html' %}
+{% extends 'admin/layout.html' %}
 
 {% block head %}
     <link rel="stylesheet" href="{{ url_for('admin.static', filename='css/style.css') }}">
@@ -6,34 +6,44 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-main overflow-x-hidden">
-    <div class="row">
-        <div class="col-md-8 side-image d-none d-md-block">
+<div class="container-main">
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 h-screen">
+        <div class="col-span-2 side-image hidden md:block">
             <!------------- empty ------------->
         </div>
-        <div class="col-md-4 right">
+        <div class="col-span-1 right flex items-center">
             <div class="input-box">
-                <div class="d-flex justify-content-center">
+                <div class="flex justify-center">
                     <img src="{{ url_for('static', filename='images/PUPLogo.png')}}" alt="" class="mb-4" width="100rem">
                 </div>
                 <header><strong>PUP-ESIS</strong> Admin Module</header>
-                <form action="" method="post">
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                        <div class="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50" role="alert">
+                            <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+                            </svg>
+                            <span class="sr-only">Info</span>
+                            <div>
+                                {{ message }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                <form action="" method="post" class="mt-6">
                     {{ form.hidden_tag() }}
                     <div class="input-field">
-                        {{ form.email(class="input") }}
+                        {{ form.email(class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0") }}
                         {{ form.email.label(class="label") }}
-                        <!-- <input type="text" class="input" id="email" required="" autocomplete="off"> -->
-                        <!-- <label for="email">Email</label>  -->
                     </div> 
                     <div class="input-field">
-                        {{ form.password(class="input") }}
+                        {{ form.password(class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0") }}
                         {{ form.password.label(class="label") }}
-                        <!-- <input type="password" class="input" id="pass" required="">
-                        <label for="pass">Password</label> -->
                     </div> 
                     <div class="input-field">
                         {{ form.submit(class="submit") }}
-                        <!-- <input type="submit" class="submit" value="Sign in"> -->
                     </div> 
                 </form>
             </div>  
