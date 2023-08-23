@@ -20,7 +20,7 @@ def participantLogin():
             attempted_user = Login.query.filter_by(email=form.email.data).first()
             if attempted_user and attempted_user.check_password_correction(attempted_password=form.password.data):
                 login_user(attempted_user)
-                return render_template('greet.html') # temp route
+                return redirect(url_for('projects.projectsList')) # temp route
             else:
                 flash('Incorrect email or password.')
 

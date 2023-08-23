@@ -15,11 +15,14 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
-
+# route where user will be redirected if not logged in
+# login_manager.login_view = [enter route here]
 from app import views, models
 from .admin.admin import admin_bp
 from .auth.auth import auth_bp
+from .projects.projects import projects_bp
 
 
 app.register_blueprint(admin_bp, url_prefix="/admin")
-app.register_blueprint(auth_bp, url_prefix="/authentication")
+app.register_blueprint(auth_bp, url_prefix="/auth") 
+app.register_blueprint(projects_bp, url_prefix='/') 
