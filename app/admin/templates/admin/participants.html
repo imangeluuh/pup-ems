@@ -1,0 +1,89 @@
+{% extends 'admin/layout.html' %}
+
+{% block head %}
+    <title>PUP-ESIS Participants</title>
+    <!--Regular Datatables CSS-->
+	<link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
+	<!--Responsive Extension Datatables CSS-->
+	<link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('admin.static', filename='css/table_style.css') }}">  
+{% endblock %}
+
+{% block content %}
+    {% include 'admin/components/sidebar.html' %}
+    <div class="p-4 sm:ml-64 mt-2">
+        <!--Container-->
+        <div class="container w-full md:w-4/5 xl:w-3/5  mx-auto px-2">
+            <!--Title-->
+            <h1 class="flex items-center font-sans font-bold break-normal text-indigo-500 px-2 py-4 text-xl md:text-2xl">
+                Participants Record
+            </h1>
+            <!--Card-->
+            <div id='recipients' class="p-8 mt-6 lg:mt-0 rounded shadow bg-white">
+                <table id="participants" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
+                    <thead>
+                        <tr>
+                            <th data-priority="1">First Name</th>
+                            <th data-priority="2">Last Name</th>
+                            <th data-priority="3">Contact Details</th>
+                            <th data-priority="4">Gender</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="">Angela Nicole</td>
+                            <td>Batoon</td>
+                            <td>09123456798</td>
+                            <td>Female</td>
+                        </tr>
+                        <tr>
+                            <td class="">Ariana</td>
+                            <td>Grande</td>
+                            <td>09987654321</td>
+                            <td>Female</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!--/Card-->
+        </div>
+	    <!--/container-->
+    </div>
+    
+    <!-- jQuery -->
+	<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	<!--Datatables -->
+	<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
+	
+    <script>
+        // $(document).ready(function(){
+        //     const url = '';
+        //     $('#users').DataTable({
+        //         ajax:{
+        //             url:url,
+        //             dataSrc:''
+        //         },
+        //         columns:[
+        //             {data: "ID"},
+        //             {data: "Name"},
+        //             {data: "Status"},
+        //             {data: "Location"},
+        //             {data: "Start Date"},
+        //             {data: "End Date"},
+        //         ],
+        //         responsive: true
+        //     }).columns.adjust()
+        //     .responsive.recalc();
+        // })
+
+        $(document).ready(function() {
+
+        var table = $('#participants').DataTable({
+                responsive: true
+            })
+            .columns.adjust()
+            .responsive.recalc()
+        });
+    </script>
+{% endblock %}

@@ -10,8 +10,9 @@
         <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.css" rel="stylesheet" />
         <link href="https://cdn.pup.edu.ph/img/ico/favicon.ico" rel="icon" type="image/x-icon" />
     </head>
-    <body>
+    <body class="bg-gray-50">
         {% if current_user.is_authenticated %}
+        {% include 'admin/components/sidebar.html' %}
             {% include 'admin/components/navbar.html' %}
         {% endif %}
         {% block content %}
