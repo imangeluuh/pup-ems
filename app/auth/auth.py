@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, url_for, request, redirect, flash
 from .forms import RegisterForm, ParticipantLoginForm
-from ..models import Login, Participant
+from ..models import Login, Participant, User
 import uuid
 from app import db
 from flask_login import login_user, logout_user, current_user
@@ -31,21 +31,8 @@ def participantSignup():
     form = RegisterForm()    
     if request.method == "POST":
         if form.validate_on_submit():
-            login_uuid = uuid.uuid4()
-            parti_login = Login(id=login_uuid,
-                                email=form.email.data,
-                                password_hash=form.password1.data,
-                                role_id=2)
-            parti_to_create = Participant(id=uuid.uuid4(),
-                                        first_name=form.first_name.data,
-                                        middle_name=form.middle_name.data,
-                                        last_name=form.last_name.data,
-                                        contact_details=form.contact_details.data,
-                                        birthdate=form.birthdate.data,
-                                        gender=form.gender.data,
-                                        address=form.address.data,
-                                        login_id=login_uuid)
-            db.session.add(parti_login)
+            user_id = create_user(form)
+            parti_to_create = Participant(id = user_id)
             db.session.add(parti_to_create)
             db.session.commit()
             return redirect(url_for('auth.participantLogin'))
@@ -65,4 +52,25 @@ def volunteerSignup():
 @auth_bp.route('/logout')
 def logout():
     logout_user()
-    return render_template('greet.html') # temp route
+    return redirect(url_for('auth.participantLogin')) # temp route
+
+def create_user(form):
+    login_uuid = uuid.uuid4()
+    user_login = Login(id=login_uuid,
+                        email=form.email.data,
+                        password_hash=form.password1.data,
+                        role_id=2)
+    user_id = uuid.uuid4()
+    user_to_create = User(id=user_id,
+                            first_name=form.first_name.data,
+                            middle_name=form.middle_name.data,
+                            last_name=form.last_name.data,
+                            contact_details=form.contact_details.data,
+                            birthdate=form.birthdate.data,
+                            gender=form.gender.data,
+                            address=form.address.data,
+                            login_id=login_uuid)
+    db.session.add(user_login)
+    db.session.add(user_to_create)
+    db.session.commit()
+    return user_id

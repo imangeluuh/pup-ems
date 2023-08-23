@@ -25,7 +25,7 @@ class Login(db.Model, UserMixin):
     status = db.Column(db.String(20), default='Active')
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'), nullable=False)
     admin_login = db.relationship("Admin", backref='admin_login', lazy=True)
-    parti_login = db.relationship("Participant", backref='parti_login', lazy=True)
+    user_login = db.relationship("User", backref='user_login', lazy=True)
 
     @property
     def password_hash(self):
@@ -60,8 +60,8 @@ class Admin(db.Model):
         return f"{self.first_name} {self.last_name}"
 
 
-class Participant(db.Model):
-    __tablename__ = 'participant'
+class User(db.Model):
+    __tablename__ = 'user'
 
     id = db.Column(db.String(36), primary_key=True)
     first_name = db.Column(db.String(50), nullable=False)
@@ -72,7 +72,21 @@ class Participant(db.Model):
     gender = db.Column(db.String(20), nullable=False)
     address = db.Column(db.String(255), nullable=False)
     login_id = db.Column(db.String(36), db.ForeignKey('login.id'), nullable=False)
+    participant = db.relationship("Participant", backref='participant', lazy=True)
+    volunteer = db.relationship("Volunteer", backref='volunteer', lazy=True)
 
     def __repr__(self):
         return f"{self.first_name} {self.last_name}"
 
+
+class Participant(db.Model):
+    __tablename__ = 'participant'
+
+    id = db.Column(db.String(36), db.ForeignKey('user.id'), primary_key=True)
+
+
+class Volunteer(db.Model):
+    __tablename__ = 'volunteer'
+
+    id = db.Column(db.String(36), db.ForeignKey('user.id'), primary_key=True)
+    skills_interest = db.Column(db.String(255), nullable=False)
