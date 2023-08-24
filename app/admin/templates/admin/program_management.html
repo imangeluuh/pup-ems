@@ -7,41 +7,13 @@
 	<!--Responsive Extension Datatables CSS-->
 	<link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('admin.static', filename='css/table_style.css') }}">  
-    <link rel="stylesheet" href="soft-ui-dashboard-tailwind.css" />
-    {% endblock %}
+{% endblock %}
 
 {% block content %}
     
     <div class="p-4 sm:ml-64 mt-2">
         <!--Container-->
         <div class="container w-full md:w-4/5 xl:w-3/5  mx-auto px-2">
-            <div class="w-full max-w-full">
-                <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border">
-                  <div class="table-responsive">
-                    <table class="table table-flush text-slate-500" datatable id="datatable-search">
-                      <thead class="thead-light">
-                        <tr>
-                            <th data-priority="1">Name</th>
-                            <th data-priority="2">Location</th>
-                            <th data-priority="3">Status</th>
-                            <th data-priority="4">Start Date</th>
-                            <th data-priority="5">End Date</th>
-                            <th data-priority="6">Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td class="font-normal leading-normal text-sm">Tiger Nixon</td>
-                          <td class="font-normal leading-normal text-sm">System Architect</td>
-                          <td class="font-normal leading-normal text-sm">Edinburgh</td>
-                          <td class="font-normal leading-normal text-sm">61</td>
-                          <td class="font-normal leading-normal text-sm">$320,800</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
             <!--Card-->
             <div id='recipients' class="p-8 mt-6 lg:mt-0 rounded shadow bg-white">
                 <div class="flex justify-between items-center">
@@ -173,8 +145,7 @@
 	<!--Datatables -->
 	<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 	<script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
-	<!-- soft UI -->
-    <script src="../path/to/soft-ui-dashboard-tailwind.js"></script>
+	
     <script>
         // $(document).ready(function(){
         //     const url = '';
@@ -202,14 +173,6 @@
             })
             .columns.adjust()
             .responsive.recalc()
-
-            var table1 = $('#datatable-search').DataTable({
-                responsive: true
-            })
-            .columns.adjust()
-            .responsive.recalc()
-        }
-        
-        );
+        });
     </script>
 {% endblock %}
