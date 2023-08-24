@@ -90,3 +90,20 @@ class Volunteer(db.Model):
 
     id = db.Column(db.String(36), db.ForeignKey('user.id'), primary_key=True)
     skills_interest = db.Column(db.String(255), nullable=False)
+
+
+class Program(db.Model):
+    __tablename__ = 'program'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=False)
+    status = db.Column(db.String(10), nullable=False)
+    target_participant = db.Column(db.String(100), nullable=False)
+    location = db.Column(db.String(255), nullable=False)
+    start_date = db.Column(db.Date)
+    end_date = db.Column(db.Date)
+    description = db.Column(db.String(255), nullable=False)
+    objectives = db.Column(db.String(255), nullable=False)
+    expected_outcome = db.Column(db.String(255), nullable=False)
+    terms_conditions = db.Column(db.String(255), nullable=False)
+
