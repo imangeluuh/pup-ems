@@ -1,7 +1,7 @@
 {% extends 'admin/layout.html' %}
 
 {% block head %}
-    <title>PUP-ESIS Participants</title>
+    <title>PUP-ESIS Beneficiaries</title>
     <!--Regular Datatables CSS-->
 	<link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
 	<!--Responsive Extension Datatables CSS-->
@@ -11,37 +11,35 @@
 
 {% block content %}
     {% include 'admin/components/sidebar.html' %}
-    <div class="p-4 sm:ml-64 mt-2">
+    <div class="p-4">
         <!--Container-->
         <div class="container w-full md:w-4/5 xl:w-3/5  mx-auto px-2">
             <!--Title-->
             <h1 class="flex items-center font-sans font-bold break-normal text-indigo-500 px-2 py-4 text-xl md:text-2xl">
-                Participants Record
+                Beneficiaries Record
             </h1>
             <!--Card-->
             <div id='recipients' class="p-8 mt-6 lg:mt-0 rounded shadow bg-white">
-                <table id="participants" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
+                <table id="beneficiaries" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
                     <thead>
                         <tr>
                             <th data-priority="1">First Name</th>
                             <th data-priority="2">Last Name</th>
                             <th data-priority="3">Contact Details</th>
                             <th data-priority="4">Gender</th>
+                            <th data-priority="5">Action</th>
                         </tr>
                     </thead>
                     <tbody>
+                        {% for beneficiary in beneficiaries %}
                         <tr>
-                            <td class="">Angela Nicole</td>
-                            <td>Batoon</td>
-                            <td>09123456798</td>
-                            <td>Female</td>
+                            <td>{{ beneficiary.user.first_name }}</td>
+                            <td>{{ beneficiary.user.last_name }}</td>
+                            <td>{{ beneficiary.user.contact_details }}</td>
+                            <td>{{ beneficiary.user.gender }}</td>
+                            <td><a href="" class="text-blue-700">View</a></td>
                         </tr>
-                        <tr>
-                            <td class="">Ariana</td>
-                            <td>Grande</td>
-                            <td>09987654321</td>
-                            <td>Female</td>
-                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -55,7 +53,6 @@
 	<!--Datatables -->
 	<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 	<script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
-	
     <script>
         // $(document).ready(function(){
         //     const url = '';
@@ -79,7 +76,7 @@
 
         $(document).ready(function() {
 
-        var table = $('#participants').DataTable({
+        var table = $('#beneficiaries').DataTable({
                 responsive: true
             })
             .columns.adjust()

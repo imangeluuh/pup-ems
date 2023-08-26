@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, url_for, request, redirect, flash
 from .forms import LoginForm, addProjectForm
-from ..models import Login, Program
+from ..models import Login, ExtensionProgram, Beneficiary
 from app import db
 from flask_login import current_user, login_user, login_required
 
@@ -34,34 +34,36 @@ def logout():
 @login_required
 @admin_bp.route('/home')
 def home():
-    return render_template('')
+    pass
 
 @login_required
 @admin_bp.route('/projects', methods=['GET', 'POST'])
 def projects():
-    form = addProjectForm()
-    programs = Program.query.all()
-    if request.method == "POST":
-        if form.validate_on_submit():
-            program_to_add = Program(name = form.program_name.data,
-                                status = form.status.data, 
-                                target_participant = form.target_participant.data,
-                                location = form.location.data,
-                                start_date = form.start_date.data,
-                                end_date = form.end_date.data,
-                                description = form.description.data,
-                                objectives = form.objectives.data,
-                                expected_outcome = form.expected_outcome.data,
-                                terms_conditions = form.terms_conditions.data)
-            db.session.add(program_to_add)
-            db.session.commit()
-            return redirect(url_for('admin.projects'))
-        if form.errors != {}: # If there are errors from the validations
-            for err_msg in form.errors.values():
-                flash(err_msg)
-    return render_template('admin/program_management.html', programs=programs, form=form)
+    pass
+    # form = addProjectForm()
+    # # programs = ExtensionProgram.query.all()
+    # # if request.method == "POST":
+    # #     if form.validate_on_submit():
+    # #         program_to_add = ExtensionProgram(name = form.program_name.data,
+    # #                             status = form.status.data, 
+    # #                             target_participant = form.target_participant.data,
+    # #                             location = form.location.data,
+    # #                             start_date = form.start_date.data,
+    # #                             end_date = form.end_date.data,
+    # #                             description = form.description.data,
+    # #                             objectives = form.objectives.data,
+    # #                             expected_outcome = form.expected_outcome.data,
+    # #                             terms_conditions = form.terms_conditions.data)
+    # #         db.session.add(program_to_add)
+    # #         db.session.commit()
+    # #         return redirect(url_for('admin.projects'))
+    #     if form.errors != {}: # If there are errors from the validations
+    #         for err_msg in form.errors.values():
+    #             flash(err_msg)
+    # return render_template('admin/program_management.html', programs=programs, form=form)
 
 @login_required
-@admin_bp.route('/participants')
-def participants():
-    return render_template('admin/participants.html')
+@admin_bp.route('/beneficiaries')
+def benificiaries():
+    benificiaries = Beneficiary.query.all()
+    return render_template('admin/benificiaries.html', benificiaries=benificiaries)

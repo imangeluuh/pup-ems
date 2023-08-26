@@ -20,7 +20,7 @@ class RegisterForm(FlaskForm):
     submit = SubmitField(label='Sign up')
 
     def validate_email(self, email):
-        existing_participant_email = Login.query.filter_by(email=email.data).first()
+        existing_participant_email = Login.query.filter_by(Email=email.data).first()
 
         if existing_participant_email:
             raise ValidationError("Email already exists. Please choose a different one.")
@@ -32,7 +32,7 @@ class RegisterForm(FlaskForm):
         if birthdate.data > ten_years_ago:
             raise ValidationError("Invalid date of birth")
         
-class ParticipantLoginForm(FlaskForm):
+class BeneficiaryLoginForm(FlaskForm):
     email = StringField(label='Email', validators=[Email(), DataRequired()])
     password = PasswordField(label='Password', validators=[Length(min=6), DataRequired()])
     submit = SubmitField(label='Sign in')

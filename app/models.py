@@ -5,105 +5,110 @@ from flask_login import UserMixin
 def load_user(user_id):
     return Login.query.get(user_id)
 
+
 class Role(db.Model):
-    __tablename__ = 'role'
+    __tablename__ = 'Role'
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(14), nullable=False)
-    login = db.relationship("Login", backref='login', lazy=True)
-
-    def __repr__(self):
-        return f"{self.name}"
+    RoleId = db.Column(db.Integer, primary_key=True)
+    RoleName = db.Column(db.String(14), nullable=False)
+    Login = db.relationship("Login", backref='Role', lazy=True, passive_deletes=True)
 
 
 class Login(db.Model, UserMixin):
-    __tablename__ = 'login'
+    __tablename__ = 'Login'
 
-    id = db.Column(db.String(36), primary_key=True)
-    email = db.Column(db.String(100), nullable=False, unique=True)
-    password = db.Column(db.String(60), nullable=False)
-    status = db.Column(db.String(20), default='Active')
-    role_id = db.Column(db.Integer, db.ForeignKey('role.id'), nullable=False)
-    admin_login = db.relationship("Admin", backref='admin_login', lazy=True)
-    user_login = db.relationship("User", backref='user_login', lazy=True)
+    LoginId = db.Column(db.String(36), primary_key=True)
+    Email = db.Column(db.String(100), nullable=False, unique=True)
+    Password = db.Column(db.String(60), nullable=False)
+    Status = db.Column(db.String(20), default='Active')
+    RoleId = db.Column(db.Integer, db.ForeignKey('Role.RoleId', ondelete='CASCADE'), nullable=False)
+    AdminLogin = db.relationship("Admin", backref='AdminLogin', lazy=True, passive_deletes=True)
+    UserLogin = db.relationship("User", backref='UserLogin', lazy=True, passive_deletes=True)
 
     @property
     def password_hash(self):
         return self.password_hash
     
+
     @password_hash.setter
     def password_hash(self, plain_text_password):
-        self.password = bcrypt.generate_password_hash(plain_text_password).decode('utf-8')
+        self.Password = bcrypt.generate_password_hash(plain_text_password).decode('utf-8')
+
 
     def check_password_correction(self, attempted_password):
-        return bcrypt.check_password_hash(self.password, attempted_password)
+        return bcrypt.check_password_hash(self.Password, attempted_password)
+    
 
-    def __repr__(self):
-        return f"{self.email}"
+    def get_id(self):
+        return (self.LoginId)
+
 
 
 class Admin(db.Model):
-    __tablename__ = 'admin'
+    __tablename__ = 'Admin'
 
-    id = db.Column(db.String(36), primary_key=True)
-    first_name = db.Column(db.String(50), nullable=False)
-    last_name = db.Column(db.String(50), nullable=False)
-    login_id = db.Column(db.String(36), db.ForeignKey('login.id'), nullable=False)
-    
-    def __init__(self, id, first_name, last_name, login_id):
-        self.id = id
-        self.first_name = first_name
-        self.last_name = last_name
-        self.login_id = login_id
-
-    def __repr__(self):
-        return f"{self.first_name} {self.last_name}"
+    AdminId = db.Column(db.String(36), primary_key=True)
+    FirstName = db.Column(db.String(50), nullable=False)
+    LastName = db.Column(db.String(50), nullable=False)
+    LoginId = db.Column(db.String(36), db.ForeignKey('Login.LoginId', ondelete='CASCADE'), nullable=False)
 
 
 class User(db.Model):
-    __tablename__ = 'user'
+    __tablename__ = 'User'
 
-    id = db.Column(db.String(36), primary_key=True)
-    first_name = db.Column(db.String(50), nullable=False)
-    middle_name = db.Column(db.String(50), default=None)
-    last_name = db.Column(db.String(50), nullable=False)
-    contact_details = db.Column(db.String(13), nullable=False)
-    birthdate = db.Column(db.Date, nullable=False)
-    gender = db.Column(db.String(20), nullable=False)
-    address = db.Column(db.String(255), nullable=False)
-    login_id = db.Column(db.String(36), db.ForeignKey('login.id'), nullable=False)
-    participant = db.relationship("Participant", backref='participant', lazy=True)
-    volunteer = db.relationship("Volunteer", backref='volunteer', lazy=True)
-
-    def __repr__(self):
-        return f"{self.first_name} {self.last_name}"
+    UserId = db.Column(db.String(36), primary_key=True)
+    FirstName = db.Column(db.String(50), nullable=False)
+    MiddleName = db.Column(db.String(50), default=None)
+    LastName = db.Column(db.String(50), nullable=False)
+    ContactDetails = db.Column(db.String(13), nullable=False)
+    Birthdate = db.Column(db.Date, nullable=False)
+    Gender = db.Column(db.String(20), nullable=False)
+    Address = db.Column(db.String(255), nullable=False)
+    LoginId = db.Column(db.String(36), db.ForeignKey('Login.LoginId', ondelete='CASCADE'), nullable=False)
 
 
-class Participant(db.Model):
-    __tablename__ = 'participant'
+class Beneficiary(db.Model):
+    __tablename__ = 'Beneficiary'
 
-    id = db.Column(db.String(36), db.ForeignKey('user.id'), primary_key=True)
-
-
-class Volunteer(db.Model):
-    __tablename__ = 'volunteer'
-
-    id = db.Column(db.String(36), db.ForeignKey('user.id'), primary_key=True)
-    skills_interest = db.Column(db.String(255), nullable=False)
+    BeneficiaryId = db.Column(db.String(36), db.ForeignKey('User.UserId', ondelete='CASCADE'), primary_key=True)
+    User = db.relationship("User", backref='Beneficiary', lazy=True, passive_deletes=True)
 
 
-class Program(db.Model):
-    __tablename__ = 'program'
+class Student(db.Model):
+    __tablename__ = 'Student'
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), nullable=False)
-    status = db.Column(db.String(10), nullable=False)
-    target_participant = db.Column(db.String(100), nullable=False)
-    location = db.Column(db.String(255), nullable=False)
-    start_date = db.Column(db.Date)
-    end_date = db.Column(db.Date)
-    description = db.Column(db.String(255), nullable=False)
-    objectives = db.Column(db.String(255), nullable=False)
-    expected_outcome = db.Column(db.String(255), nullable=False)
-    terms_conditions = db.Column(db.String(255), nullable=False)
+    VolunteerId = db.Column(db.String(36), db.ForeignKey('User.UserId', ondelete='CASCADE'), primary_key=True)
+    SkillsInterest = db.Column(db.String(255), nullable=False)
+    User = db.relationship("User", backref='Student', lazy=True, passive_deletes=True)
+
+
+class ExtensionProgram(db.Model):
+    __tablename__ = 'ExtensionProgram'
+
+    ExtensionProgramId = db.Column(db.Integer, primary_key=True)
+    Name = db.Column(db.String(255), nullable=False)
+    Agenda = db.Column(db.String(100), nullable=False)
+    Program = db.Column(db.String(100), nullable=False)
+    DateApproved = db.Column(db.Date, nullable=False)
+    ImplementationDate = db.Column(db.Date)
+    Status = db.Column(db.String(20), nullable=False)
+    Project = db.relationship("Project", backref='ExtensionProgram', lazy=True, passive_deletes=True)
+
+
+class Project(db.Model):
+    __tablename__ = 'Project'
+
+    ProjectId = db.Column(db.Integer, primary_key=True)
+    Name = db.Column(db.String(255), nullable=False)
+    LeadProponent = db.Column(db.String(255), nullable=False) # Can be integer for FacultyID foreign key
+    ProjectType = db.Column(db.String(100), nullable=False)
+    Rationale = db.Column(db.String(255), nullable=False)
+    Objectives = db.Column(db.String(255), nullable=False)
+    NumberOfBenificiaries = db.Column(db.Integer, nullable=False)
+    BeneficiariesClassifications = db.Column(db.String(255), nullable=False)
+    ProjectScope = db.Column(db.String(255), nullable=False)
+    ExtensionProgramId = db.Column(db.Integer, db.ForeignKey('ExtensionProgram.ExtensionProgramId', ondelete='CASCADE'), nullable=False)
+    # CommunityAssessment =
+    # MOU/MOAAssessment = 
+    
 

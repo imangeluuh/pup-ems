@@ -16,7 +16,7 @@
                 <div class="flex justify-center">
                     <img src="{{ url_for('static', filename='images/PUPLogo.png')}}" alt="" class="mb-4" width="100rem">
                 </div>
-                <header><strong>PUP-ESIS</strong> Participant Module</header>
+                <header><strong>PUP-ESIS</strong> Beneficiary Module</header>
                 {% with messages = get_flashed_messages() %}
                     {% if messages %}
                         {% for message in messages %}
@@ -46,7 +46,7 @@
                         {{ form.submit(class="submit") }}
                     </div> 
                     <div class="signin pb-3">
-                        <span>Don't have an account yet? <a href="{{ url_for('auth.participantSignup') }}">Register here</a></span>
+                        <span>Don't have an account yet? <a href="{{ url_for('auth.beneficiarySignup') }}">Register here</a></span>
                     </div>
                 </form>
             </div>  
