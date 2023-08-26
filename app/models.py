@@ -22,8 +22,8 @@ class Login(db.Model, UserMixin):
     Password = db.Column(db.String(60), nullable=False)
     Status = db.Column(db.String(20), default='Active')
     RoleId = db.Column(db.Integer, db.ForeignKey('Role.RoleId', ondelete='CASCADE'), nullable=False)
-    AdminLogin = db.relationship("Admin", backref='AdminLogin', lazy=True, passive_deletes=True)
-    UserLogin = db.relationship("User", backref='UserLogin', lazy=True, passive_deletes=True)
+    AdminLogin = db.relationship("Admin", backref='AdminLogin', passive_deletes=True)
+    UserLogin = db.relationship("User", backref='UserLogin', passive_deletes=True)
 
     @property
     def password_hash(self):
