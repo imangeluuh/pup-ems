@@ -1,0 +1,119 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+    <title>PUP-ESIS Extension Projects</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous"/>
+{% endblock %}
+
+{% block content %}
+<div class="py-4 md:px-8 mt-10">
+
+<div class="w-fit mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-3">
+        <!-- search -->
+        <div class="col-span-1 h-fit w-full md:max-w-sm p-4 mx-4 bg-white border border-gray-200 rounded-lg shadow-lg">
+            <h5 class="mb-2 text-xl font-semibold text-gray-500">Search Projects</h5>
+            <hr class="h-1 w-1/6 bg-cyan-400 border-0 mb-4">
+            <form action="" method="POST">
+                <div class="flex items-baseline text-gray-900">
+                    <select name="filter" hx-trigger="change, load" hx-get="/filters" hx-target="#options" class="block w-full p-2 mb-4 text-base text-gray-500 border border-gray-300 rounded-xl">
+                        <option value="All">All Projects</option>
+                        <option value="Month">Filter by Month</option>
+                        <option value="ExtensionProgram">Filter by Extension Program</option>
+                        <option value="Program">Filter by Program</option>
+                    </select>
+                </div>
+                <div class="flex items-baseline text-gray-900">
+                    <select id="option" name="option" class="block w-full p-2 mb-6 text-base text-gray-500 border border-gray-300 rounded-xl">
+                    </select>
+                </div>
+                <h5 class="mb-2 text-xl font-semibold text-gray-500">Search by Tags</h5>
+                <hr class="h-1 w-1/6 bg-cyan-400 border-0">
+                <ul role="list" class="space-y-5 my-4">
+                    <li class="flex-column space-x-3 items-center">
+                        <span class="text-base font-semibold leading-tight text-gray-900">Agenda</span>
+                        <div class="flex items-center my-4">
+                            <input  type="checkbox" value="" class="w-4 h-4 bg-gray-100 border-gray-300 rounded">
+                            <label for="default-checkbox" class="ml-2 text-sm font-medium text-gray-500">Social Enterprise, Business, Exonomics, Finance</label>
+                        </div>
+                        <div class="flex items-center mb-4">
+                            <input type="checkbox" value="" class="w-4 h-4 bg-gray-100 border-gray-300 rounded">
+                            <label for="checked-checkbox" class="ml-2 text-sm font-medium text-gray-500">Health, Wellness, and Safety</label>
+
+                        </div>
+                        <div class="flex items-center mb-4">
+                            <input type="checkbox" value="" class="w-4 h-4 bg-gray-100 border-gray-300 rounded">
+                            <label class="ml-2 text-sm font-medium text-gray-500">Evironment, Conservation, and Sustainable Development</label>
+
+                        </div>
+                        <div class="flex items-center mb-4">
+                            <input type="checkbox" value="" class="w-4 h-4 bg-gray-100 border-gray-300 rounded">
+                            <label class="ml-2 text-sm font-medium text-gray-500">Education, Communication, Culture and the Arts, Gender and Development</label>
+
+                        </div>
+                        <div class="flex items-center mb-4">
+                            <input type="checkbox" value="" class="w-4 h-4 bg-gray-100 border-gray-300 rounded">
+                            <label class="ml-2 text-sm font-medium text-gray-500">Science, Engineering and Technology</label>
+
+                        </div>
+                        <div class="flex items-center mb-4">
+                            <input type="checkbox" value="" class="w-4 h-4 bg-gray-100 border-gray-300 rounded">
+                            <label class="ml-2 text-sm font-medium text-gray-500">Governance and the Law</label>
+                        </div>
+                    </li>
+                    <li class="flex-column space-x-3 items-center">
+                        <span class="text-base font-semibold leading-tight text-gray-900">Project Type</span>
+                        <div class="flex items-center my-4">
+                            <input  type="checkbox" value="Workshop" class="w-4 h-4 bg-gray-100 border-gray-300 rounded">
+                            <label for="default-checkbox" class="ml-2 text-sm font-medium text-gray-500">Workshop</label>
+                        </div>
+                        <div class="flex items-center mb-4">
+                            <input type="checkbox" value="Awareness Campaign" class="w-4 h-4 bg-gray-100 border-gray-300 rounded">
+                            <label for="checked-checkbox" class="ml-2 text-sm font-medium text-gray-500">Awareness Campaign</label>
+                        </div>
+                        <div class="flex items-center mb-4">
+                            <input type="checkbox" value="Training" class="w-4 h-4 bg-gray-100 border-gray-300 rounded">
+                            <label class="ml-2 text-sm font-medium text-gray-500">Training</label>
+                        </div>
+                    </li>
+                </ul>
+                <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 font-bold rounded-full text-sm px-5 py-2.5 text-center tracking-wider mr-2 mb-2">SEARCH</button>
+            </form>
+        </div>
+        <!-- /search -->
+        <div class="md:ml-10 col-span-2">
+            <!-- card -->
+            {% for project in projects %}
+            <div class="flex flex-col md:grid md:grid-cols-8 items-center bg-white border mb-4 m-0 border-gray-200 rounded-lg shadow-md md:max-w-3xl hover:bg-gray-100">
+                {% if loop.index is even %}
+                <div class="md:col-span-1 bg-red-500 h-full flex items-center justify-center">
+                {% else %}
+                <div class="md:col-span-1 bg-slate-800 h-full flex items-center justify-center">
+                {% endif %}
+                    <div class="flex flex-col text-center text-white">
+                        <span class="text-6xl font-light">{{project.StartDate.strftime('%d')}}</span>
+                        <span class="text-2xl font-bold uppercase tracking-widest">{{project.StartDate.strftime('%b')}}</span>
+                    </div>
+                </div>
+                <div class="md:col-span-5">
+                    <div class="flex flex-col justify-between p-4 leading-normal">
+                        <h5 class="mb-1 text-2xl font-bold tracking-tight text-gray-900">{{ project.Name }}</h5>
+                        <p class="mb-4 text-gray-700">{{ project.Rationale }}</p>
+                        <div class="flex text-sm text-gray-500">
+                            <p><i class="fa-solid fa-tag mr-2"></i>{{ project.ProjectType }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:col-span-2">
+                    <button type="button" class="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">VIEW DETAILS & REGISTER</button>
+                </div>
+            </div>
+            <!-- /card -->
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+</div>
+<script src="https://unpkg.com/htmx.org@1.9.5"></script>
+{% endblock %}

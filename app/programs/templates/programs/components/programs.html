@@ -1,0 +1,97 @@
+<!--Regular Datatables CSS-->
+<link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
+<!--Responsive Extension Datatables CSS-->
+<link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/programs.css')}}">
+
+<div class="flex mx-auto">
+    <div class="portfolio-page sspotlight-4column mx-auto">
+    <div>
+
+        <h1 class="text-center">Extension Programs</h1>
+    </div>
+    <ul id="sspotlight-list" data-animated="fadeIn">
+        <li class="full">
+            <img src="{{ url_for('static', filename='images/9ckkRvD.jpg')}}" alt="Research">
+            <div class="sspotlight-item-content">
+                <a class="link" href="research">
+                    <div class="header"><span>SINTAkineme</span></div>
+                    <span class="body">Research programs, projects and milestones of the University
+                        <span class="minfo">More Info</span>
+                    </span>
+                </a>
+            </div>
+        </li>
+        <li class="full">
+            <img src="{{ url_for('static', filename='images/9ckkRvD.jpg')}}" alt="Extension">
+            <div class="sspotlight-item-content sgold">
+                <a class="link" href="extension">
+                    <div class="headerg"><span>SINTAkineme</span></div>
+                    <span class="body">Extension programs, projects, and activities of the University
+                        <span class="minfo">More Info</span>
+                    </span>
+                </a>
+            </div>
+        </li>
+        <li class="full">
+            <img src="{{ url_for('static', filename='images/9ckkRvD.jpg')}}" alt="Research and Extension Collaborators">
+            <div class="sspotlight-item-content">
+                <a class="link" href="collaborators">
+                    <div class="header"><span>SINTAkineme</span></div>
+                    <span class="body">Forged partnership relationships with the University on various disciplines
+                        <span class="minfo">More Info</span>
+                    </span>
+                </a>
+            </div>
+        </li>
+        <li class="full">
+            <img src="{{ url_for('static', filename='images/9ckkRvD.jpg')}}" alt="Research and Extension Experts">
+            <div class="sspotlight-item-content sgold">
+                <a class="link" href="experts">
+                    <div class="headerg"><span>SINTAkineme</span></div>
+                    <span class="body">PUP's pool of faculty engaged in research and extension<span class="minfo">More Info</span></span>
+                </a>
+            </div>
+        </li>
+    </ul>
+</div>
+</div>
+
+
+
+ <!-- jQuery -->
+ <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+ <!--Datatables -->
+ <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+ <script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
+ 
+ <script>
+     // $(document).ready(function(){
+     //     const url = '';
+     //     $('#users').DataTable({
+     //         ajax:{
+     //             url:url,
+     //             dataSrc:''
+     //         },
+     //         columns:[
+     //             {data: "ID"},
+     //             {data: "Name"},
+     //             {data: "Status"},
+     //             {data: "Location"},
+     //             {data: "Start Date"},
+     //             {data: "End Date"},
+     //         ],
+     //         responsive: true
+     //     }).columns.adjust()
+     //     .responsive.recalc();
+     // })
+
+    //  $(document).ready(function() {
+
+    //  var table = $('#projects').DataTable({
+    //          responsive: true
+    //      })
+    //      .columns.adjust()
+    //      .responsive.recalc()
+    //  });
+ </script>
