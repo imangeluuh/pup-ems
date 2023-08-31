@@ -1,4 +1,4 @@
-{% extends 'admin/layout.html' %}
+{% extends 'admin/base.html' %}
 
 {% block head %}
     <title>PUP-ESIS Beneficiaries</title>
@@ -11,7 +11,7 @@
 
 {% block content %}
     {% include 'admin/components/sidebar.html' %}
-    <div class="p-4">
+    <div class="sm:ml-64 p-4">
         <!--Container-->
         <div class="container w-full md:w-4/5 xl:w-3/5  mx-auto px-2">
             <!--Title-->
@@ -33,11 +33,11 @@
                     <tbody>
                         {% for beneficiary in beneficiaries %}
                         <tr>
-                            <td>{{ beneficiary.user.first_name }}</td>
-                            <td>{{ beneficiary.user.last_name }}</td>
-                            <td>{{ beneficiary.user.contact_details }}</td>
-                            <td>{{ beneficiary.user.gender }}</td>
-                            <td><a href="" class="text-blue-700">View</a></td>
+                            <td>{{ beneficiary.User.FirstName }}</td>
+                            <td>{{ beneficiary.User.LastName }}</td>
+                            <td>{{ beneficiary.User.ContactDetails }}</td>
+                            <td>{{ beneficiary.User.Gender }}</td>
+                            <td><a href="" class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded">View</a></td>
                         </tr>
                         {% endfor %}
                     </tbody>
