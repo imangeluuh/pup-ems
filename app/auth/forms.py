@@ -10,9 +10,9 @@ class RegisterForm(FlaskForm):
     last_name = StringField(label="Last Name", validators=[DataRequired()])
     contact_details = StringField(label="Contact Details", validators=[DataRequired(), Regexp(r'^09\d{9}$', message="Please match the contact number format. 09123456789- 11 numbers only")])
     birthdate = DateField(label="Date of Birth",  validators=[DataRequired()])
-    gender = SelectField(label="Gender", choices=[('female', 'Female'),
-        ('male', 'Male'),
-        ('others', 'Others')], validators=[DataRequired()])
+    gender = SelectField(label="Gender", choices=[('Female', 'Female'),
+        ('Male', 'Male'),
+        ('Nonbinary', 'Nonbinary')], validators=[DataRequired()])
     address = StringField(label="Home Address",  validators=[DataRequired()])
     email = StringField(label="Email", validators=[Email(), DataRequired()])
     password1 = PasswordField(label="Password", validators=[Length(min=6), DataRequired()])

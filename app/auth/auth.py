@@ -4,10 +4,17 @@ from ..models import Login, Beneficiary, User
 import uuid
 from app import db
 from flask_login import login_user, logout_user, current_user
+from datetime import datetime, timedelta
+
 
 auth_bp = Blueprint('auth', __name__, template_folder="templates", static_folder="static", static_url_path='static')
 
+lockout_duration = timedelta(minutes=1)
+
+
 @auth_bp.route('/beneficiary', methods=['GET', 'POST'])
+# @limiter.limit('5 per day')
+# @limiter.limit("3 per day", key_func=lambda: request.method == "POST")
 def beneficiaryLogin():
     # Prevents logged in users from accessing the page
     if current_user.is_authenticated:
@@ -19,8 +26,8 @@ def beneficiaryLogin():
         if form.validate_on_submit():
             attempted_user = Login.query.filter_by(Email=form.email.data).first()
             if attempted_user and attempted_user.check_password_correction(attempted_password=form.password.data):
-                login_user(attempted_user)
-                return redirect(url_for('projects.projectsList')) # temp route
+                login_user(attempted_user, remember=True)
+                return redirect(url_for('programs.projectsList')) # temp route
             else:
                 flash('Incorrect email or password.')
 
