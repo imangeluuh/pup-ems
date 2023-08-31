@@ -22,8 +22,8 @@ class Login(db.Model, UserMixin):
     Password = db.Column(db.String(60), nullable=False)
     Status = db.Column(db.String(20), default='Active')
     RoleId = db.Column(db.Integer, db.ForeignKey('Role.RoleId', ondelete='CASCADE'), nullable=False)
-    AdminLogin = db.relationship("Admin", backref='AdminLogin', passive_deletes=True)
-    UserLogin = db.relationship("User", backref='UserLogin', passive_deletes=True)
+    AdminLogin = db.relationship("Admin", backref='AdminLogin', lazy=True, passive_deletes=True)
+    UserLogin = db.relationship("User", backref='UserLogin', lazy=True, passive_deletes=True)
 
     @property
     def password_hash(self):
@@ -87,11 +87,13 @@ class ExtensionProgram(db.Model):
 
     ExtensionProgramId = db.Column(db.Integer, primary_key=True)
     Name = db.Column(db.String(255), nullable=False)
-    Agenda = db.Column(db.String(100), nullable=False)
-    Program = db.Column(db.String(100), nullable=False)
     DateApproved = db.Column(db.Date, nullable=False)
     ImplementationDate = db.Column(db.Date)
     Status = db.Column(db.String(20), nullable=False)
+    AgendaId = db.Column(db.Integer, db.ForeignKey('Agenda.AgendaId', ondelete='CASCADE'), nullable=False)
+    Agenda = db.relationship("Agenda", backref='ExtensionProgram', lazy=True, passive_deletes=True)
+    ProgramId = db.Column(db.Integer, db.ForeignKey('Program.ProgramId', ondelete='CASCADE'), nullable=False)
+    Program = db.relationship("Program", backref='ExtensionProgram', lazy=True, passive_deletes=True)
     Project = db.relationship("Project", backref='ExtensionProgram', lazy=True, passive_deletes=True)
 
 
@@ -104,11 +106,25 @@ class Project(db.Model):
     ProjectType = db.Column(db.String(100), nullable=False)
     Rationale = db.Column(db.String(255), nullable=False)
     Objectives = db.Column(db.String(255), nullable=False)
+    StartDate = db.Column(db.Date)
     NumberOfBenificiaries = db.Column(db.Integer, nullable=False)
     BeneficiariesClassifications = db.Column(db.String(255), nullable=False)
     ProjectScope = db.Column(db.String(255), nullable=False)
     ExtensionProgramId = db.Column(db.Integer, db.ForeignKey('ExtensionProgram.ExtensionProgramId', ondelete='CASCADE'), nullable=False)
     # CommunityAssessment =
     # MOU/MOAAssessment = 
+
+
+class Program(db.Model):
+    __tablename__ = 'Program'
+
+    ProgramId = db.Column(db.Integer, primary_key=True)
+    ProgramName = db.Column(db.String(255), nullable=False)
     
+
+class Agenda(db.Model):
+    __tablename__ = 'Agenda'
+
+    AgendaId = db.Column(db.Integer, primary_key=True)
+    AgendaName = db.Column(db.String(255), nullable=False)
 

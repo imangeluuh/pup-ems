@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, url_for, request, redirect, flash
 from .forms import LoginForm, ProjectForm
-from ..models import Login, ExtensionProgram, Beneficiary, Activity
+from ..models import Login, ExtensionProgram, Beneficiary
 from app import db
 from datetime import date
 from flask_login import current_user, login_user, login_required, logout_user
@@ -123,9 +123,3 @@ def beneficiaries():
 def calendar():
     return render_template('admin/index.html')
 
-def fetch_activities():
-    return Activity.query.with_entities(Activity.activity_name, Activity.activity_date, Activity.location, Activity.activity_description).all()
-
-def fetch_today_activities():
-    today = date.today()
-    return Activity.query.filter_by(activity_date=today).with_entities(Activity.activity_name, Activity.location, Activity.activity_description).all()
