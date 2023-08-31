@@ -8,15 +8,11 @@ class LoginForm(FlaskForm):
     submit = SubmitField(label='Sign in')
 
 
-class addProjectForm(FlaskForm):
-    program_name = StringField(label='Program Name', validators=[DataRequired()])
-    target_participant = StringField(label='Target Participant', validators=[DataRequired()])
-    location = StringField(label='Location', validators=[DataRequired()])
+class ProjectForm(FlaskForm):
+    program_name = StringField(label='Extension Program Name', validators=[DataRequired()])
+    agenda = StringField(label='Agenda', validators=[DataRequired()])
+    program = StringField(label='Program', validators=[DataRequired()])
+    date_approved = DateField(label='Date Approved', validators=[Optional()])
+    implementation_date = DateField(label='Implementation Date', validators=[Optional()])
     status = StringField(label="Status", validators=[DataRequired()])
-    start_date = DateField(label='Start Date', validators=[Optional()])
-    end_date = DateField(label='End Date', validators=[Optional()])
-    description = TextAreaField(label='Description', validators=[DataRequired()])
-    objectives = TextAreaField(label='Objectives', validators=[DataRequired()])
-    expected_outcome = TextAreaField(label='Expected Outcome', validators=[DataRequired()])
-    terms_conditions = TextAreaField(label='Terms and Conditions', validators=[DataRequired()])
-    submit = SubmitField(label='Save Project')
+    submit = SubmitField(label='Save Program')

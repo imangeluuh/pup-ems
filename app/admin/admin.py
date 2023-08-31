@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, url_for, request, redirect, flash
-from .forms import LoginForm, addProjectForm
+from .forms import LoginForm, ProjectForm
 from ..models import Login, ExtensionProgram, Beneficiary, Activity
 from app import db
 from datetime import date
@@ -20,7 +20,7 @@ def adminLogin():
             attempted_user = Login.query.filter_by(Email=form.email.data).first()
             if attempted_user and attempted_user.RoleId == 1: 
                 if attempted_user.check_password_correction(attempted_password=form.password.data):
-                    login_user(attempted_user)
+                    login_user(attempted_user, remember=True)
                     return redirect(url_for('admin.programs')) # temp route
                 else:
                     flash('The password you\'ve entered is incorrect.')
@@ -42,7 +42,7 @@ def home():
 @admin_bp.route('/programs')
 def programs():
     # pass
-    form = addProjectForm()
+    form = ProjectForm()
     programs = ExtensionProgram.query.all()
     
     return render_template('admin/program_management.html', programs=programs, form=form)
@@ -51,7 +51,7 @@ def programs():
 @login_required
 @admin_bp.route('/extension-program/insert', methods=['POST'])
 def insertExtensionProgram():
-    form = addProjectForm()
+    form = ProjectForm()
     if request.method == "POST":
         if form.validate_on_submit():
             program_to_add = ExtensionProgram(Name = form.program_name.data,
@@ -62,17 +62,18 @@ def insertExtensionProgram():
                                 ImplementationDate = form.implementation_date.data,)
             db.session.add(program_to_add)
             db.session.commit()
+            flash('Extension progam is successfully inserted.', category='success')
             return redirect(url_for('admin.programs'))
         if form.errors != {}: # If there are errors from the validations
             for err_msg in form.errors.values():
-                flash(err_msg)
-    return redirect('admin.programs')
+                flash(err_msg, category='error')
+    return redirect(url_for('admin.programs'))
 
 
 @login_required
 @admin_bp.route('/update/extension-program/<int:id>', methods=['POST'])
 def updateExtensionProgram(id):
-    form = addProjectForm()
+    form = ProjectForm()
     extension_program = ExtensionProgram.query.get_or_404(id)
     if form.validate_on_submit():
         extension_program.Name = form.program_name.data
@@ -84,9 +85,9 @@ def updateExtensionProgram(id):
 
         try:
             db.session.commit()
-            flash('Extension progam is successfully updated.')
+            flash('Extension progam is successfully updated.', category='success')
         except:
-            flash('There was an issue updating the extension program.')
+            flash('There was an issue updating the extension program.', category='error')
 
         return redirect(url_for('admin.programs'))
     
@@ -104,9 +105,9 @@ def deleteExtensionProgram(id):
     try:
         db.session.delete(extension_program)
         db.session.commit()
-        flash('Extension program is successfully deleted.')
+        flash('Extension program is successfully deleted.', category='success')
     except:
-        flash('There was an issue deleting the extension program.')
+        flash('There was an issue deleting the extension program.', category='error')
 
     return redirect(url_for('admin.programs'))
 
