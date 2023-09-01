@@ -1,0 +1,15 @@
+{% extends 'admin/components/delete_modal.html' %}
+
+{% block id %}delete-project-{{project.ProjectId}}{% endblock %}
+
+{% block id1 %}delete-project-{{project.ProjectId}}{% endblock %}
+
+{% block id2 %}delete-project-{{project.ProjectId}}{% endblock %}
+
+{% block url %}
+    {{ url_for('admin.deleteProject', id=project.ProjectId) }}
+{% endblock %}
+
+{% block item %}
+    {{project.Name}}
+{% endblock %}
