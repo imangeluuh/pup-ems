@@ -29,14 +29,24 @@
                     </div>
                     <div class="col-span-6 sm:col-span-6">
                         <!-- agenda -->
+                        {% set agenda = program.Agenda %}
                         {{ form.agenda.label(class="block mb-2 text-sm font-medium text-gray-900") }}
-                        {{ form.agenda(class="input shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5", value=program.Agenda)}}
+                        <select name="{{ form.agenda.name }}" class="input shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5">
+                            {% for option in form.agenda.choices %}
+                                <option value="{{ option[0] }}" {% if option[0] == agenda.AgendaId %}selected{% endif %}>{{ option[1] }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                     <div class="col-span-6 sm:col-span-3">
                         <!-- program -->
+                        {% set course = program.Program %}
                         {{ form.program.label(class="block mb-2 text-sm font-medium text-gray-900") }}
-                        {{ form.program(class="input shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5", value=program.Program)}}
-                    </div>
+                        <select name="{{ form.program.name }}" class="input shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5">
+                            {% for option in form.program.choices %}
+                                <option value="{{ option[0] }}" {% if option[0] == course.ProgramId %}selected{% endif %}>{{ option[1] }}</option>
+                            {% endfor %}
+                        </select>
+                        </div>
                     <div class="col-span-6 sm:col-span-3">
                         <!-- status -->
                         {{ form.status.label(class="block mb-2 text-sm font-medium text-gray-900") }}
@@ -61,3 +71,4 @@
         </form>
     </div>
 </div>
+

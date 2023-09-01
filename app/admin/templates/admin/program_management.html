@@ -7,6 +7,43 @@
 	<!--Responsive Extension Datatables CSS-->
 	<link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('admin.static', filename='css/table_style.css') }}">  
+    <style>
+        .tree-view ul {
+            list-style: none;
+        }
+
+        .tree-view ul li{
+            position: relative;
+        }
+
+        .tree-view ul li::before {
+            position: absolute;
+            left:-15px;
+            top:-16px;
+            border-left: 3px solid #d90429;
+            border-bottom: 3px solid #d90429;
+            content: "";
+            width: 15px;
+            height: 3.2em;
+        }
+
+        .tree-view ul li::after {
+            position: absolute;
+            left:-15px;
+            bottom:0px;
+            border-left: 3px solid #d90429;
+            content: "";
+            width: 15px;
+            height: 100%;
+        }
+
+        .tree-view ul li:last-child::after,
+        .tree-view ul li:last-child::after,
+        ul.tree > li:after, ul.tree > li:before {
+            display: none;
+        }
+
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -14,53 +51,122 @@
     <div class="p-4 sm:ml-64 mt-2">
         <!--Container-->
         <div class="container w-full md:w-4/5 xl:w-3/5  mx-auto px-2">
-            <!--Card-->
-            <div id='recipients' class="p-8 mt-6 lg:mt-0 rounded shadow bg-white">
-                <div class="flex flex-col md:flex-row justify-between items-center">
-                    <!--Title-->
-                    <h1 class="flex items-center font-sans font-bold break-normal text-indigo-500 px-2 py-4 text-xl md:text-2xl">
-                        Extension Programs
-                    </h1>
-                    <button type="button" data-modal-target="addProjectModal" data-modal-show="addProjectModal" class="flex items-center justify-center text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-lg text-sm px-4 py-2 focus:ring-0 focus:ring-offset-0">
-                        <svg class="h-3.5 w-3.5 mr-2" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <path clip-rule="evenodd" fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
-                        </svg>
-                        Add program
-                    </button>
-                </div>
-                <table id="projects" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
-                    <thead>
-                        <tr>
-                            <th data-priority="1">Name</th>
-                            <th data-priority="2">Agenda</th>
-                            <th data-priority="3">Status</th>
-                            <th data-priority="4">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for program in programs %}
-                        <tr>
-                            <td>{{ program.Name }}</td>
-                            <td>{{ program.Agenda }}</td>
-                            <td>{{ program.Status }}</td>
-                            <td>
-                                <button data-modal-target="viewProjectModal{{program.ExtensionProgramId}}" data-modal-show="viewProjectModal{{program.ExtensionProgramId}}" class="font-medium text-xl text-blue-600 md:mr-2 px-2.5 py-0.5"><iconify-icon icon="ph:eye"></iconify-icon></button>
-                                <button data-modal-target="editProjectModal{{program.ExtensionProgramId}}" data-modal-show="editProjectModal{{program.ExtensionProgramId}}" class="font-medium text-xl text-gray-500 md:mr-2 px-2.5 py-0.5"><iconify-icon icon="bx:edit"></iconify-icon></button>
-                                <button data-modal-target="deleteModal{{ program.ExtensionProgramId }}" data-modal-show="deleteModal{{ program.ExtensionProgramId }}" class="font-medium text-xl text-gray-500 md:mr-2 px-2.5 py-0.5"><iconify-icon icon="ion:trash-outline"></iconify-icon></button>
-                            </td>
-                        </tr>
-                        {% include 'admin/components/edit_ext_program_modal.html' %}
-                        {% include 'admin/components/view_ext_program_modal.html' %}
-                        {% include 'admin/components/delete_modal.html' %}
-                        {% endfor %}
-                    </tbody>
-                </table>
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <!--Title-->
+                <h1 class="flex items-center font-sans font-bold break-normal text-indigo-500 px-2 py-4 text-xl md:text-2xl">
+                    Extension Programs
+                </h1>
+                <button type="button" data-modal-target="addProjectModal" data-modal-show="addProjectModal" class="flex items-center justify-center text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-lg text-sm px-4 py-2 focus:ring-0 focus:ring-offset-0">
+                    <svg class="h-3.5 w-3.5 mr-2" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path clip-rule="evenodd" fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
+                    </svg>
+                    Add program
+                </button>
             </div>
-            <!--/Card-->
+            {% if programs %}
+                
+                <div class="tree-view bg-white px-3 pb-4 pt-5 rounded-lg shadow">
+                <ul class="tree">
+                    {% for program in programs %}
+                    <li>
+                        <div id="accordion-collapse" data-accordion="collapse">
+                            <h2 id="accordion-collapse-heading-{{ program.ExtensionProgramId }}">
+                                <div class="flex items-center justify-between w-full p-5 mb-2 font-medium text-left bg-white border border-gray-400  hover:bg-gray-100 rounded-xl">
+                                    <div class="flex items-center">
+                                        <button class="bg-transparent mr-5" data-accordion-target="#accordion-collapse-body-{{ program.ExtensionProgramId }}" aria-expanded="false" aria-controls="accordion-collapse-body-{{ program.ExtensionProgramId }}"> 
+                                            <svg data-accordion-icon class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 8">
+                                                <path stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 5.326 5.7a.909.909 0 0 0 1.348 0L13 1"/>
+                                            </svg>
+                                        </button>
+                                        <span>{{ program.Name }}</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <button data-modal-target="viewProjectModal{{program.ExtensionProgramId}}" data-modal-show="viewProjectModal{{program.ExtensionProgramId}}" class="flex items-center font-semibold text-2xl text-blue-600 mr-4">
+                                            <iconify-icon icon="ph:eye"></iconify-icon>
+                                        </button>
+                                        <button data-modal-target="editProjectModal{{program.ExtensionProgramId}}" data-modal-show="editProjectModal{{program.ExtensionProgramId}}" class="flex items-center font-semibold text-2xl text-gray-500 mr-4">
+                                            <iconify-icon icon="bx:edit"></iconify-icon>
+                                        </button>
+                                        <button data-modal-target="deleteModal{{ program.ExtensionProgramId }}" data-modal-show="deleteModal{{ program.ExtensionProgramId }}" class="flex items-center font-semibold text-2xl text-gray-500 mr-4">
+                                            <iconify-icon icon="ion:trash-outline"></iconify-icon>
+                                        </button>
+                                        <button data-modal-target="add-project-{{program.ExtensionProgramId}}" data-modal-show="add-project-{{program.ExtensionProgramId}}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                                <path fill="currentColor" d="M19 12.998h-6v6h-2v-6H5v-2h6v-6h2v6h6z"/>
+                                            </svg>
+                                        </button>
+                                        {% include 'admin/components/edit_ext_program_modal.html' %}
+                                        {% include 'admin/components/view_ext_program_modal.html' %}
+                                        {% include 'admin/delete_program.html' %}
+                                    </div>
+                                </div>
+                            </h2>
+                            <div id="accordion-collapse-body-{{ program.ExtensionProgramId }}" class="hidden" aria-labelledby="accordion-collapse-heading-{{ program.ExtensionProgramId }}">
+                                <div class="pb-4 pt-2 pl-10">
+                                    <!-- Nested accordion -->
+                                    <ul>
+                                        {% for project in program.Project %}
+                                        <li>
+                                            <div id="accordion-nested-collapse" class="mb-4" data-accordion="collapse">
+                                                <h2 id="accordion-nested-collapse-heading-{{ project.ProjectId }}">
+                                                    <div class="flex items-center justify-between w-full p-5 rounded-xl font-medium text-left bg-white border border-gray-400 hover:bg-gray-100">
+                                                        <div class="flex items-center">
+                                                            <button class="bg-transparent mr-5" data-accordion-target="#accordion-nested-collapse-body-{{ project.ProjectId }}" aria-expanded="false" aria-controls="accordion-nested-collapse-body-{{ project.ProjectId }}">
+                                                                <svg data-accordion-icon class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 8">
+                                                                    <path stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 5.326 5.7a.909.909 0 0 0 1.348 0L13 1"/>
+                                                                </svg>
+                                                            </button>
+                                                            <span>{{ project.Name }}</span>
+                                                        </div>
+                                                        <div class="flex items-center">
+                                                            <button data-modal-target="view-project-{{project.ProjectId}}" data-modal-show="view-project-{{project.ProjectId}}" class="flex items-center font-semibold text-2xl text-blue-600 mr-4">
+                                                                <iconify-icon icon="ph:eye"></iconify-icon>
+                                                            </button>
+                                                            <button data-modal-target="edit-project-{{project.ProjectId}}" data-modal-show="edit-project-{{project.ProjectId}}" class="flex items-center font-semibold text-2xl text-gray-500 mr-4">
+                                                                <iconify-icon icon="bx:edit"></iconify-icon>
+                                                            </button>
+                                                            <button data-modal-target="delete-project-{{ project.ProjectId }}" data-modal-show="delete-project-{{ project.ProjectId }}" class="flex items-center font-semibold text-2xl text-gray-500 mr-4">
+                                                                <iconify-icon icon="ion:trash-outline"></iconify-icon>
+                                                            </button>
+                                                            <button>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                                                    <path fill="currentColor" d="M19 12.998h-6v6h-2v-6H5v-2h6v-6h2v6h6z"/>
+                                                                </svg>
+                                                            </button>
+                                                            {% include 'admin/components/view_project_modal.html' %}
+                                                            {% include 'admin/components/edit_project_modal.html' %}
+                                                            {% include 'admin/delete_project.html' %}
+                                                        </div>
+                                                    </div>
+                                                </h2>
+                                                <div id="accordion-nested-collapse-body-{{ project.ProjectId }}" class="hidden" aria-labelledby="accordion-nested-collapse-heading-{{ project.ProjectId }}">
+                                                    <div class="p-5 border border-b-0 border-gray-200">
+                                                        <p class="text-gray-500">{{ project.Rationale }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                    <!-- End: Nested accordion -->
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    {% include 'admin/components/add_project_modal.html' %}
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="rounded-md bg-white w-full flex justify-center items-center">
+                    No extension programs found.
+                </div>
+            {% endif %}
+            </div>
         </div>
         <!--/container-->
     </div>
     {% include 'admin/components/add_ext_program_modal.html' %}
+    
     
 
     

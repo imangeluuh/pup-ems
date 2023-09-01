@@ -29,16 +29,18 @@
                     </div>
                     <div class="col-span-6 sm:col-span-6">
                         <!-- agenda -->
+                        {% set agenda = program.Agenda %}
                         {{ form.agenda.label(class="block mb-2 text-sm font-medium text-gray-900") }}
                         <div class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
-                            {{ program.Agenda }}
+                            {{ agenda.AgendaName }}
                         </div>
                     </div>
                     <div class="col-span-6 sm:col-span-3">
                         <!-- program -->
+                        {% set course = program.Program %}
                         {{ form.program.label(class="block mb-2 text-sm font-medium text-gray-900") }}
                         <div class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
-                            {{ program.Program}}
+                            {{ course.ProgramName}}
                         </div>
                     </div>
                     <div class="col-span-6 sm:col-span-3">
