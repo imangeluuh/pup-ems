@@ -24,9 +24,9 @@
                     <thead>
                         <tr>
                             <th data-priority="1">First Name</th>
-                            <th data-priority="2">Last Name</th>
-                            <th data-priority="3">Contact Details</th>
-                            <th data-priority="4">Gender</th>
+                            <th data-priority="2">First Name</th>
+                            <th data-priority="3">Last Name</th>
+                            <th data-priority="4">Email</th>
                             <th data-priority="5">Action</th>
                         </tr>
                     </thead>
@@ -34,10 +34,11 @@
                         {% for beneficiary in beneficiaries %}
                         <tr>
                             <td>{{ beneficiary.User.FirstName }}</td>
+                            <td>{{ beneficiary.User.MiddleName }}</td>
                             <td>{{ beneficiary.User.LastName }}</td>
-                            <td>{{ beneficiary.User.ContactDetails }}</td>
-                            <td>{{ beneficiary.User.Gender }}</td>
-                            <td><a href="" class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded">View</a></td>
+                            <td>{{ beneficiary.User.UserLogin.Email }}</td>
+                            <td><button data-modal-target="view-beneficiary-{{beneficiary.BeneficiaryId}}" data-modal-show="view-beneficiary-{{beneficiary.BeneficiaryId}}" class="bg-green-100 text-green-800 text-base font-medium mr-2 px-2.5 py-0.5 rounded">View</a></td>
+                            {% include 'admin/components/view_modal.html' %}
                         </tr>
                         {% endfor %}
                     </tbody>
