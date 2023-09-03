@@ -1,5 +1,6 @@
 from app import db, bcrypt, login_manager
 from flask_login import UserMixin
+from datetime import datetime
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -107,7 +108,7 @@ class Project(db.Model):
     Rationale = db.Column(db.String(255), nullable=False)
     Objectives = db.Column(db.String(255), nullable=False)
     StartDate = db.Column(db.Date)
-    NumberOfBenificiaries = db.Column(db.Integer, nullable=False)
+    NumberOfBeneficiaries = db.Column(db.Integer, nullable=False)
     BeneficiariesClassifications = db.Column(db.String(255), nullable=False)
     ProjectScope = db.Column(db.String(255), nullable=False)
     ExtensionProgramId = db.Column(db.Integer, db.ForeignKey('ExtensionProgram.ExtensionProgramId', ondelete='CASCADE'), nullable=False)
@@ -127,4 +128,42 @@ class Agenda(db.Model):
 
     AgendaId = db.Column(db.Integer, primary_key=True)
     AgendaName = db.Column(db.String(255), nullable=False)
+
+
+class Activity(db.Model):
+    __tablename__ = 'Activity'
+
+    ActivityId = db.Column(db.Integer, primary_key=True)
+    Date = db.Column(db.Date, nullable=False)
+    Duration = db.Column(db.String(255), nullable=False)
+    CommunityBackground = db.Column(db.String(255), nullable=False)
+    ActivityFlow = db.Column(db.String(255), nullable=False)
+
+
+class Announcement(db.Model):
+    __tablename__ = 'Announcement'
+
+    AnnouncementId = db.Column(db.Integer, primary_key=True)
+    Title = db.Column(db.String(255), nullable=False)
+    Content= db.Column(db.Text, nullable=False)
+    CurrentLiveVersionId = db.Column(db.Integer, db.ForeignKey('AnnouncementVersion.VersionId', ondelete='SET NULL'))
+    ExtensionProgramId = db.Column(db.Integer, db.ForeignKey('ExtensionProgram.ExtensionProgramId', ondelete='CASCADE'), nullable=False)
+    Created = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    Updated = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    LiveVersion = db.relationship('AnnouncementVersion', backref='AnnouncementLive', lazy=True)
+    ExtensionProgram = db.relationship('ExtensionProgram', backref='Announcement', lazy=True)
+
+
+class AnnouncementVersion(db.Model):
+    __tablename__ = 'AcnnouncementVersion'
+
+    VersionId = db.Column(db.Integer, primary_key=True)
+    AnnouncementId = db.Column(db.Integer, db.ForeignKey('Announcement.AnnouncementId', ondelete='CASCADE'))
+    IsLive = db.Column(db.Boolean, nullable=False)
+    VersionContent = db.Column(db.Text)
+    Created = db.Column(db.Date, default=datetime.utcnow, nullable=False)
+    Announcement = db.relationship('Announcement', backref='AnnouncementVersion', lazy=True)
+
+
+
 
