@@ -13,8 +13,11 @@
                         <header class="m-0 md:mb-6 md:mt-8 text-xl text-center">Create account</header>
                         {% with messages = get_flashed_messages() %}
                             {% if messages %}
-                            <div class="alert alert-danger rounded-0 py-2 mb-2 mx-4 d-flex align-items-center">
-                                <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 32 32"><path fill="currentColor" d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2Zm0 26a12 12 0 1 1 12-12a12 12 0 0 1-12 12Z"/><path fill="currentColor" d="M15 8h2v11h-2zm1 14a1.5 1.5 0 1 0 1.5 1.5A1.5 1.5 0 0 0 16 22z"/></svg>
+                            <div class="flex items-center p-4 mb-4 mx-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50" role="alert">
+                                <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+                                </svg>
+                                <span class="sr-only">Info</span>
                                 <div>
                                     <span> It looks like something went wrong during account creation. </span>
                                     <ul class="m-0">
@@ -26,7 +29,7 @@
                             </div>
                             {% endif %}
                         {% endwith %}
-                        <form action="" method="post" class="grid grid-cols-3 md:px-5 mt-2 md:mt-4 max-h-full">
+                        <form id="signupForm" action="" method="post" class="grid grid-cols-3 md:px-5 mt-2 md:mt-4 max-h-full">
                             {{ form.hidden_tag() }}
                             <div class="input-field col-span-3 sm:col-span-1">
                                 {{ form.first_name(class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0") }}
@@ -85,4 +88,69 @@
                     </div>
     </div>
 </div>
+{% include 'auth/components/review_modal.html' %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    // Initialize  Modal object and set options
+    const $targetEl = document.getElementById('reviewModal'); 
+    const options = {
+        placement: 'center', 
+        backdrop: 'dynamic', 
+        backdropClasses: 'bg-gray-900 bg-opacity-50 fixed inset-0 z-40',
+        closable: true, 
+    };
+    const modal = new Modal($targetEl, options);
+    // Get a reference to the signup form
+    const signupForm = document.getElementById('signupForm');
+
+    // Define the handleSubmit function
+    function handleSubmit(event) {
+        e.preventDefault(); // Prevent default form submission
+        
+        // Get form input values
+        const first_name = document.getElementById('f-name').value;
+        const middle_name = document.getElementById('md-name').value;
+        const last_name = document.getElementById('l-name').value;
+        const contact_details = document.getElementById('contact').value;
+        const birthdate = document.getElementById('birthdate').value;
+        const gender = document.getElementById('gender').value;
+        const address = document.getElementById('address').value;
+        const email = document.getElementById('email').value;
+
+        // Display the inputted values in the modal
+        document.getElementById('reviewFirstName').textContent = first_name;
+        document.getElementById('reviewMiddleName').textContent = middle_name;
+        document.getElementById('reviewLastName').textContent = last_name;
+        document.getElementById('reviewContact').textContent = contact_details;
+        document.getElementById('reviewBirthdate').textContent = birthdate;
+        document.getElementById('reviewGender').textContent = gender;
+        document.getElementById('reviewAddress').textContent = address;
+        document.getElementById('reviewEmail').textContent = email;
+
+        // Show the review modal
+        modal.show()
+    }
+    
+   // Add the form submit event listener
+    signupForm.addEventListener('submit', handleSubmit);
+
+    // Handle the click event of the Save button in the modal
+    document.getElementById('saveButton').addEventListener('click', function () {
+        // Hide the review modal
+        modal.hide()
+        
+        // Remove the form submit event listener and submit the form
+        signupForm.removeEventListener('submit', handleSubmit);
+        signupForm.submit();
+    });
+
+    document.getElementById('cancelButton').addEventListener('click', function () {
+        // Hide the review modal
+        modal.hide()
+    });
+});
+
+
+</script>
 {% endblock %}
