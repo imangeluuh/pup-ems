@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, url_for, request, redirect, flash
-from .forms import LoginForm, ProgramForm, ProjectForm
-from ..models import Login, ExtensionProgram, Beneficiary, Project, Agenda, Program
+from .forms import LoginForm, ProgramForm, ProjectForm, AnnouncementForm
+from ..models import Login, ExtensionProgram, Beneficiary, Project, Agenda, Program, Student
 from app import db
 from datetime import date
 from flask_login import current_user, login_user, login_required, logout_user
@@ -188,11 +188,31 @@ def deleteProject(id):
 @login_required
 @admin_bp.route('/beneficiaries')
 def beneficiaries():
-    beneficiaries = Beneficiary.query.all()
-    return render_template('admin/beneficiaries.html', beneficiaries=beneficiaries)
+    users = Beneficiary.query.all()
+    current_url_path = request.path
+    return render_template('admin/users.html', users=users,current_url_path=current_url_path)
+
+
+@login_required
+@admin_bp.route('/students')
+def students():
+    users = Student.query.all()
+    current_url_path = request.path
+    return render_template('admin/users.html', users=users,current_url_path=current_url_path)
 
 
 @admin_bp.route('/calendar')
 def calendar():
     return render_template('admin/index.html')
 
+
+@admin_bp.route('/announcement')
+def announcement():
+    programs = Program.query.all()
+    return render_template('admin/announcement.html', programs=programs)
+
+
+@admin_bp.route('/announcement/create')
+def createAnnouncement():
+    form = AnnouncementForm()
+    return render_template('admin/create_announcement.html', form=form)
