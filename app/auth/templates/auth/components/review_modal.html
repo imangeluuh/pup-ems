@@ -41,11 +41,11 @@
                         {{ form.address.label(class="font-medium") }}
                         <p id="reviewAddress"></p>
                     </div> 
-                    {% if current_user.RoleId == 3 %}
+                    {% if current_url_path == url_for('auth.studentSignup') %}
                     <div class="col-span-3 mb-2">
                         {{ form.skills_interest.label(class="font-medium") }}
                         <p id="reviewSkills"></p>
-                    </div>
+                    </div> 
                     {% endif %}
                     <div class="col-span-3 mb-2">
                         {{ form.email.label(class="font-medium") }}

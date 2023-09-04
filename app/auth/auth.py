@@ -37,6 +37,7 @@ def beneficiaryLogin():
 @auth_bp.route('/beneficiary/signup', methods=['GET', 'POST'])
 def beneficiarySignup():
     form = BeneficiaryRegisterForm()    
+    current_url_path = request.path
     if request.method == "POST":
         if form.validate_on_submit():
             str_user_id = createUser(form, 2)
@@ -47,7 +48,7 @@ def beneficiarySignup():
         if form.errors != {}: # If there are errors from the validations
             for err_msg in form.errors.values():
                 flash(err_msg)
-    return render_template('auth/beneficiary/beneficiary_signup.html', form=form)
+    return render_template('auth/beneficiary/beneficiary_signup.html', form=form, current_url_path=current_url_path)
 
 @auth_bp.route('/student', methods=['GET', 'POST'])
 def studentLogin():
@@ -72,6 +73,7 @@ def studentLogin():
 @auth_bp.route('/student/signup', methods=['GET', 'POST'])
 def studentSignup():
     form = StudentRegisterForm()    
+    current_url_path = request.path
     if request.method == "POST":
         if form.validate_on_submit():
             str_user_id = createUser(form, 3)
@@ -83,7 +85,7 @@ def studentSignup():
         if form.errors != {}: # If there are errors from the validations
             for err_msg in form.errors.values():
                 flash(err_msg)
-    return render_template('auth/student/student_signup.html', form=form)
+    return render_template('auth/student/student_signup.html', form=form, current_url_path=current_url_path)
 
 @auth_bp.route('/logout')
 def logout():
