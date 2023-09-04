@@ -68,9 +68,10 @@
 .input:focus, .form-select:focus, .md-name-input:focus {
     border-bottom: 1px solid #800000!important;
 }
-/* .input:valid, .md-name-input:not(:placeholder-shown) {
-    border-bottom: 1px solid black!important;
-} */
+#skills-label {
+    top: -25px;
+    left: 10px;
+}
 .submit{
     border: none;
     outline: none;

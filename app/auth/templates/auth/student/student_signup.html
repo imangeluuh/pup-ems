@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('auth.static', filename='css/signup_style.css') }}">
+    <title>PUP-ESIS Signup</title>
+    <script src="{{ url_for('auth.static', filename='js/index.js')}}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container-main h-screen min-h-screen">
+    <div class="container h-full flex items-center mx-auto">
+        <div class="right mx-auto  relative overflow-auto">
+            <header class="m-0 md:mb-6 md:mt-8 text-xl text-center">Create account</header>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <div class="flex items-center p-4 mb-4 mx-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50" role="alert">
+                    <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+                    </svg>
+                    <span class="sr-only">Info</span>
+                    <div>
+                        <span> It looks like something went wrong during account creation. </span>
+                        <ul class="m-0">
+                        {% for message in messages %}
+                            <li>{{ message|replace('[','')|replace(']','')|replace("'",'') }}</li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                {% endif %}
+            {% endwith %}
+            <form id="signupForm" action="" method="post" class="grid grid-cols-3 md:px-5 mt-2 md:mt-4 max-h-full">
+                {{ form.hidden_tag() }}
+                <div class="input-field col-span-3 sm:col-span-1">
+                    {{ form.first_name(id="f-name", class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0") }}
+                    {{ form.first_name.label(class="label") }}
+                </div> 
+                <div class="input-field col-span-3 sm:col-span-1">
+                    {{ form.middle_name(id="md-name", class="md-name-input focus:ring-0 focus:ring-offset-0 bg-transparent p-0", placeholder=" ") }}
+                    {{ form.middle_name.label(class="md-name-label") }}
+                </div> 
+                <div class="input-field col-span-3 sm:col-span-1">
+                    {{ form.last_name(id="l-name", class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0") }}
+                    {{ form.last_name.label(class="label") }}
+                </div> 
+                <div class="input-field col-span-3 sm:col-span-1">
+                    {{ form.contact_details(id="contact", class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0") }}
+                    {{ form.contact_details.label(class="label") }}
+                </div> 
+                <div class="input-field col-span-3 sm:col-span-1">
+                    {{ form.birthdate(id="birthdate", class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0") }}
+                    {{ form.birthdate.label(class="label") }}
+                </div> 
+                <div class="input-field col-span-3 sm:col-span-1">
+                    <select name="gender" id="gender" class="form-select shadow-none focus:ring-0 focus:ring-offset-0 bg-transparent p-0">
+                    {% for option in form.gender %}
+                        {% if loop.first %}
+                            <option value="" disabled selected>Gender</option>
+                        {% endif %}
+                        {{ option }}
+                    {% endfor %}
+                    </select>
+                    {{ form.gender.label(class="gender-label") }}
+                </div> 
+                <div class="input-field col-span-3">
+                    {{ form.address(id="address", class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0") }}
+                    {{ form.address.label(class="label") }}
+                </div> 
+                <div class="input-field col-span-3 mt-3">
+                    {{ form.skills_interest.label(id="skills-label") }}
+                    {{ form.skills_interest(id="skills", class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0") }}
+                </div> 
+                <div class="input-field col-span-3">
+                    {{ form.email(id="email", class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0") }}
+                    {{ form.email.label(class="label") }}
+                </div> 
+                <div class="input-field col-span-3">
+                    {{ form.password1(class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0") }}
+                    {{ form.password1.label(class="label") }}
+                </div> 
+                <div class="input-field col-span-3">
+                    {{ form.password2(class="input  focus:ring-0 focus:ring-offset-0 bg-transparent p-0") }}
+                    {{ form.password2.label(class="label") }}
+                </div> 
+                <div class="input-field col-span-3">
+                    {{ form.submit(class="submit")}}
+                </div>
+            </form>
+            <div class="signin pb-6">
+                <span>Already have an account? <a href="{{ url_for('auth.studentLogin') }}">Log in here</a></span>
+            </div>
+        </div>
+    </div>
+</div>
+{% include 'auth/components/review_modal.html' %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    // Initialize  Modal object and set options
+    const $targetEl = document.getElementById('reviewModal'); 
+    const options = {
+        placement: 'center', 
+        backdrop: 'dynamic', 
+        backdropClasses: 'bg-gray-900 bg-opacity-50 fixed inset-0 z-40',
+        closable: true, 
+    };
+    const modal = new Modal($targetEl, options);
+    // Get a reference to the signup form
+    const signupForm = document.getElementById('signupForm');
+
+    // Define the handleSubmit function
+    function handleSubmit(event) {
+        e.preventDefault(); // Prevent default form submission
+        
+        // Get form input values
+        const first_name = document.getElementById('f-name').value;
+        const middle_name = document.getElementById('md-name').value;
+        const last_name = document.getElementById('l-name').value;
+        const contact_details = document.getElementById('contact').value;
+        const birthdate = document.getElementById('birthdate').value;
+        const gender = document.getElementById('gender').value;
+        const address = document.getElementById('address').value;
+        const skills = document.getElementById('skills').value;
+        const email = document.getElementById('email').value;
+
+        // Display the inputted values in the modal
+        document.getElementById('reviewFirstName').textContent = first_name;
+        document.getElementById('reviewMiddleName').textContent = middle_name;
+        document.getElementById('reviewLastName').textContent = last_name;
+        document.getElementById('reviewContact').textContent = contact_details;
+        document.getElementById('reviewBirthdate').textContent = birthdate;
+        document.getElementById('reviewGender').textContent = gender;
+        document.getElementById('reviewAddress').textContent = address;
+        document.getElementById('reviewSkills').textContent = skills;
+        document.getElementById('reviewEmail').textContent = email;
+
+        // Show the review modal
+        modal.show()
+    }
+    
+   // Add the form submit event listener
+    signupForm.addEventListener('submit', handleSubmit);
+
+    // Handle the click event of the Save button in the modal
+    document.getElementById('saveButton').addEventListener('click', function () {
+        // Hide the review modal
+        modal.hide()
+        
+        // Remove the form submit event listener and submit the form
+        signupForm.removeEventListener('submit', handleSubmit);
+        signupForm.submit();
+    });
+
+    document.getElementById('cancelButton').addEventListener('click', function () {
+        // Hide the review modal
+        modal.hide()
+    });
+});
+
+
+</script>
+{% endblock %}

@@ -78,7 +78,7 @@ class Beneficiary(db.Model):
 class Student(db.Model):
     __tablename__ = 'Student'
 
-    VolunteerId = db.Column(db.String(36), db.ForeignKey('User.UserId', ondelete='CASCADE'), primary_key=True)
+    StudentId = db.Column(db.String(36), db.ForeignKey('User.UserId', ondelete='CASCADE'), primary_key=True)
     SkillsInterest = db.Column(db.String(255), nullable=False)
     User = db.relationship("User", backref='Student', lazy=True, passive_deletes=True)
 
@@ -138,32 +138,6 @@ class Activity(db.Model):
     Duration = db.Column(db.String(255), nullable=False)
     CommunityBackground = db.Column(db.String(255), nullable=False)
     ActivityFlow = db.Column(db.String(255), nullable=False)
-
-
-class Announcement(db.Model):
-    __tablename__ = 'Announcement'
-
-    AnnouncementId = db.Column(db.Integer, primary_key=True)
-    Title = db.Column(db.String(255), nullable=False)
-    Content= db.Column(db.Text, nullable=False)
-    CurrentLiveVersionId = db.Column(db.Integer, db.ForeignKey('AnnouncementVersion.VersionId', ondelete='SET NULL'))
-    ExtensionProgramId = db.Column(db.Integer, db.ForeignKey('ExtensionProgram.ExtensionProgramId', ondelete='CASCADE'), nullable=False)
-    Created = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    Updated = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
-    LiveVersion = db.relationship('AnnouncementVersion', backref='AnnouncementLive', lazy=True)
-    ExtensionProgram = db.relationship('ExtensionProgram', backref='Announcement', lazy=True)
-
-
-class AnnouncementVersion(db.Model):
-    __tablename__ = 'AcnnouncementVersion'
-
-    VersionId = db.Column(db.Integer, primary_key=True)
-    AnnouncementId = db.Column(db.Integer, db.ForeignKey('Announcement.AnnouncementId', ondelete='CASCADE'))
-    IsLive = db.Column(db.Boolean, nullable=False)
-    VersionContent = db.Column(db.Text)
-    Created = db.Column(db.Date, default=datetime.utcnow, nullable=False)
-    Announcement = db.relationship('Announcement', backref='AnnouncementVersion', lazy=True)
-
 
 
 

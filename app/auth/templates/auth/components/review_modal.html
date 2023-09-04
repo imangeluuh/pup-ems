@@ -1,0 +1,62 @@
+<!-- Main modal -->
+<div id="reviewModal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative w-full max-w-2xl max-h-full">
+        <!-- Modal content -->
+        <div class="relative bg-white rounded-lg shadow">
+            <!-- Modal header -->
+            <div class="flex items-start justify-between p-4 border-b rounded-t">
+                <h3 class="text-xl font-medium text-gray-900">
+                    Review your Information
+                </h3>
+            </div>
+            <!-- Modal body -->
+            <div class="p-6 space-y-6">
+                <p>Kindly review all the information you have provided.</p>
+                <div class="grid grid-cols-3">
+                    <div class="col-span-3 sm:col-span-1 mb-2">
+                        {{ form.first_name.label(class="font-medium") }}
+                        <p id="reviewFirstName"></p>
+                    </div> 
+                    <div class="col-span-3 sm:col-span-1 mb-2">
+                        {{ form.middle_name.label(class="font-medium") }}
+                        <p id="reviewMiddleName"></p>
+                    </div> 
+                    <div class="col-span-3 sm:col-span-1 mb-2">
+                        {{ form.last_name.label(class="font-medium") }}
+                        <p id="reviewLastName"></p>
+                    </div> 
+                    <div class="col-span-3 sm:col-span-1 mb-2">
+                        {{ form.contact_details.label(class="font-medium") }}
+                        <p id="reviewContact"></p>
+                    </div> 
+                    <div class="col-span-3 sm:col-span-1 mb-2">
+                        {{ form.birthdate.label(class="font-medium") }}
+                        <p id="reviewBirthdate"></p>
+                    </div> 
+                    <div class="col-span-3 sm:col-span-1 mb-2">
+                        {{ form.gender.label(class="font-medium") }}
+                        <p id="reviewGender"></p>
+                    </div> 
+                    <div class="col-span-3 mb-2">
+                        {{ form.address.label(class="font-medium") }}
+                        <p id="reviewAddress"></p>
+                    </div> 
+                    <div class="col-span-3 mb-2">
+                        {{ form.skills_interest.label(class="font-medium") }}
+                        <p id="reviewSkills"></p>
+                    </div> 
+                    <div class="col-span-3 mb-2">
+                        {{ form.email.label(class="font-medium") }}
+                        <p id="reviewEmail"></p>
+                    </div> 
+                </div>
+                <p class="italic mb-0 mt-2" style="font-size: 14px;">I hereby certify that all the information provided in this registration form is correct and true.</p>
+            </div>
+            <!-- Modal footer -->
+            <div class="flex items-center justify-end p-6 space-x-2 border-t border-gray-200 rounded-b">
+                <button type="button" id="saveButton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center">Signup</button>
+                <button type="button" id="cancelButton" class="text-gray-500 bg-white hover:bg-gray-100 focus:outline-none rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
