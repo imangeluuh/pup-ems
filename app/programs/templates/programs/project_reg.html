@@ -1,0 +1,260 @@
+{% extends 'base.html' %}
+{% block head %}
+    <title>{{ project.Name }}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" rel="stylesheet">
+    <style>
+       .header-container {
+            position: relative;
+            height: 300px;
+            overflow: hidden;
+        }
+
+        .header-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        #modal {
+            display: none;
+        }
+
+        .modal-confirmation, .modal-activity {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            margin: 0 auto;
+        }
+
+        .modal-confirmation {
+            max-width: 450px;
+            text-align: center;
+        }
+
+        .modal-activity {
+            max-width: 800px;
+            text-align: left;
+        }
+
+        .modal-content {
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        #success-message {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: -300px;
+            background-color: #4ecca6;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 999;
+        }
+
+        .animate-slide-in {
+            animation: slideIn 0.5s forwards;
+        }
+
+        .animate-slide-out {
+            animation: slideOut 0.5s forwards;
+        }
+
+        @keyframes slideIn {
+            from {
+                right: -300px;
+            }
+            to {
+                right: 20px;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                right: 20px;
+            }
+            to {
+                right: -300px;
+            }
+        }
+
+        #success-message i {
+            margin-right: 5px;
+        }
+
+        .justify-label {
+        text-align: left;
+        }
+
+        .hover-underline:hover {
+        text-decoration: underline;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="mx-auto">
+    <div class="p-0">
+        <div class="header-container">
+            <img src="{{url_for('static', filename='images/ZMbwyUM.jpg')}}" alt="Project Image" class="header-bg">
+        </div>
+        <div class="ml-8 pt-8 md:mx-24 mt-4">
+            <a href="{{url_for('programs.projectsList')}}">< Go Back</a>
+            <h1 class="text-black text-3xl font-bold my-8">{{ project.Name }}</h1>
+            <!-- tabs -->
+            <div class="mb-4 border-b border-gray-200">
+                <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
+                    <li class="mr-2" role="presentation">
+                        <button class="inline-block p-4 border-b-2 rounded-t-lg" id="details-tab" data-tabs-target="#details" type="button" role="tab" aria-controls="details" aria-selected="false">Details</button>
+                    </li>
+                    <li class="mr-2" role="presentation">
+                        <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300" id="activity-outline-tab" data-tabs-target="#activity-outline" type="button" role="tab" aria-controls="activity-outline" aria-selected="false">Activity Outline</button>
+                    </li>
+                </ul>
+            </div>
+            <div id="myTabContent">
+                <div class="hidden p-4 rounded-lg" id="details" role="tabpanel" aria-labelledby="details-tab">
+                    <div class="flex mb-4">
+                        <i class="fa-regular fa-calendar fa-lg text-gray-700 pt-3 mr-4"></i>
+                        <div>
+                            <div class="text-sm text-gray-600">Date</div>
+                            <p class="text-black">{{ project.StartDate }}</p>
+                        </div>
+                    </div>
+                    <div class="flex mb-4">
+                        <i class="fa-solid fa-location-dot fa-lg text-gray-700 pt-3 mr-5"></i>
+                        <div>
+                            <div class="text-sm text-gray-600">Location</div>
+                            <p class="text-black">{{ project.Location }}</p>
+                        </div>
+                    </div>
+                    <div class="flex mb-4">
+                        <i class="fa-solid fa-users fa-lg text-gray-700 pt-3 mr-3.5"></i>
+                        <div>
+                            <div class="text-sm text-gray-600">Target Participants</div>
+                            <p class="text-black">{{ project.BeneficiariesClassifications }}</p>
+                        </div>
+                    </div>
+                    <div class="flex mb-6">
+                        <i class="fa-solid fa-bars fa-lg text-gray-700 pt-3 mr-4"></i>
+                        <div>
+                            <div class="text-sm text-gray-600">Rationale</div>
+                            <p class="text-black">{{ project.Rationale }}</p>
+                        </div>
+                    </div>
+                    {% if not bool_is_registered %}
+                    <button onclick="handleRegistration()" class="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer mb-8">Register</button>
+                    {% endif %}
+                </div>
+                <div class="hidden p-4" id="activity-outline" role="tabpanel" aria-labelledby="activity-outline-tab">
+                    <div class="activity-content">
+                        <h1 class="text-black text-3xl font-bold mb-8">Activity Outline</h1>
+                        <h1 class="text-black text-xl font-bold mb-8">1. Tree Planting</h1>
+                        <div class="flex mb-4">
+                            <i class="fa-regular fa-calendar fa-lg text-gray-700 pt-3 mr-4"></i>
+                            <div>
+                                <div class="text-sm text-gray-600">Activity Date</div>
+                                <p class="text-black"></p>
+                            </div>
+                        </div>
+                        <div class="flex mb-6">
+                            <i class="fa-solid fa-bars fa-lg text-gray-700 pt-3 mr-4"></i>
+                            <div>
+                                <div class="text-sm text-gray-600">Activity Description</div>
+                                <p class="text-black"></p>
+                            </div>
+                        </div>
+                        <h1 class="text-black text-xl font-bold mb-8">1. Tree Planting</h1>
+                        <div class="flex mb-4">
+                            <i class="fa-regular fa-calendar fa-lg text-gray-700 pt-3 mr-4"></i>
+                            <div>
+                                <div class="text-sm text-gray-600">Activity Date</div>
+                                <p class="text-black"></p>
+                            </div>
+                        </div>
+                        <div class="flex mb-6">
+                            <i class="fa-solid fa-bars fa-lg text-gray-700 pt-3 mr-4"></i>
+                            <div>
+                                <div class="text-sm text-gray-600">Activity Description</div>
+                                <p class="text-black"></p>
+                            </div>
+                        </div>
+                        <h1 class="text-black text-xl font-bold mb-8">1. Tree Planting</h1>
+                        <div class="flex mb-4">
+                            <i class="fa-regular fa-calendar fa-lg text-gray-700 pt-3 mr-4"></i>
+                            <div>
+                                <div class="text-sm text-gray-600">Activity Date</div>
+                                <p class="text-black"></p>
+                            </div>
+                        </div>
+                        <div class="flex mb-6">
+                            <i class="fa-solid fa-bars fa-lg text-gray-700 pt-3 mr-4"></i>
+                            <div>
+                                <div class="text-sm text-gray-600">Activity Description</div>
+                                <p class="text-black"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ./tabs -->
+            
+        </div>
+
+
+    <!-- Modal container for the Registration Confirmation -->
+    <div id="confirmation-modal" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center" style="display: none;">
+        <div class="modal-confirmation">
+            <p class="text-gray-700 text-lg mb-6">Are you sure you want to register as a beneficiary of {{ project.Name }} project?</p>
+            <form action="", method="post">
+                <button onclick="cancelRegistration()" class="bg-gray-200 text-gray-600 px-4 py-2 rounded-lg cursor-pointer ml-2">Cancel</button>
+                <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
+                <input type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg cursor-pointer ml-2 w-fit" value="Confirm">
+            </form>
+        </div>
+    </div> 
+
+    <!-- Success message for registration -->
+    <div id="success-message">
+        <i class="fas fa-check"></i> Registration Successful!
+    </div>
+
+    <script>
+        function handleRegistration() {
+            document.querySelector("#confirmation-modal").style.display = "flex";
+        }
+
+        function cancelRegistration() {
+            document.querySelector("#confirmation-modal").style.display = "none";
+        }
+
+        function showSuccessMessage() {
+            const successMessage = document.querySelector("#success-message");
+            successMessage.style.display = "block";
+            setTimeout(function() {
+                closeSuccessMessage();
+            }, 5000);
+        }
+
+        function closeSuccessMessage() {
+            const successMessage = document.querySelector("#success-message");
+            successMessage.style.animation = "slideIn 0.5s forwards";
+            setTimeout(function() {
+                successMessage.style.display = "none";
+                successMessage.style.animation = "";
+            }, 2000);
+        }
+
+    </script>
+    </div>
+</div>
+{% endblock %}
+
+
