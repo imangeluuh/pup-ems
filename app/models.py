@@ -154,3 +154,14 @@ class Announcement(db.Model):
     ProjectId = db.Column(db.Integer, db.ForeignKey('Project.ProjectId', ondelete='CASCADE'), nullable=False)
     Project = db.relationship('Project', backref='Announcement')
     Creator = db.relationship('Admin', backref='Announcement')
+
+
+class Registration(db.Model):
+    __tablename__ = 'Registration'
+
+    RegistrationId = db.Column(db.Integer, primary_key=True)
+    RegistrationDate = db.Column(db.Date, default=datetime.utcnow, nullable=False)
+    ProjectId = db.Column(db.Integer, db.ForeignKey('Project.ProjectId', ondelete='CASCADE'), nullable=False)
+    UserId = db.Column(db.String(36), db.ForeignKey('User.UserId', ondelete='CASCADE'), nullable=False)
+    Project = db.relationship('Project', backref='Registration')
+    User = db.relationship('User', backref='Registration')

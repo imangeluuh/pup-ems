@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, url_for, request, redirect, flash
 from flask_login import login_user, logout_user, current_user
-from ..models import Project, ExtensionProgram, Program, Registration
+from ..models import Project, ExtensionProgram, Program, Registration, Agenda
 import calendar
 from datetime import datetime
 from sqlalchemy import extract
@@ -10,35 +10,38 @@ programs_bp = Blueprint('programs', __name__, template_folder="templates", stati
 
 @programs_bp.route('/programs')
 def programsList():
-    pass
+    extension_programs = ExtensionProgram.query.all()
+    programs = Program.query.all()
+    agendas = Agenda.query.all()
+    return render_template('programs/programs.html', extension_programs=extension_programs, programs=programs, agendas=agendas)
 
 
-@programs_bp.route('/projects', methods=['GET', 'POST'])
-def projectsList():
-    projects = Project.query.all()
-
-    if 'submit' in request.args:
-        dict_filter_conditions = {} 
-
-        filter_value = request.args.get('filter')  
-        option_value = request.args.get('option') 
-        if filter_value == "All":
-            return render_template('programs/projects_list.html', projects=projects)
-        elif filter_value == "Month":
-            dict_month = dict((month, index) for index, month in enumerate(calendar.month_name) if month)
-            # Convert the selected option to a month number (1 for January, 2 for February, etc.)
-            int_month = dict_month[option_value]
-            dict_filter_conditions['Month'] =  extract('month', Project.StartDate) == int_month
-        elif filter_value == "ExtensionProgram":
-            dict_filter_conditions['ExtensionProgram'] =  Project.ExtensionProgram.Name = option_value
-
-
-        # Get the projects based on the selected filter and option
-        filtered_projects = Project.query.filter(dict_filter_conditions.get(filter_value)).all()
-
-        return render_template('programs/projects_list.html', projects=filtered_projects)
-
+@programs_bp.route('/projects/<int:program_id>', methods=['GET', 'POST'])
+def projectsList(program_id):
+    projects = Project.query.filter_by(ExtensionProgramId=program_id).all()
     return render_template('programs/projects_list.html', projects=projects)
+    # if 'submit' in request.args:
+    #     dict_filter_conditions = {} 
+
+    #     filter_value = request.args.get('filter')  
+    #     option_value = request.args.get('option') 
+    #     if filter_value == "All":
+    #         return render_template('programs/projects_list.html', projects=projects)
+    #     elif filter_value == "Month":
+    #         dict_month = dict((month, index) for index, month in enumerate(calendar.month_name) if month)
+    #         # Convert the selected option to a month number (1 for January, 2 for February, etc.)
+    #         int_month = dict_month[option_value]
+    #         dict_filter_conditions['Month'] =  extract('month', Project.StartDate) == int_month
+    #     elif filter_value == "ExtensionProgram":
+    #         dict_filter_conditions['ExtensionProgram'] =  Project.ExtensionProgram.Name = option_value
+
+
+    #     # Get the projects based on the selected filter and option
+    #     filtered_projects = Project.query.filter(dict_filter_conditions.get(filter_value)).all()
+
+    #     return render_template('programs/projects_list.html', projects=filtered_projects)
+
+    
 
 @programs_bp.route('/filters')
 def filters():
