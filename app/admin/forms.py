@@ -2,7 +2,8 @@ from flask import current_app
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, DateField, SelectField, TextAreaField, IntegerField, HiddenField
 from wtforms.validators import Length, Email, DataRequired, Optional
-from ..models import Agenda, Program
+from ..models import Agenda, Program, Project
+from flask_ckeditor import CKEditorField
 
 class LoginForm(FlaskForm):
     email = StringField(label='Email', validators=[DataRequired(), Email()])
@@ -42,3 +43,17 @@ class ProjectForm(FlaskForm):
     project_scope = TextAreaField(label="Scope of Project", validators=[DataRequired()])
     extension_program = HiddenField(validators=[DataRequired()])
     submit = SubmitField(label="Save Project") 
+
+
+class AnnouncementForm(FlaskForm):
+    title = StringField(label="Announcement Title")
+    content = CKEditorField(label="Announcement Content")
+    project = SelectField(label='Extension Project')
+    publish = SubmitField(label="Publish") 
+    draft = SubmitField(label="Save as Draft") 
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        with current_app.app_context():
+            self.project.choices = [(project.ProjectId, project.Name) for project in Project.query.all()]

@@ -1,9 +1,10 @@
 from flask import Blueprint, render_template, url_for, request, redirect, flash
 from .forms import LoginForm, ProgramForm, ProjectForm, AnnouncementForm
-from ..models import Login, ExtensionProgram, Beneficiary, Project, Agenda, Program, Student
+from ..models import Login, ExtensionProgram, Beneficiary, Project, Program, Student, Announcement
 from app import db
 from datetime import date
 from flask_login import current_user, login_user, login_required, logout_user
+import string, sys
 
 admin_bp = Blueprint('admin', __name__, template_folder="templates", static_folder="static", static_url_path='static')
 
@@ -158,7 +159,7 @@ def updateProject(id):
 
         try:
             db.session.commit()
-            flash('Extension progaject is successfully updated.', category='success')
+            flash('Extension project is successfully updated.', category='success')
         except:
             flash('There was an issue updating the extension project.', category='error')
 
@@ -206,13 +207,143 @@ def calendar():
     return render_template('admin/index.html')
 
 
-@admin_bp.route('/announcement')
-def announcement():
+@admin_bp.route('/announcement/<string:project>')
+@admin_bp.route('/announcement', defaults={'project': None})
+def announcement(project):
+    bool_is_published_empty = True
+    bool_is_draft_empty = True
+    if project is not None:
+        announcements = Announcement.query.join(Project).filter(Project.Name == project).all()
+        for announcement in announcements:
+            if announcement.IsLive == 1:
+                bool_is_published_empty = False
+                break
+        for announcement in announcements:
+            if announcement.IsLive == 0:
+                bool_is_draft_empty = False
+                break
+    else:
+        announcements = Announcement.query.all()
+        for announcement in announcements:
+            if announcement.IsLive == 1:
+                bool_is_published_empty = False
+                break
+        for announcement in announcements:
+            if announcement.IsLive == 0:
+                bool_is_draft_empty = False
+                break
     programs = Program.query.all()
-    return render_template('admin/announcement.html', programs=programs)
+    return render_template('admin/announcement.html', programs=programs, announcements=announcements, bool_is_published_empty=bool_is_published_empty, bool_is_draft_empty=bool_is_draft_empty)
 
 
-@admin_bp.route('/announcement/create')
+@admin_bp.route('/announcement/create', methods=['GET', 'POST'])
 def createAnnouncement():
     form = AnnouncementForm()
+    if request.method == "POST":
+        if form.validate_on_submit():
+            if 'publish' in request.form:
+                if not all(request.form.values()):
+                    flash('Please fill out all the fields before publishing.')
+                    print('Please fill out all the fields before publishing.')
+                    return redirect(url_for('admin.createAnnouncement'))
+                is_live = 1
+            elif 'draft' in request.form:
+                is_live = 0
+            admin_login = current_user.AdminLogin
+            announcement_to_create = Announcement(Title=form.title.data,
+                                                Content=form.content.data,
+                                                CreatorId=admin_login[0].AdminId,
+                                                IsLive=is_live,
+                                                Slug=generateSlug(form.title.data),
+                                                ProjectId=form.project.data)
+            db.session.add(announcement_to_create)
+            db.session.commit()
+            flash('Announcement is successfully inserted.', category='success')
+            return redirect(url_for('admin.announcement'))
+        if form.errors != {}: # If there are errors from the validations
+            for err_msg in form.errors.values():
+                flash(err_msg, category='error')
+
     return render_template('admin/create_announcement.html', form=form)
+
+
+@admin_bp.route('/announcement/update/<int:id>', methods=['GET', 'POST'])
+def updateAnnouncement(id):
+    form = AnnouncementForm()
+    announcement = Announcement.query.get_or_404(id)
+    current_url_path = request.path
+
+    if request.method == "POST":
+        if form.validate_on_submit():
+            if 'publish' in request.form:
+                if not all(request.form.values()):
+                    flash('Please fill out all the fields before publishing.')
+                    print('Please fill out all the fields before publishing.')
+                    return redirect(url_for('admin.updateAnnouncement'))
+                is_live = 1
+            elif 'draft' in request.form:
+                is_live = 0
+
+            announcement.Title=form.title.data
+            announcement.Content=form.content.data
+            announcement.IsLive=is_live
+            announcement.Slug=generateSlug(form.title.data)
+
+            try:
+                db.session.commit()
+                flash('Announcement is successfully updated.', category='success')
+            except  Exception as e:
+                flash('There was an issue updating the announcement.', category='error')
+                print('There was an issue updating the announcement.', str(e))
+
+            return redirect(url_for('admin.announcement'))
+        if form.errors != {}: # If there are errors from the validations
+            for err_msg in form.errors.values():
+                flash(err_msg, category='error')
+    
+    form.title.data = announcement.Title
+    form.content.data = announcement.Content
+
+    return render_template('admin/edit_announcement.html', form=form, announcement=announcement, current_url_path=current_url_path)
+
+
+@login_required
+@admin_bp.route('/delete/announcement/<int:id>', methods=['POST'])
+def deleteAnnouncement(id):
+    announcement = Announcement.query.get_or_404(id)
+    try:
+        db.session.delete(announcement)
+        db.session.commit()
+        flash('Announcement is successfully deleted.', category='success')
+    except:
+        flash('There was an issue deleting the announcement.', category='error')
+
+    return redirect(url_for('admin.announcement'))
+
+
+@login_required
+@admin_bp.route('/unpublish/announcement/<int:id>', methods=['POST'])
+def unpublishAnnouncement(id):
+    announcement = Announcement.query.get_or_404(id)
+    announcement.IsLive = 0
+    try:
+        db.session.commit()
+        flash('Announcement is successfully unpublished.', category='success')
+    except:
+        flash('There was an issue unpublishing the announcement.', category='error')
+
+    return redirect(url_for('admin.announcement'))
+
+
+@login_required
+@admin_bp.route('/view/announcement/<int:id>/<string:slug>')
+def viewAnnouncement(id, slug):
+    announcement = Announcement.query.filter_by(AnnouncementId=id, Slug=slug).first_or_404()
+    return render_template('admin/view_announcement.html', announcement=announcement)
+
+
+def generateSlug(title, separator='-', lower=True):
+    title = title.translate(str.maketrans('', '', string.punctuation))
+    if lower:
+        title = title.lower()
+    return separator.join(title.split())

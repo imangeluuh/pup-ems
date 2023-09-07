@@ -140,4 +140,17 @@ class Activity(db.Model):
     ActivityFlow = db.Column(db.String(255), nullable=False)
 
 
+class Announcement(db.Model):
+    __tablename__ = 'Announcement'
 
+    AnnouncementId = db.Column(db.Integer, primary_key=True)
+    Title = db.Column(db.String(255), nullable=False)
+    Content= db.Column(db.Text)
+    CreatorId = db.Column(db.String(36), db.ForeignKey('Admin.AdminId', ondelete='CASCADE'), nullable=False)
+    IsLive = db.Column(db.Boolean, nullable=False)
+    Slug = db.Column(db.String(255), nullable=False)
+    Created = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    Updated = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    ProjectId = db.Column(db.Integer, db.ForeignKey('Project.ProjectId', ondelete='CASCADE'), nullable=False)
+    Project = db.relationship('Project', backref='Announcement')
+    Creator = db.relationship('Admin', backref='Announcement')
