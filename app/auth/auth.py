@@ -28,7 +28,9 @@ def beneficiaryLogin():
             if attempted_user and attempted_user.RoleId == 2:
                 if attempted_user.check_password_correction(attempted_password=form.password.data):
                     login_user(attempted_user, remember=True)
-                return redirect(url_for('programs.projectsList')) # temp route
+                    return redirect(url_for('programs.programsList')) # temp route
+                else:
+                    flash('The password you\'ve entered is incorrect.')
             else:
                 flash('The email you entered isn\'t connected to an account.')
 
@@ -64,7 +66,9 @@ def studentLogin():
             if attempted_user and attempted_user.RoleId == 3:
                 if attempted_user.check_password_correction(attempted_password=form.password.data):
                     login_user(attempted_user, remember=True)
-                return redirect(url_for('programs.projectsList')) # temp route
+                    return redirect(url_for('programs.programsList')) # temp route
+                else:
+                    flash('The password you\'ve entered is incorrect.')
             else:
                 flash('The email you entered isn\'t connected to an account.')
 
