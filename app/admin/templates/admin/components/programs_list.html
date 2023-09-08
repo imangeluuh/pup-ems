@@ -1,0 +1,11 @@
+
+<div class="mb-6 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg shadow">
+    {% for program in programs %}
+        <div class="block w-full px-4 py-2 text-white bg-slate-800 border-b border-gray-200">{{ program.ProgramName }}</div>
+        {% for ext_program in program.ExtensionProgram %}
+            <a href="#" class="block w-full px-4 py-2 border-b border-gray-200 cursor-pointer hover:text-blue-700 focus:outline-none">
+                {{ ext_program.Name }}
+            </a>
+        {% endfor %}
+    {% endfor %}
+</div>

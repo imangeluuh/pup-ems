@@ -66,7 +66,7 @@
                             <iconify-icon class="w-3 h-3 mr-2" icon="bx:edit"></iconify-icon>
                             Edit
                         </button>
-                        <button type="button" class="inline-flex items-center focus:outline-none text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm px-4 py-2 mr-2 mb-2">
+                        <button type="button" data-modal-target="delete-project-{{ project.ProjectId }}" data-modal-show="delete-project-{{ project.ProjectId }}" class="inline-flex items-center focus:outline-none text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm px-4 py-2 mr-2 mb-2">
                             <iconify-icon class="w-3 h-3 mr-2" icon="ion:trash-outline"></iconify-icon>
                             Delete
                         </button>
@@ -150,6 +150,7 @@
                 </div>
             </div>
         </form>
+        {% include 'admin/delete_project.html' %}
             <div class="hidden p-4" id="activity-outline" role="tabpanel" aria-labelledby="activity-outline-tab">
                 <div class="activity-content">
                     <h1 class="text-black text-3xl font-bold mb-8">Activity Outline</h1>
@@ -234,6 +235,8 @@
         </div>
         <!-- ./tabs -->
     </div>
+
+
 
 <!-- jQuery -->
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>

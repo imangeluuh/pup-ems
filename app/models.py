@@ -66,6 +66,7 @@ class User(db.Model):
     Gender = db.Column(db.String(20), nullable=False)
     Address = db.Column(db.String(255), nullable=False)
     LoginId = db.Column(db.String(36), db.ForeignKey('Login.LoginId', ondelete='CASCADE'), nullable=False)
+    Registration = db.relationship('Registration', backref='User', cascade='all, delete-orphan', passive_deletes=True)
 
 
 class Beneficiary(db.Model):
@@ -112,6 +113,7 @@ class Project(db.Model):
     BeneficiariesClassifications = db.Column(db.String(255), nullable=False)
     ProjectScope = db.Column(db.String(255), nullable=False)
     ExtensionProgramId = db.Column(db.Integer, db.ForeignKey('ExtensionProgram.ExtensionProgramId', ondelete='CASCADE'), nullable=False)
+    Registration = db.relationship('Registration', backref='Project', cascade='all, delete-orphan', passive_deletes=True)
     # CommunityAssessment =
     # MOU/MOAAssessment = 
 
@@ -163,5 +165,3 @@ class Registration(db.Model):
     RegistrationDate = db.Column(db.Date, default=datetime.utcnow, nullable=False)
     ProjectId = db.Column(db.Integer, db.ForeignKey('Project.ProjectId', ondelete='CASCADE'), nullable=False)
     UserId = db.Column(db.String(36), db.ForeignKey('User.UserId', ondelete='CASCADE'), nullable=False)
-    Project = db.relationship('Project', backref='Registration')
-    User = db.relationship('User', backref='Registration')

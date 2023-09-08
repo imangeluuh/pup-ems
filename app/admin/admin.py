@@ -225,8 +225,9 @@ def deleteProject(id):
         db.session.delete(project)
         db.session.commit()
         flash('Extension project is successfully deleted.', category='success')
-    except:
+    except Exception as e:
         flash('There was an issue deleting the extension project.', category='error')
+        print(e)
 
     return redirect(url_for('admin.programs'))
 
@@ -337,7 +338,7 @@ def updateAnnouncement(id):
             try:
                 db.session.commit()
                 flash('Announcement is successfully updated.', category='success')
-            except  Exception as e:
+            except Exception as e:
                 flash('There was an issue updating the announcement.', category='error')
                 print('There was an issue updating the announcement.', str(e))
 
