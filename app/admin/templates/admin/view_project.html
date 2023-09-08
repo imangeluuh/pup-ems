@@ -3,87 +3,153 @@
 {% block head %}
     <title>{{ project.Name }}</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" rel="stylesheet">
+    <!--Regular Datatables CSS-->
+    <link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
+    <!--Responsive Extension Datatables CSS-->
+    <link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('admin.static', filename='css/table_style.css') }}">  
 {% endblock %}
 
 {% block content %}
+{% include 'admin/components/success_toast.html' %}
 <div class="p-0">
+    <div class="ml-8 md:ml-64 p-4 bg-white flex ">
+        <!-- Breadcrumb -->
+        <a href="{{ url_for('admin.programs' )}}" class="flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
+            <svg class="w-5 h-5 mx-2"aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 5H1m0 0 4 4M1 5l4-4"></path>
+            </svg>
+        </a>
+        <nav class="justify-between px-4 py-3 ml-4 text-gray-700 border border-gray-200 rounded-lg sm:flex sm:px-5 bg-gray-50 w-full" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center mb-3 space-x-1 md:space-x-3 sm:mb-0">
+                <li>
+                    <div class="flex items-center">
+                    <a href="{{ url_for('admin.programs') }}" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2">Program</a>
+                    </div>
+                </li>
+                <li aria-current="page">
+                    <div class="flex items-center">
+                    <svg class="w-3 h-3 mx-1 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                    </svg>
+                    <span class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2">{{ project.Name }}</span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+  
+    </div>
+    <form id="projectForm" action="" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div class="ml-8 md:ml-72 md:mr-10 mt-6 p-4 shadow rounded-md bg-white">
         <!-- name -->
-        {{ form.project_name(class="text-black text-3xl font-bold mt-8 mb-4 border-0 bg-transparent", disabled="disabled")}}
+        {{ form.project_name(class="input text-black text-3xl font-bold mb-4 mt-2 border-0 bg-transparent", disabled="disabled")}}
         <!-- tabs -->
         <div class="mb-4 border-b border-gray-200">
-            <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
-                <li class="mr-2" role="presentation">
-                    <button class="inline-block p-4 border-b-2 rounded-t-lg" id="details-tab" data-tabs-target="#details" type="button" role="tab" aria-controls="details" aria-selected="false">Details</button>
-                </li>
-                <li class="mr-2" role="presentation">
-                    <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300" id="activity-outline-tab" data-tabs-target="#activity-outline" type="button" role="tab" aria-controls="activity-outline" aria-selected="false">Activity Outline</button>
-                </li>
-            </ul>
+            <div class="grid grid-cols-6 ">
+                <div class="col-span-4">
+                    <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
+                        <li class="mr-2" role="presentation">
+                            <button class="inline-block p-4 border-b-2 rounded-t-lg" id="details-tab" data-tabs-target="#details" type="button" role="tab" aria-controls="details" aria-selected="false">Details</button>
+                        </li>
+                        <li class="mr-2" role="presentation">
+                            <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300" id="activity-outline-tab" data-tabs-target="#activity-outline" type="button" role="tab" aria-controls="activity-outline" aria-selected="false">Activity Outline</button>
+                        </li>
+                        <li class="mr-2" role="presentation">
+                            <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300" id="registered-tab" data-tabs-target="#registered" type="button" role="tab" aria-controls="registered" aria-selected="false">Registered</button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-span-2 flex items-end justify-end">
+                    <div class="inline-flex rounded-md shadow-sm" id="details-buttons" role="group">
+                        <button type="button" id="edit-project" class="inline-flex items-center text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-4 py-2 mr-2 mb-2 focus:outline-none">
+                            <iconify-icon class="w-3 h-3 mr-2" icon="bx:edit"></iconify-icon>
+                            Edit
+                        </button>
+                        <button type="button" class="inline-flex items-center focus:outline-none text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm px-4 py-2 mr-2 mb-2">
+                            <iconify-icon class="w-3 h-3 mr-2" icon="ion:trash-outline"></iconify-icon>
+                            Delete
+                        </button>
+                    </div>  
+                    <div class="hidden rounded-md shadow-sm" id="activity-button" role="group">
+                        <button type="button" id="edit-project" class="inline-flex items-center text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-4 py-2 mr-2 mb-2 focus:outline-none">
+                            <iconify-icon class="w-3 h-3 mr-2" icon="ic:baseline-plus"></iconify-icon>
+                            Add Activity
+                        </button>
+                    </div>  
+                </div>
+            </div>
         </div>
         <div id="myTabContent">
             <div class="hidden p-4 rounded-lg" id="details" role="tabpanel" aria-labelledby="details-tab">
-                <div class="flex mb-4">
-                    <i class="fa-solid fa-user text-gray-700 pt-3 mr-4"></i>
-                    <div>
-                        <div>{{ form.lead_proponent.label(class="text-sm text-gray-600") }}</div>
-                        {{ form.lead_proponent(class="text-black border-0 bg-transparent pl-0", disabled="disabled")}}
+                <div class="grid grid-cols-12">
+                    <div class="col-span-12 sm:col-span-4 flex mb-4">
+                        <i class="fa-solid fa-user text-gray-700 pt-3 mr-4"></i>
+                        <div>
+                            <div>{{ form.lead_proponent.label(class="text-sm text-gray-600") }}</div>
+                            {{ form.lead_proponent(class="input text-black border-0 bg-transparent pl-0", disabled="disabled")}}
+                        </div>
                     </div>
-                </div>
-                <div class="flex mb-4">
-                    <i class="fa-solid fa-user text-gray-700 pt-3 mr-4"></i>
-                    <div>
-                        <div>{{ form.project_type.label(class="text-sm text-gray-600") }}</div>
-                        <select disabled name="{{ form.project_type.name }}" class="text-black border-0 bg-transparent pl-0 focus:ring-0">
-                            {% for option in form.project_type.choices %}
-                                <option value="{{ option[0] }}" {% if option[0] == project.ProjectType %}selected{% endif %}>{{ option[1] }}</option>
-                            {% endfor %}
-                        </select>
+                    <div class="col-span-12 sm:col-span-4 flex mb-4">
+                        <i class="fa-solid fa-user text-gray-700 pt-3 mr-4"></i>
+                        <div>
+                            <div>{{ form.project_type.label(class="text-sm text-gray-600") }}</div>
+                            <select disabled name="{{ form.project_type.name }}" class="input text-black border-0 bg-transparent pl-0 focus:ring-0">
+                                {% for option in form.project_type.choices %}
+                                    <option value="{{ option[0] }}" {% if option[0] == project.ProjectType %}selected{% endif %}>{{ option[1] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="flex mb-4">
-                    <i class="fa-regular fa-calendar fa-lg text-gray-700 pt-3 mr-4"></i>
-                    <div>
-                        <div>{{ form.start_date.label(class="text-sm text-gray-600") }}</div>
-                        {{ form.start_date(class="text-black border-0 bg-transparent pl-0 focus:ring-0", disabled="disabled") }}
+                    <div class="col-span-12 sm:col-span-4 flex mb-4">
+                        <i class="fa-regular fa-calendar fa-lg text-gray-700 pt-3 mr-4"></i>
+                        <div>
+                            <div>{{ form.start_date.label(class="text-sm text-gray-600") }}</div>
+                            {{ form.start_date(class="input text-black border-0 bg-transparent pl-0 focus:ring-0", disabled="disabled") }}
+                        </div>
                     </div>
-                </div>
-                <div class="flex mb-4">
-                    <i class="fa-regular fa-calendar fa-lg text-gray-700 pt-3 mr-4"></i>
-                    <div>
-                        <div>{{ form.rationale.label(class="text-sm text-gray-600") }}</div>
-                        {{ form.rationale(class="text-black border-0 bg-transparent pl-0 focus:ring-0 ", cols=100, disabled="disabled") }}
+                    <div class="col-span-12 flex mb-4">
+                        <i class="fa-regular fa-calendar fa-lg text-gray-700 pt-3 mr-4"></i>
+                        <div>
+                            <div>{{ form.rationale.label(class="text-sm text-gray-600") }}</div>
+                            {{ form.rationale(class="input text-black border-0 bg-transparent pl-0 focus:ring-0 ", cols=100, disabled="disabled") }}
+                        </div>
                     </div>
-                </div>
-                <div class="flex mb-4">
-                    <i class="fa-regular fa-calendar fa-lg text-gray-700 pt-3 mr-4"></i>
-                    <div>
-                        <div>{{ form.objectives.label(class="text-sm text-gray-600") }}</div>
-                        {{ form.objectives(class="text-black border-0 bg-transparent pl-0 focus:ring-0", cols=100, disabled="disabled") }}
+                    <div class="col-span-12 flex mb-4">
+                        <i class="fa-regular fa-calendar fa-lg text-gray-700 pt-3 mr-4"></i>
+                        <div>
+                            <div>{{ form.objectives.label(class="text-sm text-gray-600") }}</div>
+                            {{ form.objectives(class="input text-black border-0 bg-transparent pl-0 focus:ring-0", cols=100, disabled="disabled") }}
+                        </div>
                     </div>
-                </div>
-                <div class="flex mb-4">
-                    <i class="fa-regular fa-calendar fa-lg text-gray-700 pt-3 mr-4"></i>
-                    <div>
-                        <div>{{ form.num_of_beneficiaries.label(class="text-sm text-gray-600") }}</div>
-                        {{ form.num_of_beneficiaries(class="text-black border-0 bg-transparent pl-0 focus:ring-0", disabled="disabled") }}
+                    <div class="col-span-12 sm:col-span-6 flex mb-4">
+                        <i class="fa-regular fa-calendar fa-lg text-gray-700 pt-3 mr-4"></i>
+                        <div>
+                            <div>{{ form.num_of_beneficiaries.label(class="text-sm text-gray-600") }}</div>
+                            {{ form.num_of_beneficiaries(class="input text-black border-0 bg-transparent pl-0 focus:ring-0", disabled="disabled") }}
+                        </div>
                     </div>
-                </div>
-                <div class="flex mb-4">
-                    <i class="fa-solid fa-users fa-lg text-gray-700 pt-3 mr-3.5"></i>
-                    <div>
-                        <div>{{ form.beneficiaries_classifications.label(class="text-sm text-gray-600") }}</div>
-                        {{ form.beneficiaries_classifications(class="text-black border-0 bg-transparent pl-0 focus:ring-0", disabled="disabled") }}
+                    <div class="col-span-12 sm:col-span-6 flex mb-4">
+                        <i class="fa-solid fa-users fa-lg text-gray-700 pt-3 mr-3.5"></i>
+                        <div>
+                            <div>{{ form.beneficiaries_classifications.label(class="text-sm text-gray-600") }}</div>
+                            {{ form.beneficiaries_classifications(class="input text-black border-0 bg-transparent pl-0 focus:ring-0", disabled="disabled") }}
+                        </div>
                     </div>
-                </div>
-                <div class="flex mb-4">
-                    <i class="fa-solid fa-users fa-lg text-gray-700 pt-3 mr-3.5"></i>
-                    <div>
-                        <div>{{ form.project_scope.label(class="text-sm text-gray-600") }}</div>
-                        {{ form.project_scope(class="text-black border-0 bg-transparent pl-0 focus:ring-0", cols=100, disabled="disabled") }}
+                    <div class="col-span-12 flex mb-4">
+                        <i class="fa-solid fa-users fa-lg text-gray-700 pt-3 mr-3.5"></i>
+                        <div>
+                            <div>{{ form.project_scope.label(class="text-sm text-gray-600") }}</div>
+                            {{ form.project_scope(class="input text-black border-0 bg-transparent pl-0 focus:ring-0", cols=100, disabled="disabled") }}
+                        </div>
+                    </div>
+                    <div id="submit-project" class="hidden col-span-12 mb-4">
+                        {{ form.submit(class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-4") }}
+                        <button id="cancel-project" type="button" class="text-white bg-gray-400 hover:bg-gray-500 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-4">Cancel</button>
                     </div>
                 </div>
             </div>
+        </form>
             <div class="hidden p-4" id="activity-outline" role="tabpanel" aria-labelledby="activity-outline-tab">
                 <div class="activity-content">
                     <h1 class="text-black text-3xl font-bold mb-8">Activity Outline</h1>
@@ -134,8 +200,112 @@
                     </div>
                 </div>
             </div>
+            <div class="hidden p-4" id="registered" role="tabpanel" aria-labelledby="registered-tab">
+                <!--Container-->
+                <div class="container w-full md:w-4/5 xl:w-3/5  mx-auto px-2">
+                    <table id="users" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
+                        <thead>
+                            <tr>
+                                <th data-priority="1">First Name</th>
+                                <th data-priority="2">Middle Name</th>
+                                <th data-priority="3">Last Name</th>
+                                <th data-priority="4">Email</th>
+                                <th data-priority="5">Role</th>
+                                <th data-priority="6">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in registered %}
+                            <tr>
+                                <td>{{ user.User.FirstName }}</td>
+                                <td>{{ user.User.MiddleName if user.User.MiddleName else 'N/A' }}</td>
+                                <td>{{ user.User.LastName }}</td>
+                                <td>{{ user.User.UserLogin.Email }}</td>
+                                <td>{{ user.User.UserLogin.Role.RoleName }}</td>
+                                <td class="flex justify-center"><button data-modal-target="view-user-{{user.User.UserId}}" data-modal-show="view-user-{{user.User.UserId}}" class="bg-green-100 text-green-800 text-base font-medium mr-2 px-2.5 py-0.5 rounded">View</a></td>
+                                {% include 'admin/components/view_modal.html' %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>   
+                </div>
+                <!--/container-->
+            </div>
         </div>
         <!-- ./tabs -->
-        
     </div>
+
+<!-- jQuery -->
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<!--Datatables -->
+<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var table = $('#users').DataTable({
+                responsive: true
+        })
+        .columns.adjust()
+        .responsive.recalc()
+
+        const editButton = document.getElementById('edit-project');
+        const cancelButton = document.getElementById('cancel-project');
+        const submitProjectDiv= document.getElementById('submit-project')
+        const form = document.getElementById('projectForm');
+
+        // Add a click event listener to the "Edit" button
+        editButton.addEventListener('click', function () {
+            // Get all input, textarea, and select elements within the form
+            const formElements = form.querySelectorAll('input.input, textarea.input, select.input');
+
+            // Loop through the elements and remove the "disabled" attribute
+            formElements.forEach(function (element) {
+                element.removeAttribute('disabled');
+                element.classList.remove('border-0', 'bg-transparent');
+                element.classList.add('bg-gray-50', 'border', 'border-gray-300');
+            });
+            submitProjectDiv.classList.remove('hidden');
+            submitProjectDiv.classList.add('flex');
+        });
+        cancelButton.addEventListener('click', function () {
+            // Get all input, textarea, and select elements within the form
+            const formElements = form.querySelectorAll('input.input, textarea.input, select.input');
+
+            // Loop through the elements and remove the "disabled" attribute
+            formElements.forEach(function (element) {
+                element.setAttribute('disabled', 'true');
+                element.classList.remove('bg-gray-50', 'border', 'border-gray-300');
+                element.classList.add('border-0', 'bg-transparent');
+            });
+            submitProjectDiv.classList.remove('flex');
+            submitProjectDiv.classList.add('hidden');
+        });
+
+        
+        const activityOutlineTab = document.getElementById('activity-outline-tab')
+        const detailsTab = document.getElementById('details-tab')
+        const registeredTab = document.getElementById('registered-tab')
+        const activityButton = document.getElementById('activity-button');
+        const detailsButton = document.getElementById('details-buttons');
+        
+        activityOutlineTab.addEventListener('click', function () {
+            detailsButton.classList.remove('inline-flex');
+            detailsButton.classList.add('hidden');
+            activityButton.classList.remove('hidden');
+            activityButton.classList.add('inline-flex');
+        });
+        detailsTab.addEventListener('click', function () {
+            activityButton.classList.remove('inline-flex');
+            activityButton.classList.add('hidden');
+            detailsButton.classList.remove('hidden');
+            detailsButton.classList.add('inline-flex');
+        });
+        registeredTab.addEventListener('click', function () {
+            activityButton.classList.remove('inline-flex');
+            activityButton.classList.add('hidden');
+            detailsButton.classList.remove('inline-flex');
+            detailsButton.classList.add('hidden');
+        });
+    });
+</script>
 {% endblock %}

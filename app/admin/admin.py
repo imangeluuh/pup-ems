@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, url_for, request, redirect, flash
 from .forms import LoginForm, ProgramForm, ProjectForm, AnnouncementForm
-from ..models import Login, ExtensionProgram, Beneficiary, Project, Program, Student, Announcement
+from ..models import Login, ExtensionProgram, Beneficiary, Project, Program, Student, Announcement, Registration
 from app import db
 from datetime import date
 from flask_login import current_user, login_user, login_required, logout_user
@@ -145,23 +145,23 @@ def insertProject():
 def viewProject(id):
     form = ProjectForm()
     project = Project.query.get_or_404(id)
+    registered = Registration.query.filter_by(ProjectId=project.ProjectId)
     if request.method == "POST":
         if form.validate_on_submit():
+            project.Name = form.project_name.data
             project.LeadProponent= form.lead_proponent.data
             project.ProjectType = form.project_type.data
-            project.Name = form.project_name.data
             project.Rationale = form.rationale.data
             project.Objectives = form.objectives.data
             project.StartDate = form.start_date.data
             project.NumberOfBeneficiaries = form.num_of_beneficiaries.data
             project.BeneficiariesClassifications = form.beneficiaries_classifications.data
             project.ProjectScope = form.project_scope.data
-            project.ExtensionProgramId = form.extension_program.data
 
             try:
                 db.session.commit()
                 flash('Extension project is successfully updated.', category='success')
-                return redirect(url_for('admin.programs'))
+                return redirect(url_for('admin.viewProject', id=project.ProjectId))
             except:
                 flash('There was an issue updating the extension project.', category='error')
 
@@ -169,7 +169,7 @@ def viewProject(id):
             for err_msg in form.errors.values():
                 flash(err_msg)
 
-        return redirect(url_for('admin.programs'))
+        return redirect(url_for('admin.viewProject', id=project.ProjectId))
     
     form.lead_proponent.data = project.LeadProponent
     form.project_type.data = project.ProjectType
@@ -182,7 +182,7 @@ def viewProject(id):
     form.project_scope.data = project.ProjectScope
     form.extension_program.data = project.ExtensionProgramId
 
-    return render_template('admin/view_project.html', project=project, form=form)
+    return render_template('admin/view_project.html', project=project, form=form, registered=registered)
 
 
 @login_required

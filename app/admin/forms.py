@@ -41,7 +41,7 @@ class ProjectForm(FlaskForm):
     num_of_beneficiaries = IntegerField(label="Specific Numbers of Target Beneficiaries", validators=[Optional()])
     beneficiaries_classifications = StringField(label="Target Beneficiaries Classifications", validators=[Optional()])
     project_scope = TextAreaField(label="Scope of Project", validators=[DataRequired()])
-    extension_program = HiddenField(validators=[DataRequired()])
+    extension_program = HiddenField()
     submit = SubmitField(label="Save Project") 
 
 
