@@ -3,7 +3,7 @@
     <title>{{ project.Name }}</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" rel="stylesheet">
     <style>
-       .header-container {
+        .header-container {
             position: relative;
             height: 300px;
             overflow: hidden;
@@ -16,8 +16,6 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
         }
 
         #modal {
@@ -123,21 +121,14 @@
                     <div class="flex mb-4">
                         <i class="fa-regular fa-calendar fa-lg text-gray-700 pt-3 mr-4"></i>
                         <div>
-                            <div class="text-sm text-gray-600">Date</div>
+                            <div class="text-sm text-gray-600">Start Date</div>
                             <p class="text-black">{{ project.StartDate }}</p>
-                        </div>
-                    </div>
-                    <div class="flex mb-4">
-                        <i class="fa-solid fa-location-dot fa-lg text-gray-700 pt-3 mr-5"></i>
-                        <div>
-                            <div class="text-sm text-gray-600">Location</div>
-                            <p class="text-black">{{ project.Location }}</p>
                         </div>
                     </div>
                     <div class="flex mb-4">
                         <i class="fa-solid fa-users fa-lg text-gray-700 pt-3 mr-3.5"></i>
                         <div>
-                            <div class="text-sm text-gray-600">Target Participants</div>
+                            <div class="text-sm text-gray-600">Target Beneficiaries</div>
                             <p class="text-black">{{ project.BeneficiariesClassifications }}</p>
                         </div>
                     </div>
@@ -148,8 +139,24 @@
                             <p class="text-black">{{ project.Rationale }}</p>
                         </div>
                     </div>
+                    <div class="flex mb-6">
+                        <i class="fa-solid fa-bars fa-lg text-gray-700 pt-3 mr-4"></i>
+                        <div>
+                            <div class="text-sm text-gray-600">Objectives</div>
+                            <p class="text-black">{{ project.Objectives }}</p>
+                        </div>
+                    </div>
+                    <div class="flex mb-6">
+                        <i class="fa-solid fa-bars fa-lg text-gray-700 pt-3 mr-4"></i>
+                        <div>
+                            <p class="text-black">{{ project.ExtensionProgram.Name }}</p>
+                        </div>
+                    </div>
                     {% if bool_is_registered %}
-                    <button disabled class="bg-gray-400 text-white px-4 py-2 rounded-lg cursor-pointer mb-8">Already Registered</button>
+                    <button data-modal-target="popup-modal" data-modal-toggle="popup-modal" class="bg-red-800 text-white px-4 py-2 rounded-lg cursor-pointer mb-8" type="button">
+                        Cancel Registration
+                    </button>
+                    {% include 'programs/cancel_registration.html' %}
                     {% else %}
                     <button onclick="handleRegistration()" class="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer mb-8">Register</button>
                     {% endif %}

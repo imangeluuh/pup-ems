@@ -77,7 +77,6 @@ def registration(project_id):
     project = Project.query.get_or_404(project_id)
     user_id = current_user.UserLogin[0].UserId if current_user.is_authenticated else None
     bool_is_registered = True if Registration.query.filter_by(ProjectId=project_id, UserId=user_id).first() else False
-    print( project_id, user_id)
     if request.method == 'POST':
         registration_to_create = Registration(ProjectId = project_id,
                                             UserId=user_id)
@@ -91,4 +90,20 @@ def registration(project_id):
 
         return redirect(url_for('programs.registration', project_id=project_id))
     return render_template("programs/project_reg.html", project=project, bool_is_registered=bool_is_registered)
+
+
+@programs_bp.route('/registration/cancel/<int:project_id>', methods=['POST'])
+def cancelRegistration(project_id):
+    project = Project.query.get_or_404(project_id)
+    user_id = current_user.UserLogin[0].UserId if current_user.is_authenticated else None
+    registration = Registration.query.filter_by(ProjectId=project_id, UserId=user_id).first()
+
+    try:
+        db.session.delete(registration)
+        db.session.commit()
+        flash('Registration is successfully canceled.', category='success')
+    except:
+        flash('There was an issue canceling the registration.', category='error')
+
+    return redirect(url_for('programs.registration', project_id=project_id))
 

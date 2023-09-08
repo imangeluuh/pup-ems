@@ -6,9 +6,9 @@
 {% endblock %}
 
 {% block content %}
-<div class="py-4 md:px-8 mt-10">
-
-<div class="w-fit mx-auto">
+<div class="py-4 md:px-8 mt-6">
+    <div class="w-fit mx-auto">
+    <h1 class="text-3xl font-semibold mb-8">Extension Projects</h1>
     <div class="grid grid-cols-1 md:grid-cols-3">
         <!-- search -->
         <div class="col-span-1 h-fit w-full md:max-w-sm p-4 mx-4 bg-white border border-gray-200 rounded-lg shadow-lg">
@@ -85,17 +85,7 @@
             <!-- card -->
             {% for project in projects %}
             <div class="flex flex-col md:grid md:grid-cols-8 items-center bg-white border mb-4 m-0 border-gray-200 rounded-lg shadow-md md:max-w-3xl hover:bg-gray-100">
-                {% if loop.index is even %}
-                <div class="md:col-span-1 bg-red-500 h-full flex items-center justify-center">
-                {% else %}
-                <div class="md:col-span-1 bg-slate-800 h-full flex items-center justify-center">
-                {% endif %}
-                    <div class="flex flex-col text-center text-white">
-                        <span class="text-6xl font-light">{{project.StartDate.strftime('%d')}}</span>
-                        <span class="text-2xl font-bold uppercase tracking-widest">{{project.StartDate.strftime('%b')}}</span>
-                    </div>
-                </div>
-                <div class="md:col-span-5">
+                <div class="md:col-span-6">
                     <div class="flex flex-col justify-between p-4 leading-normal">
                         <h5 class="mb-1 text-2xl font-bold tracking-tight text-gray-900">{{ project.Name }}</h5>
                         <p class="mb-4 text-gray-700">{{ project.Rationale }}</p>
