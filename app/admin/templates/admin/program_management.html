@@ -18,22 +18,22 @@
 
         .tree-view ul li::before {
             position: absolute;
-            left:-15px;
+            left:-35px;
             top:-16px;
             border-left: 3px solid #d90429;
             border-bottom: 3px solid #d90429;
             content: "";
-            width: 15px;
+            width: 35px;
             height: 3.2em;
         }
 
         .tree-view ul li::after {
             position: absolute;
-            left:-15px;
+            left:-35px;
             bottom:0px;
             border-left: 3px solid #d90429;
             content: "";
-            width: 15px;
+            width: 35px;
             height: 100%;
         }
 
@@ -102,40 +102,18 @@
                                 </div>
                             </h2>
                             <div id="accordion-collapse-body-{{ program.ExtensionProgramId }}" class="hidden" aria-labelledby="accordion-collapse-heading-{{ program.ExtensionProgramId }}">
-                                <div class="pb-4 pt-2 pl-10">
+                                <div class="pb-4 pt-2 pl-16">
                                     <!-- Nested accordion -->
                                     <ul>
                                         {% for project in program.Project %}
                                         <li>
-                                            <div id="accordion-nested-collapse" class="mb-4" data-accordion="collapse">
-                                                <h2 id="accordion-nested-collapse-heading-{{ project.ProjectId }}">
-                                                    <div class="flex items-center justify-between w-full p-5 rounded-xl font-medium text-left bg-white border border-gray-400 hover:bg-gray-100">
+                                            <div class="mb-4">
+                                                <h2>
+                                                    <div class="flex items-center  w-full p-5 rounded-xl font-medium text-left bg-white border border-gray-400 hover:bg-gray-100">
                                                         <div class="flex items-center">
-                                                            <button class="bg-transparent mr-5" data-accordion-target="#accordion-nested-collapse-body-{{ project.ProjectId }}" aria-expanded="false" aria-controls="accordion-nested-collapse-body-{{ project.ProjectId }}">
-                                                                <svg data-accordion-icon class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 8">
-                                                                    <path stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 5.326 5.7a.909.909 0 0 0 1.348 0L13 1"/>
-                                                                </svg>
-                                                            </button>
-                                                            <span>{{ project.Name }}</span>
-                                                        </div>
-                                                        <div class="flex items-center">
-                                                            <button data-modal-target="view-project-{{project.ProjectId}}" data-modal-show="view-project-{{project.ProjectId}}" class="flex items-center font-semibold text-2xl text-blue-600 mr-4">
-                                                                <iconify-icon icon="ph:eye"></iconify-icon>
-                                                            </button>
-                                                            <button data-modal-target="edit-project-{{project.ProjectId}}" data-modal-show="edit-project-{{project.ProjectId}}" class="flex items-center font-semibold text-2xl text-gray-500 mr-4">
-                                                                <iconify-icon icon="bx:edit"></iconify-icon>
-                                                            </button>
-                                                            <button data-modal-target="delete-project-{{ project.ProjectId }}" data-modal-show="delete-project-{{ project.ProjectId }}" class="flex items-center font-semibold text-2xl text-gray-500 mr-4">
-                                                                <iconify-icon icon="ion:trash-outline"></iconify-icon>
-                                                            </button>
-                                                            <button>
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                                                    <path fill="currentColor" d="M19 12.998h-6v6h-2v-6H5v-2h6v-6h2v6h6z"/>
-                                                                </svg>
-                                                            </button>
-                                                            {% include 'admin/components/view_project_modal.html' %}
-                                                            {% include 'admin/components/edit_project_modal.html' %}
-                                                            {% include 'admin/delete_project.html' %}
+                                                            <a href="{{url_for('admin.viewProject', id=project.ProjectId)}}" class="hover:underline">
+                                                                <span>{{ project.Name }}</span>
+                                                            </a>
                                                         </div>
                                                     </div>
                                                 </h2>

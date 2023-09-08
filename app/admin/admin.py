@@ -141,6 +141,51 @@ def insertProject():
 
 
 @login_required
+@admin_bp.route('/extension-program/project/<int:id>', methods=['GET', 'POST'])
+def viewProject(id):
+    form = ProjectForm()
+    project = Project.query.get_or_404(id)
+    if request.method == "POST":
+        if form.validate_on_submit():
+            project.LeadProponent= form.lead_proponent.data
+            project.ProjectType = form.project_type.data
+            project.Name = form.project_name.data
+            project.Rationale = form.rationale.data
+            project.Objectives = form.objectives.data
+            project.StartDate = form.start_date.data
+            project.NumberOfBeneficiaries = form.num_of_beneficiaries.data
+            project.BeneficiariesClassifications = form.beneficiaries_classifications.data
+            project.ProjectScope = form.project_scope.data
+            project.ExtensionProgramId = form.extension_program.data
+
+            try:
+                db.session.commit()
+                flash('Extension project is successfully updated.', category='success')
+                return redirect(url_for('admin.programs'))
+            except:
+                flash('There was an issue updating the extension project.', category='error')
+
+        if form.errors != {}: # If there are errors from the validations
+            for err_msg in form.errors.values():
+                flash(err_msg)
+
+        return redirect(url_for('admin.programs'))
+    
+    form.lead_proponent.data = project.LeadProponent
+    form.project_type.data = project.ProjectType
+    form.project_name.data = project.Name
+    form.rationale.data = project.Rationale
+    form.objectives.data = project.Objectives
+    form.start_date.data = project.StartDate
+    form.num_of_beneficiaries.data = project.NumberOfBeneficiaries
+    form.beneficiaries_classifications.data = project.BeneficiariesClassifications
+    form.project_scope.data = project.ProjectScope
+    form.extension_program.data = project.ExtensionProgramId
+
+    return render_template('admin/view_project.html', project=project, form=form)
+
+
+@login_required
 @admin_bp.route('/update/extension-program/project/<int:id>', methods=['POST'])
 def updateProject(id):
     form = ProjectForm()
