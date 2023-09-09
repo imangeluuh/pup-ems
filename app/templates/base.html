@@ -18,7 +18,10 @@
         {% block content %}
         
         {% endblock %}
-        {% include 'components/footer.html'%}
+        
+        {% if current_user.is_authenticated %}
+            {% include 'components/footer.html'%}
+        {% endif %}
         <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
     </body>
 </html>

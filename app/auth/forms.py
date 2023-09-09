@@ -17,7 +17,7 @@ class BeneficiaryRegisterForm(FlaskForm):
     email = StringField(label="Email", validators=[Email(), DataRequired()])
     password1 = PasswordField(label="Password", validators=[Length(min=6), DataRequired()])
     password2 = PasswordField(label="Confirm Password", validators=[EqualTo('password1'),  DataRequired()])
-    submit = SubmitField(label='Sign up')
+    signup = SubmitField(label='Sign up')
 
     def validate_email(self, email):
         existing_participant_email = Login.query.filter_by(Email=email.data).first()
@@ -51,7 +51,7 @@ class StudentRegisterForm(FlaskForm):
     email = StringField(label="Email", validators=[Email(), DataRequired()])
     password1 = PasswordField(label="Password", validators=[Length(min=6), DataRequired()])
     password2 = PasswordField(label="Confirm Password", validators=[EqualTo('password1'),  DataRequired()])
-    submit = SubmitField(label='Sign up')
+    signup = SubmitField(label='Sign up')
 
     def validate_email(self, email):
         existing_participant_email = Login.query.filter_by(Email=email.data).first()
