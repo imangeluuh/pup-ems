@@ -30,8 +30,10 @@ from app import views, models
 from .admin.admin import admin_bp
 from .auth.auth import auth_bp
 from .programs.programs import programs_bp
+from .announcement.announcement import announcement_bp
 
 
 app.register_blueprint(admin_bp, url_prefix="/admin")
 app.register_blueprint(auth_bp, url_prefix="/auth") 
 app.register_blueprint(programs_bp, url_prefix='/') 
+app.register_blueprint(announcement_bp, url_prefix='/') 

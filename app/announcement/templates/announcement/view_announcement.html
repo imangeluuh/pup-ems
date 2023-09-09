@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>PUP-ESIS Announcement</title>
+{% endblock %}
+
+{% block content %}
+<div class="sm:mx-48 my-8 p-4 bg-white shadow-lg ">
+    <!-- Breadcrumb -->
+    <nav class="flex px-5 py-3 mb-10 text-gray-700 border border-gray-200 rounded-lg bg-gray-50" aria-label="Breadcrumb">
+        <a href="{{ url_for('announcement.announcement' )}}" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
+            <svg class="w-3 h-3 mr-4"aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5H1m0 0 4 4M1 5l4-4"></path>
+            </svg>
+        </a>
+        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+            <li class="inline-flex items-center">
+                <a href="{{ url_for('announcement.announcement' )}}" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
+                    <svg class="w-3 h-3 mr-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 19">
+                        <path d="M15 1.943v12.114a1 1 0 0 1-1.581.814L8 11V5l5.419-3.871A1 1 0 0 1 15 1.943ZM7 4H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2v5a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2V4ZM4 17v-5h1v5H4ZM16 5.183v5.634a2.984 2.984 0 0 0 0-5.634Z"></path>
+                    </svg>
+                    Announcement
+                </a>
+            </li>
+            <li aria-current="page">
+                <div class="flex items-center">
+                <svg class="w-3 h-3 mx-1 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                </svg>
+                <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">{{announcement.Title}}</span>
+                </div>
+            </li>
+        </ol>
+    </nav>
+    <!-- ./breadcrumbs  -->
+    <div class="p-6">
+        <h1 class="pb-4 text-4xl text-center font-bold">{{ announcement.Title }}</h1>
+        <p class="text-sm text-center mb-1">By: {{ announcement.Creator.FirstName ~ ' ' ~announcement.Creator.LastName }}
+        </p> 
+        <p class="text-sm text-center mb-1">{{announcement.Updated.strftime('%b %d, %Y')}}</p>
+        <br/><br/>
+        
+            {{ announcement.Content|safe }}<br/><br/>
+    </div>
+</div>
+
+{% endblock %}
