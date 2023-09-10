@@ -1,0 +1,37 @@
+{% extends 'admin/base.html' %}
+
+{% block head %}
+    <title>PUPQC-ESIS Calendar</title>
+{% endblock %}
+
+{% block content %}
+    {% include 'admin/components/sidebar.html' %}
+
+    <div class="sm:ml-72 md:mr-10 pt-9 mb-8">
+        <h1 class="flex items-center font-sans font-bold break-normal text-indigo-500 text-xl md:text-2xl">
+            Activity Calendar
+        </h1>
+        <div class="flex pt-6">
+            <div class="w-1/4 p-4 bg-white rounded-lg shadow h-fit">
+                <form action="{{url_for('admin.calendar')}}" method="GET">
+                    <select name="project_id" id="projectFilter" class="block w-full p-2 mb-4 text-base text-gray-500 border border-gray-300 rounded-xl" onchange="this.form.submit()">
+                        <option value="">All Projects</option>
+                        {% for project in projects %}
+                            <option value="{{ project.ProjectId }}">{{ project.Name }}</option>
+                        {% endfor %}
+                    </select>
+                </form>
+            </div>
+            <div class="w-3/4 pl-8">
+                {% include 'admin/components/calendar.html' %}
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const projectFilter = document.getElementById('projectFilter');
+            projectFilter.value= "{{selected_project_id if selected_project_id else ''}}";
+        });
+    </script> 
+{% endblock %}

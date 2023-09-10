@@ -1,10 +1,9 @@
 from flask import Blueprint, render_template, url_for, request, redirect, flash
-from .forms import LoginForm, ProgramForm, ProjectForm, AnnouncementForm
-from ..models import Login, ExtensionProgram, Beneficiary, Project, Program, Student, Announcement, Registration
+from .forms import LoginForm, ProgramForm, ProjectForm, AnnouncementForm, ActivityForm
+from ..models import Login, ExtensionProgram, Beneficiary, Project, Program, Student, Announcement, Registration, Activity
 from app import db
-from datetime import date
 from flask_login import current_user, login_user, login_required, logout_user
-import string, sys
+import string
 
 admin_bp = Blueprint('admin', __name__, template_folder="templates", static_folder="static", static_url_path='static')
 
@@ -14,7 +13,7 @@ def adminLogin():
     
     # Prevents logged in users from accessing the page
     if current_user.is_authenticated:
-        return render_template('greet.html')  # Temp route
+        return redirect(url_for('admin.programs'))  # Temp route
 
     if request.method == "POST":
         if form.validate_on_submit():
@@ -144,8 +143,11 @@ def insertProject():
 @admin_bp.route('/extension-program/project/<int:id>', methods=['GET', 'POST'])
 def viewProject(id):
     form = ProjectForm()
+    activity_form = ActivityForm()
     project = Project.query.get_or_404(id)
     registered = Registration.query.filter_by(ProjectId=project.ProjectId)
+    # for calendar - temp
+    events = fetch_activities(id)
     if request.method == "POST":
         if form.validate_on_submit():
             project.Name = form.project_name.data
@@ -182,7 +184,7 @@ def viewProject(id):
     form.project_scope.data = project.ProjectScope
     form.extension_program.data = project.ExtensionProgramId
 
-    return render_template('admin/view_project.html', project=project, form=form, registered=registered)
+    return render_template('admin/view_project.html', project=project, form=form, activity_form=activity_form, registered=registered, events=events)
 
 
 @login_required
@@ -227,9 +229,30 @@ def deleteProject(id):
         flash('Extension project is successfully deleted.', category='success')
     except Exception as e:
         flash('There was an issue deleting the extension project.', category='error')
-        print(e)
 
     return redirect(url_for('admin.programs'))
+
+
+
+@login_required
+@admin_bp.route('<int:id>/activity/create', methods=['POST'])
+def insertActivity(id):
+    activity_form = ActivityForm()
+    if activity_form.validate_on_submit():
+        activity_to_create = Activity(ActivityName=activity_form.name.data,
+                                        Date=activity_form.date.data,
+                                        StartTime=activity_form.start_time.data,
+                                        EndTime=activity_form.end_time.data,
+                                        Description=activity_form.description.data,
+                                        ProjectId=id)
+        db.session.add(activity_to_create)
+        db.session.commit()
+        flash('Activity is successfully inserted.', category='success')
+        return redirect(url_for('admin.viewProject', id=id))
+    if activity_form.errors != {}: # If there are errors from the validations
+        for err_msg in activity_form.errors.values():
+            flash(err_msg, category='error')
+    return redirect(url_for('admin.viewProject', id=id))
 
 
 @login_required
@@ -248,11 +271,18 @@ def students():
     return render_template('admin/users.html', users=users,current_url_path=current_url_path)
 
 
+@login_required
 @admin_bp.route('/calendar')
 def calendar():
-    return render_template('admin/index.html')
+    projects = Project.query.all()
+    selected_project_id = request.args.get('project_id', None)
+    # Call a function to fetch activities based on the selected project
+    activities = fetch_activities(selected_project_id)
+    
+    return render_template('admin/activity_calendar.html', projects=projects, events=activities, selected_project_id=selected_project_id)
 
 
+@login_required
 @admin_bp.route('/announcement/<string:project>')
 @admin_bp.route('/announcement', defaults={'project': None})
 def announcement(project):
@@ -282,6 +312,7 @@ def announcement(project):
     return render_template('admin/announcement.html', programs=programs, announcements=announcements, bool_is_published_empty=bool_is_published_empty, bool_is_draft_empty=bool_is_draft_empty)
 
 
+@login_required
 @admin_bp.route('/announcement/create', methods=['GET', 'POST'])
 def createAnnouncement():
     form = AnnouncementForm()
@@ -290,7 +321,6 @@ def createAnnouncement():
             if 'publish' in request.form:
                 if not all(request.form.values()):
                     flash('Please fill out all the fields before publishing.')
-                    print('Please fill out all the fields before publishing.')
                     return redirect(url_for('admin.createAnnouncement'))
                 is_live = 1
             elif 'draft' in request.form:
@@ -313,6 +343,7 @@ def createAnnouncement():
     return render_template('admin/create_announcement.html', form=form)
 
 
+@login_required
 @admin_bp.route('/announcement/update/<int:id>', methods=['GET', 'POST'])
 def updateAnnouncement(id):
     form = AnnouncementForm()
@@ -324,7 +355,6 @@ def updateAnnouncement(id):
             if 'publish' in request.form:
                 if not all(request.form.values()):
                     flash('Please fill out all the fields before publishing.')
-                    print('Please fill out all the fields before publishing.')
                     return redirect(url_for('admin.updateAnnouncement'))
                 is_live = 1
             elif 'draft' in request.form:
@@ -340,7 +370,6 @@ def updateAnnouncement(id):
                 flash('Announcement is successfully updated.', category='success')
             except Exception as e:
                 flash('There was an issue updating the announcement.', category='error')
-                print('There was an issue updating the announcement.', str(e))
 
             return redirect(url_for('admin.announcement'))
         if form.errors != {}: # If there are errors from the validations
@@ -393,3 +422,13 @@ def generateSlug(title, separator='-', lower=True):
     if lower:
         title = title.lower()
     return separator.join(title.split())
+
+# Define a new function to fetch activities based on the selected project
+def fetch_activities(selected_project_id=None):
+
+    query = Activity.query
+
+    if selected_project_id:
+        query = query.filter(Activity.ProjectId == selected_project_id)
+
+    return query.with_entities(Activity.ActivityName, Activity.Date, Project.Name).join(Project).all()

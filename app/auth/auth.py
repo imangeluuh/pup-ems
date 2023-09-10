@@ -17,8 +17,9 @@ lockout_duration = timedelta(minutes=1)
 # @limiter.limit("3 per day", key_func=lambda: request.method == "POST")
 def beneficiaryLogin():
     # Prevents logged in users from accessing the page
+    current_url_path = request.path
     if current_user.is_authenticated:
-        return render_template('greet.html')  # Temp route
+        return redirect(url_for('home'))  # Temp route
     
     form = LoginForm()
 
@@ -28,16 +29,17 @@ def beneficiaryLogin():
             if attempted_user and attempted_user.RoleId == 2:
                 if attempted_user.check_password_correction(attempted_password=form.password.data):
                     login_user(attempted_user, remember=True)
-                    return redirect(url_for('programs.programsList')) # temp route
+                    return redirect(url_for('home')) # temp route
                 else:
                     flash('The password you\'ve entered is incorrect.')
             else:
                 flash('The email you entered isn\'t connected to an account.')
 
-    return render_template('auth/beneficiary/beneficiary_login.html', form=form)
+    return render_template('auth/beneficiary/beneficiary_login.html', form=form, current_url_path=current_url_path)
 
 @auth_bp.route('/beneficiary/signup', methods=['GET', 'POST'])
 def beneficiarySignup():
+    current_url_path = request.path
     form = BeneficiaryRegisterForm()    
     current_url_path = request.path
     if request.method == "POST":
@@ -54,9 +56,10 @@ def beneficiarySignup():
 
 @auth_bp.route('/student', methods=['GET', 'POST'])
 def studentLogin():
+    current_url_path = request.path
     # Prevents logged in users from accessing the page
     if current_user.is_authenticated:
-        return render_template('greet.html')  # Temp route
+        return redirect(url_for('home'))  # Temp route
     
     form = LoginForm()
 
@@ -66,16 +69,17 @@ def studentLogin():
             if attempted_user and attempted_user.RoleId == 3:
                 if attempted_user.check_password_correction(attempted_password=form.password.data):
                     login_user(attempted_user, remember=True)
-                    return redirect(url_for('programs.programsList')) # temp route
+                    return redirect(url_for('home')) # temp route
                 else:
                     flash('The password you\'ve entered is incorrect.')
             else:
                 flash('The email you entered isn\'t connected to an account.')
 
-    return render_template('auth/student/student_login.html', form=form)
+    return render_template('auth/student/student_login.html', form=form, current_url_path=current_url_path)
 
 @auth_bp.route('/student/signup', methods=['GET', 'POST'])
 def studentSignup():
+    current_url_path = request.path
     form = StudentRegisterForm()    
     current_url_path = request.path
     if request.method == "POST":
@@ -94,7 +98,7 @@ def studentSignup():
 @auth_bp.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('auth.beneficiaryLogin')) # temp route
+    return redirect(url_for('home')) # temp route
 
 def createUser(form, role):
     str_login_uuid = uuid.uuid4()

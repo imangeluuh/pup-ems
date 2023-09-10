@@ -136,10 +136,13 @@ class Activity(db.Model):
     __tablename__ = 'Activity'
 
     ActivityId = db.Column(db.Integer, primary_key=True)
+    ActivityName = db.Column(db.String(255), nullable=False)
     Date = db.Column(db.Date, nullable=False)
-    Duration = db.Column(db.String(255), nullable=False)
-    CommunityBackground = db.Column(db.String(255), nullable=False)
-    ActivityFlow = db.Column(db.String(255), nullable=False)
+    StartTime = db.Column(db.Time, nullable=False)
+    EndTime = db.Column(db.Time, nullable=False)
+    Description = db.Column(db.String(255), nullable=False)
+    ProjectId = db.Column(db.Integer, db.ForeignKey('Project.ProjectId', ondelete='CASCADE'), nullable=False)
+    Project = db.relationship('Project', backref='Activity')
 
 
 class Announcement(db.Model):

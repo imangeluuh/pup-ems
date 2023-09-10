@@ -86,7 +86,6 @@ def registration(project_id):
             flash('Registration Successful!', category='success')
         except  Exception as e:
             flash('There was an issue during registration.', category='error')
-            print('There was an issue during registration.', str(e))
 
         return redirect(url_for('programs.registration', project_id=project_id))
     return render_template("programs/project_reg.html", project=project, bool_is_registered=bool_is_registered)

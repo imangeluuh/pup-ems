@@ -1,12 +1,118 @@
 {% extends 'base.html' %}
 
-{% block body %}
-    {% for role in roles %}
-        <p>{{ role.id }}</p>
-        <p>{{ role.name }}</p>
-    {% endfor %}
-    <form action="/greet" method="post">
-        <input autocomplete="off" autofocus name="name" placeholder="Name" type="text">
-        <button type="submit">Greet</button>
-    </form>
+{% block head %}
+<title>PUPQC - ESIS </title>
+{% endblock %}
+
+{% block content %}
+    <section>
+        <h1 class="font-bold text-4xl text-center mb-4 mt-8">Latest Announcements</h1>
+        <div class="flex">
+            <div class="w-2/12 flex items-center">
+                <div class="w-full text-right">
+                    <button onclick="prev()" class="p-3 mr-5 rounded-full bg-white border border-gray-100 shadow-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 15 15">
+                            <g transform="rotate(180 7.5 7.5)">
+                                <path fill="currentColor" d="M8.293 2.293a1 1 0 0 1 1.414 0l4.5 4.5a1 1 0 0 1 0 1.414l-4.5 4.5a1 1 0 0 1-1.414-1.414L11 8.5H1.5a1 1 0 0 1 0-2H11L8.293 3.707a1 1 0 0 1 0-1.414Z"/>
+                            </g>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div id="sliderContainer" class="w-10/12 overflow-hidden">
+                <ul id="slider" class="flex w-full">
+                    {% for announcement in latest_announcements %}
+                    <li class="w-96 p-5">
+                        <div class="h-full bg-white border border-gray-200 rounded-lg shadow">
+                            <img class="rounded-t-lg h-36 w-full object-cover" src="https://flowbite.com/docs/images/blog/image-1.jpg" alt="" />
+                            <div class="p-5">
+                                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ announcement.Title }}</h5>
+                                <div class="h-12 w-full overflow-hidden mb-3 ">
+                                    <div class="whitespace-wrap text-clip">
+                                        <p class="font-normal text-gray-700">{{ announcement.Content|safe }}</p>
+                                    </div>
+                                </div>
+                                <a href="{{url_for('announcement.viewAnnouncement',id=announcement.AnnouncementId)}}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
+                                    Read more
+                                    <svg class="w-3.5 h-3.5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="w-2/12 flex items-center">
+                <div class="w-full text-left">
+                    <button onclick="next()" class="p-3 ml-5 rounded-full bg-white border border-gray-100 shadow-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 15 15">
+                            <path fill="currentColor" d="M8.293 2.293a1 1 0 0 1 1.414 0l4.5 4.5a1 1 0 0 1 0 1.414l-4.5 4.5a1 1 0 0 1-1.414-1.414L11 8.5H1.5a1 1 0 0 1 0-2H11L8.293 3.707a1 1 0 0 1 0-1.414Z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- program -->
+    <div class="mx-64 mt-8">
+        <h2 class="font-semibold text-3xl text-gray-600 mb-4">Select a Program</h2>
+        <hr class="h-1">
+        <div class="grid grid-cols-12 gap-6 mt-4">
+            {% for extension_program in extension_programs %}
+            <a href="{{ url_for('programs.projectsList', program_id=extension_program.ExtensionProgramId)}}" class="col-span-3 flex flex-col justify-center items-center h-36 bg-white rounded-xl shadow-lg p-4">
+                <div class="max-w-full flex justify-center items-center font-medium">
+                    <span class="text-center">{{ extension_program.Name }}</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    <!-- /programs -->
+    {% if not current_user.is_authenticated %}
+    <div class="bg-blue-100 py-12 mt-16">  
+        <div class=""> 
+            <div class="">
+                <div class="my-auto text-center">
+                    <p class="text-xl inline-block text-center">Get info that matters to you: Tell us your interests and sign up for emails.</p> <a class="text-white bg-blue-500 hover:bg-blue-600 focus:ring-0 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2" href="{{url_for('auth.beneficiarySignup')}}" role="link">SIGN UP</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+
+    <script>
+        let sliderContainer = document.getElementById('sliderContainer');
+        let slider = document.getElementById('slider');
+        let cards = slider.getElementsByTagName('li');
+
+        let elementsToShow = 3;
+
+        let sliderContainerWidth = sliderContainer.clientWidth;
+
+        let cardWidth = sliderContainerWidth/elementsToShow;
+        
+        slider.style.width = cards.length*cardWidth+'px';
+        slider.style.transition = 'margin';
+        slider.style.transitionDuration='1s';
+
+
+        for (let index = 0; index < cards.length; indez++) {
+            const element =  cards[index];
+            element.style.width = cardWidth+'px';
+        }
+
+        function prev(){
+            if (+slider.style.marginLeft.slice(0, -2) != 0) {
+                slider.style.marginLeft = ((+slider.style.marginLeft.slice(0, -2)) + cardWidth)+'px';
+            }
+        }
+        function next(){
+            if (+slider.style.marginLeft.slice(0, -2) != -cardWidth * (cards.length - elementsToShow)) {
+                slider.style.marginLeft = ((+slider.style.marginLeft.slice(0, -2)) - cardWidth)+'px'; // 100px
+            }
+        }
+    </script>
 {% endblock %}

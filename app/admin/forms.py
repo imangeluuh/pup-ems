@@ -1,6 +1,6 @@
 from flask import current_app
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, DateField, SelectField, TextAreaField, IntegerField, HiddenField
+from wtforms import StringField, PasswordField, SubmitField, DateField, SelectField, TextAreaField, IntegerField, HiddenField, TimeField
 from wtforms.validators import Length, Email, DataRequired, Optional
 from ..models import Agenda, Program, Project
 from flask_ckeditor import CKEditorField
@@ -51,6 +51,22 @@ class AnnouncementForm(FlaskForm):
     project = SelectField(label='Extension Project')
     publish = SubmitField(label="Publish") 
     draft = SubmitField(label="Save as Draft") 
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        with current_app.app_context():
+            self.project.choices = [(project.ProjectId, project.Name) for project in Project.query.all()]
+
+
+class ActivityForm(FlaskForm):
+    name = StringField(label="Activity Name", validators=[DataRequired()])
+    date = DateField(label="Date", validators=[DataRequired()])
+    start_time = TimeField(label="Start Time", validators=[DataRequired()])
+    end_time = TimeField(label='End Time', validators=[DataRequired()])
+    description = TextAreaField(label='Description', validators=[DataRequired()])
+    project = SelectField(label='Extension Project')
+    save = SubmitField(label="Save Activity") 
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

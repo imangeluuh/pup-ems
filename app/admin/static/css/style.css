@@ -6,7 +6,7 @@
 }
 .container-main {
     min-height: 100vh;
-    background: #888 url("../images/6FSp1eg.jpg") center center / cover no-repeat fixed;
+    background: #888 url("../../../static/images/maxresdefault1.jpg") center center / cover no-repeat fixed;
 }
 .side-image{
     position: relative;

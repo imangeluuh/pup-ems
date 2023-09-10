@@ -2,7 +2,7 @@
 
 {% block head %}
     <link rel="stylesheet" href="{{ url_for('auth.static', filename='css/signin_style.css') }}">
-    <title>PUP-ESIS Login</title>
+    <title>PUPQC-ESIS Login</title>
 {% endblock %}
 
 {% block content %}
@@ -16,7 +16,7 @@
                 <div class="flex justify-center">
                     <img src="{{ url_for('static', filename='images/PUPLogo.png')}}" alt="" class="mb-4" width="100rem">
                 </div>
-                <header><strong>PUP-ESIS</strong> Beneficiary Module</header>
+                <header><strong>PUPQC-ESIS</strong> Beneficiary Module</header>
                 {% with messages = get_flashed_messages() %}
                     {% if messages %}
                         {% for message in messages %}
