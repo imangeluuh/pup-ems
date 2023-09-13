@@ -7,52 +7,59 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-main h-screen min-h-screen">
+<div class="container-main min-h-screen">
     <div class="container h-full flex items-center mx-auto">
         <div class="right mx-auto  relative overflow-auto">
             <header class="m-0 md:mb-6 md:mt-8 text-xl text-center">Create account</header>
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                <div class="flex items-center p-4 mb-4 mx-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50" role="alert">
-                    <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                    </svg>
-                    <span class="sr-only">Info</span>
-                    <div>
-                        <span> It looks like something went wrong during account creation. </span>
-                        <ul class="m-0">
-                        {% for message in messages %}
-                            <li>{{ message|replace('[','')|replace(']','')|replace("'",'') }}</li>
-                        {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-                {% endif %}
-            {% endwith %}
             <form id="signupForm" action="" method="post" class="grid grid-cols-3 md:px-5 mt-2 md:mt-4 max-h-full">
                 {{ form.hidden_tag() }}
-                <div class="input-field col-span-3 sm:col-span-1">
-                    {{ form.first_name(id="f-name", class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0") }}
+                <div class="input-field mt-2 col-span-3 sm:col-span-1">
+                    {{ form.first_name(id="f-name", class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0 mb-2") }}
                     {{ form.first_name.label(class="label") }}
+                    <ol>
+                        {% for error in form.first_name.errors %}
+                        <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                        {% endfor %}
+                    </ol>
                 </div> 
-                <div class="input-field col-span-3 sm:col-span-1">
-                    {{ form.middle_name(id="md-name", class="md-name-input focus:ring-0 focus:ring-offset-0 bg-transparent p-0", placeholder=" ") }}
+                <div class="input-field mt-2 col-span-3 sm:col-span-1">
+                    {{ form.middle_name(id="md-name", class="md-name-input focus:ring-0 focus:ring-offset-0 bg-transparent p-0 mb-2", placeholder=" ") }}
                     {{ form.middle_name.label(class="md-name-label") }}
+                    <ol>
+                        {% for error in form.middle_name.errors %}
+                        <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                        {% endfor %}
+                    </ol>
                 </div> 
-                <div class="input-field col-span-3 sm:col-span-1">
-                    {{ form.last_name(id="l-name", class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0") }}
+                <div class="input-field mt-2 col-span-3 sm:col-span-1">
+                    {{ form.last_name(id="l-name", class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0 mb-2") }}
                     {{ form.last_name.label(class="label") }}
+                    <ol>
+                        {% for error in form.last_name.errors %}
+                        <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                        {% endfor %}
+                    </ol>
                 </div> 
-                <div class="input-field col-span-3 sm:col-span-1">
-                    {{ form.contact_details(id="contact", class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0") }}
+                <div class="input-field mt-2 col-span-3 sm:col-span-1">
+                    {{ form.contact_details(id="contact", class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0 mb-2") }}
                     {{ form.contact_details.label(class="label") }}
+                    <ol>
+                        {% for error in form.contact_details.errors %}
+                        <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                        {% endfor %}
+                    </ol>
                 </div> 
-                <div class="input-field col-span-3 sm:col-span-1">
-                    {{ form.birthdate(id="birthdate", class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0") }}
+                <div class="input-field mt-2 col-span-3 sm:col-span-1">
+                    {{ form.birthdate(id="birthdate", class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0 mb-2") }}
                     {{ form.birthdate.label(class="label") }}
+                    <ol>
+                        {% for error in form.birthdate.errors %}
+                        <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                        {% endfor %}
+                    </ol>
                 </div> 
-                <div class="input-field col-span-3 sm:col-span-1">
-                    <select name="gender" id="gender" class="form-select shadow-none focus:ring-0 focus:ring-offset-0 bg-transparent p-0">
+                <div class="input-field mt-2 col-span-3 sm:col-span-1">
+                    <select name="gender" id="gender" class="form-select shadow-none focus:ring-0 focus:ring-offset-0 bg-transparent p-0 mb-2">
                     {% for option in form.gender %}
                         {% if loop.first %}
                             <option value="" disabled selected>Gender</option>
@@ -61,28 +68,58 @@
                     {% endfor %}
                     </select>
                     {{ form.gender.label(class="gender-label") }}
+                    <ol>
+                        {% for error in form.gender.errors %}
+                        <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                        {% endfor %}
+                    </ol>
                 </div> 
-                <div class="input-field col-span-3">
-                    {{ form.address(id="address", class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0") }}
+                <div class="input-field mt-2 col-span-3">
+                    {{ form.address(id="address", class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0 mb-2") }}
                     {{ form.address.label(class="label") }}
+                    <ol>
+                        {% for error in form.address.errors %}
+                        <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                        {% endfor %}
+                    </ol>
                 </div> 
-                <div class="input-field col-span-3 mt-3">
+                <div class="input-field col-span-3 mt-5">
                     {{ form.skills_interest.label(id="skills-label") }}
-                    {{ form.skills_interest(id="skills", class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0") }}
+                    {{ form.skills_interest(id="skills", class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0 mb-2") }}
+                    <ol>
+                        {% for error in form.skills_interest.errors %}
+                        <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                        {% endfor %}
+                    </ol>
                 </div> 
-                <div class="input-field col-span-3">
-                    {{ form.email(id="email", class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0") }}
+                <div class="input-field mt-2 col-span-3">
+                    {{ form.email(id="email", class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0 mb-2") }}
                     {{ form.email.label(class="label") }}
+                    <ol>
+                        {% for error in form.email.errors %}
+                        <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                        {% endfor %}
+                    </ol>
                 </div> 
-                <div class="input-field col-span-3">
-                    {{ form.password1(class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0") }}
+                <div class="input-field mt-2 col-span-3">
+                    {{ form.password1(class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0 mb-2") }}
                     {{ form.password1.label(class="label") }}
+                    <ol>
+                        {% for error in form.password1.errors %}
+                        <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                        {% endfor %}
+                    </ol>
                 </div> 
-                <div class="input-field col-span-3">
-                    {{ form.password2(class="input  focus:ring-0 focus:ring-offset-0 bg-transparent p-0") }}
+                <div class="input-field mt-2 col-span-3">
+                    {{ form.password2(class="input  focus:ring-0 focus:ring-offset-0 bg-transparent p-0 mb-2") }}
                     {{ form.password2.label(class="label") }}
+                    <ol>
+                        {% for error in form.password2.errors %}
+                        <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                        {% endfor %}
+                    </ol>
                 </div> 
-                <div class="input-field col-span-3">
+                <div class="input-field mt-2 col-span-3">
                     {{ form.signup(class="submit")}}
                 </div>
             </form>

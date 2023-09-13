@@ -290,16 +290,12 @@ def announcement(project):
     bool_is_draft_empty = True
     if project is not None:
         announcements = Announcement.query.join(Project).filter(Project.Name == project).all()
-        for announcement in announcements:
-            if announcement.IsLive == 1:
-                bool_is_published_empty = False
-                break
-        for announcement in announcements:
-            if announcement.IsLive == 0:
-                bool_is_draft_empty = False
-                break
     else:
         announcements = Announcement.query.all()
+
+    if announcements:
+        # bool_is_published_empty = announcements.query.filter_by(IsLive = 1).first()
+        # bool_is_draft_empty = announcements.query.filter_by(IsLive = 0).first()
         for announcement in announcements:
             if announcement.IsLive == 1:
                 bool_is_published_empty = False
