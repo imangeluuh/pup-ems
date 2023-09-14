@@ -1,11 +1,33 @@
+from flask import url_for
 from app import db, bcrypt, login_manager
 from flask_login import UserMixin
 from datetime import datetime
+import uuid
 
 @login_manager.user_loader
 def load_user(user_id):
     return Login.query.get(user_id)
 
+
+class PaginatedAPIMixin(object):
+    @staticmethod
+    def to_collection_dict(query, page, per_page, endpoint, **kwargs):
+        resources = query.paginate(page=page, per_page=per_page, error_out=False)
+        data = {
+            'items': [item.to_dict() for item in resources.items],
+            '_meta': {
+                'page': page,
+                'per_page': per_page,
+                'total_pages': resources.pages,
+                'total_items': resources.total
+            },
+            '_links': {
+                'self': url_for(endpoint, page=page, per_page=per_page, **kwargs),
+                'next': url_for(endpoint, page=page + 1, per_page=per_page, **kwargs) if resources.has_next else None,
+                'prev': url_for(endpoint, page=page - 1, per_page=per_page, **kwargs) if resources.has_prev else None,
+            }
+        }
+        return data
 
 class Role(db.Model):
     __tablename__ = 'Role'
@@ -44,7 +66,6 @@ class Login(db.Model, UserMixin):
         return (self.LoginId)
 
 
-
 class Admin(db.Model):
     __tablename__ = 'Admin'
 
@@ -54,7 +75,7 @@ class Admin(db.Model):
     LoginId = db.Column(db.String(36), db.ForeignKey('Login.LoginId', ondelete='CASCADE'), nullable=False)
 
 
-class User(db.Model):
+class User(PaginatedAPIMixin, db.Model):
     __tablename__ = 'User'
 
     UserId = db.Column(db.String(36), primary_key=True)
@@ -67,6 +88,37 @@ class User(db.Model):
     Address = db.Column(db.String(255), nullable=False)
     LoginId = db.Column(db.String(36), db.ForeignKey('Login.LoginId', ondelete='CASCADE'), nullable=False)
     Registration = db.relationship('Registration', backref='User', cascade='all, delete-orphan', passive_deletes=True)
+
+
+    def to_dict(self, include_email=False):
+        data = {
+            'LoginId': self.UserId,
+            'Email': self.UserLogin.Email,
+            'Status': self.UserLogin.Status,
+            'RoleId': self.UserLogin.RoleId,
+            'FistName': self.FirstName,
+            'MiddleName': self.MiddleName,
+            'LastName': self.LastName,
+            'ContactDetails': self.ContactDetails,
+            'Birthdate': self.Birthdate,
+            'Gender': self.Gender,
+            'Address': self.Address,
+            '_links': {
+                'self': url_for('api.get_user', id=self.UserId),
+            }
+        }
+        if include_email:
+            data['Email'] = self.UserLogin.Email
+        return data
+    
+
+    def from_dict(self, data, new_user=False):
+        setattr(Login, Login.LoginId, uuid.uuid4())
+        for field in ['FirstName', 'MiddleName', 'LastName', 'ContactDetails', 'Birthdate', 'Gender', 'Address']:
+            if field in data:
+                setattr(self, field, data[field])
+        if new_user and 'Password' in data:
+            self.set_password(data['Password'])
 
 
 class Beneficiary(db.Model):
