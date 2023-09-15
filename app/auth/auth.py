@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, url_for, request, redirect, flash
+from flask import render_template, url_for, request, redirect, flash
 from .forms import BeneficiaryRegisterForm, StudentRegisterForm, LoginForm
 from ..models import Login, Beneficiary, User, Student
 import uuid
@@ -6,11 +6,7 @@ from app import db
 from flask_login import login_user, logout_user, current_user
 from datetime import datetime, timedelta
 
-
-auth_bp = Blueprint('auth', __name__, template_folder="templates", static_folder="static", static_url_path='static')
-
 lockout_duration = timedelta(minutes=1)
-
 
 @auth_bp.route('/beneficiary', methods=['GET', 'POST'])
 # @limiter.limit('5 per day')

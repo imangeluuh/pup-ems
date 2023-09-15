@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, url_for, request, redirect, flash
+from app.programs import bp
+from flask import render_template, url_for, request, redirect, flash
 from flask_login import login_user, logout_user, current_user
 from ..models import Project, ExtensionProgram, Program, Registration, Agenda
 import calendar
@@ -6,9 +7,7 @@ from datetime import datetime
 from sqlalchemy import extract
 from app import db
 
-programs_bp = Blueprint('programs', __name__, template_folder="templates", static_folder="static", static_url_path='static')
-
-@programs_bp.route('/programs')
+@bp.route('/programs')
 def programsList():
     extension_programs = ExtensionProgram.query.all()
     programs = Program.query.all()
@@ -16,7 +15,7 @@ def programsList():
     return render_template('programs/programs.html', extension_programs=extension_programs, programs=programs, agendas=agendas)
 
 
-@programs_bp.route('/projects/<int:program_id>', methods=['GET', 'POST'])
+@bp.route('/projects/<int:program_id>', methods=['GET', 'POST'])
 def projectsList(program_id):
     projects = Project.query.filter_by(ExtensionProgramId=program_id).all()
     return render_template('programs/projects_list.html', projects=projects)
@@ -43,7 +42,7 @@ def projectsList(program_id):
 
     
 
-@programs_bp.route('/filters')
+@bp.route('/filters')
 def filters():
     # Retrieve only the names from the program table
     extension_programs = ExtensionProgram.query.with_entities(ExtensionProgram.Name).all()
@@ -72,7 +71,7 @@ def filters():
     return render_template('programs/filters.html',list_filter=list_filter)
 
 
-@programs_bp.route('/registration/<int:project_id>', methods=['GET', 'POST'])
+@bp.route('/registration/<int:project_id>', methods=['GET', 'POST'])
 def registration(project_id):
     project = Project.query.get_or_404(project_id)
     user_id = current_user.UserLogin[0].UserId if current_user.is_authenticated else None
@@ -91,7 +90,7 @@ def registration(project_id):
     return render_template("programs/project_reg.html", project=project, bool_is_registered=bool_is_registered)
 
 
-@programs_bp.route('/registration/cancel/<int:project_id>', methods=['POST'])
+@bp.route('/registration/cancel/<int:project_id>', methods=['POST'])
 def cancelRegistration(project_id):
     project = Project.query.get_or_404(project_id)
     user_id = current_user.UserLogin[0].UserId if current_user.is_authenticated else None

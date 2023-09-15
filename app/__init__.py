@@ -27,10 +27,10 @@ ckeditor = CKEditor(app)
 # limiter = Limiter(get_remote_address, app=app, default_limits=['5 per day'])
 
 from app import views, models
-from .admin.admin import admin_bp
-from .auth.auth import auth_bp
-from .programs.programs import programs_bp
-from .announcement.announcement import announcement_bp
+from .admin.admin import bp as admin_bp
+from .auth.auth import bp as auth_bp
+from .programs.programs import bp as programs_bp
+from .announcement.announcement import bp as announcement_bp
 from app.api import bp as api_bp
 
 
