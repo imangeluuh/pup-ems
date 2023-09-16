@@ -1,3 +1,4 @@
+from app.auth import bp
 from flask import render_template, url_for, request, redirect, flash
 from .forms import BeneficiaryRegisterForm, StudentRegisterForm, LoginForm
 from ..models import Login, Beneficiary, User, Student
@@ -8,7 +9,7 @@ from datetime import datetime, timedelta
 
 lockout_duration = timedelta(minutes=1)
 
-@auth_bp.route('/beneficiary', methods=['GET', 'POST'])
+@bp.route('/beneficiary', methods=['GET', 'POST'])
 # @limiter.limit('5 per day')
 # @limiter.limit("3 per day", key_func=lambda: request.method == "POST")
 def beneficiaryLogin():
@@ -33,7 +34,7 @@ def beneficiaryLogin():
 
     return render_template('auth/beneficiary/beneficiary_login.html', form=form, current_url_path=current_url_path)
 
-@auth_bp.route('/beneficiary/signup', methods=['GET', 'POST'])
+@bp.route('/beneficiary/signup', methods=['GET', 'POST'])
 def beneficiarySignup():
     current_url_path = request.path
     form = BeneficiaryRegisterForm()    
@@ -50,7 +51,7 @@ def beneficiarySignup():
                 flash(err_msg)
     return render_template('auth/beneficiary/beneficiary_signup.html', form=form, current_url_path=current_url_path)
 
-@auth_bp.route('/student', methods=['GET', 'POST'])
+@bp.route('/student', methods=['GET', 'POST'])
 def studentLogin():
     current_url_path = request.path
     # Prevents logged in users from accessing the page
@@ -73,7 +74,7 @@ def studentLogin():
 
     return render_template('auth/student/student_login.html', form=form, current_url_path=current_url_path)
 
-@auth_bp.route('/student/signup', methods=['GET', 'POST'])
+@bp.route('/student/signup', methods=['GET', 'POST'])
 def studentSignup():
     current_url_path = request.path
     form = StudentRegisterForm()    
@@ -91,7 +92,7 @@ def studentSignup():
                 flash(err_msg)
     return render_template('auth/student/student_signup.html', form=form, current_url_path=current_url_path)
 
-@auth_bp.route('/logout')
+@bp.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('home')) # temp route
