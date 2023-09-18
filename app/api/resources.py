@@ -3,6 +3,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_tok
 from ..models import *
 from app import db
 from .api_models import *
+import uuid
 
 authorizations = {
     "jsonWebToken": {
@@ -26,7 +27,6 @@ class AccountsApi(Resource):
     @ns.marshal_list_with(login_model)
     def get(self):
         return Login.query.all()  
-
 
 @ns.route('/login/admin')
 class AdminLoginApi(Resource):
@@ -62,7 +62,6 @@ class StudentLoginApi(Resource):
     @ns.expect(login_input_model)
     def post(self):
         attempted_user = Login.query.filter_by(Email=ns.payload['Email'], RoleId=3).first()
-        print(attempted_user)
         if attempted_user and attempted_user.Status == 'Active': 
             if attempted_user.check_password_correction(attempted_password=ns.payload['Password']):
                 return {'access_token': create_access_token(attempted_user.LoginId)}
@@ -70,6 +69,20 @@ class StudentLoginApi(Resource):
                 return {'error': 'The password you\'ve entered is incorrect.'}, 404
         else:
             return {'error': 'The email you entered isn\'t connected to an account.'}, 404
+
+@ns.route('/register/beneficiary')
+class BeneficiaryRegisterApi(Resource):
+    @ns.expect(register_input_model)
+    def post(self):
+        createUser(2)
+        return {"success": "Account is successfully created"}, 200
+    
+@ns.route('/register/student')
+class StudentRegisterApi(Resource):
+    @ns.expect(register_input_model)
+    def post(self):
+        createUser(3)
+        return {"success": "Account is successfully created"}, 200
 
 @ns.route('/admins')
 class AdminListApi(Resource):
@@ -82,3 +95,31 @@ class UsersListApi(Resource):
     @ns.marshal_list_with(user_model)
     def get(self):
         return User.query.all()
+    
+
+def createUser(role):
+    str_login_uuid = uuid.uuid4()
+    user_login = Login(LoginId=str_login_uuid,
+                        Email=ns.payload['Email'],
+                        password_hash=ns.payload['Password'],
+                        RoleId=role)
+    str_user_id = uuid.uuid4()
+    user_to_create = User(UserId=str_user_id,
+                            FirstName=ns.payload['FirstName'],
+                            MiddleName=ns.payload['MiddleName'],
+                            LastName=ns.payload['LastName'],
+                            ContactDetails=ns.payload['ContactDetails'],
+                            Birthdate=ns.payload['Birthdate'],
+                            Gender=ns.payload['Gender'],
+                            Address=ns.payload['Address'],
+                            LoginId=str_login_uuid)
+    db.session.add(user_login)
+    db.session.add(user_to_create)
+    if role == 2:
+        beneficiary_to_create = Beneficiary(BeneficiaryId = str_user_id)
+        db.session.add(beneficiary_to_create)
+    elif role == 3:
+        student_to_create = Student(StudentId = str_user_id,
+                                    SkillsInterest = ns.payload['SkillsInterest'])
+        db.session.add(student_to_create)
+    db.session.commit()

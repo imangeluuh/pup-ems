@@ -3,7 +3,7 @@ from flask import render_template, url_for, request, redirect, flash, session
 from .forms import BeneficiaryRegisterForm, StudentRegisterForm, LoginForm
 from ..models import Login, Beneficiary, User, Student
 from app import db, api
-from ..Api.resources import BeneficiaryLoginApi, StudentLoginApi
+from ..Api.resources import BeneficiaryLoginApi, StudentLoginApi, BeneficiaryRegisterApi, StudentRegisterApi
 from flask_login import login_user, logout_user, current_user
 from datetime import datetime, timedelta
 import uuid
@@ -47,15 +47,31 @@ def beneficiarySignup():
     current_url_path = request.path
     if request.method == "POST":
         if form.validate_on_submit():
-            str_user_id = createUser(form, 2)
-            beneficiary_to_create = Beneficiary(BeneficiaryId = str_user_id)
-            db.session.add(beneficiary_to_create)
-            db.session.commit()
-            return redirect(url_for('auth.beneficiaryLogin'))
+            data={"Email": form.email.data,
+                "Password": form.password1.data,
+                "FirstName": form.first_name.data,
+                "MiddleName": form.middle_name.data,
+                "LastName": form.last_name.data,
+                "ContactDetails": form.contact_details.data,
+                "Birthdate": form.birthdate.data.strftime("%Y-%m-%d"),
+                "Gender": form.gender.data,
+                "Address": form.address.data,
+                "SkillsInterest": ""}
+            response = requests.post(api.url_for(BeneficiaryRegisterApi, _external=True), json=data, headers=headers)
+            if response.status_code == 200:
+                response_data = response.json()
+                flash(response_data.get('success'))
+                return redirect(url_for('auth.beneficiaryLogin'))
+            else:
+                try:
+                    response_data = response.json()
+                    flash(response_data.get('error'))
+                except json.JSONDecodeError:
+                    print(response)
         if form.errors != {}: # If there are errors from the validations
             for err_msg in form.errors.values():
                 flash(err_msg)
-    return render_template('auth/beneficiary/beneficiary_signup.html', form=form, current_url_path=current_url_path)
+    return render_template('auth/beneficiary_signup.html', form=form, current_url_path=current_url_path)
 
 @bp.route('/student', methods=['GET', 'POST'])
 def studentLogin():
@@ -90,16 +106,31 @@ def studentSignup():
     current_url_path = request.path
     if request.method == "POST":
         if form.validate_on_submit():
-            str_user_id = createUser(form, 3)
-            student_to_create = Student(StudentId = str_user_id,
-                                        SkillsInterest = form.skills_interest.data)
-            db.session.add(student_to_create)
-            db.session.commit()
-            return redirect(url_for('auth.studentLogin'))
+            data={"Email": form.email.data,
+                "Password": form.password1.data,
+                "FirstName": form.first_name.data,
+                "MiddleName": form.middle_name.data,
+                "LastName": form.last_name.data,
+                "ContactDetails": form.contact_details.data,
+                "Birthdate": form.birthdate.data.strftime("%Y-%m-%d"),
+                "Gender": form.gender.data,
+                "Address": form.address.data,
+                "SkillsInterest": form.skills_interest.data}
+            response = requests.post(api.url_for(StudentRegisterApi, _external=True), json=data, headers=headers)
+            if response.status_code == 200:
+                response_data = response.json()
+                flash(response_data.get('success'))
+                return redirect(url_for('auth.studentLogin'))
+            else:
+                try:
+                    response_data = response.json()
+                    flash(response_data.get('error'))
+                except json.JSONDecodeError:
+                    print(response)
         if form.errors != {}: # If there are errors from the validations
             for err_msg in form.errors.values():
                 flash(err_msg)
-    return render_template('auth/student/student_signup.html', form=form, current_url_path=current_url_path)
+    return render_template('auth/student_signup.html', form=form, current_url_path=current_url_path)
 
 @bp.route('/logout')
 def logout():

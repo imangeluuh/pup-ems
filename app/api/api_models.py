@@ -19,6 +19,19 @@ login_model = api.model("Login", {
     "RoleId": fields.Integer
 })
 
+register_input_model = api.model("RegisterInput", {
+    "Email": fields.String,
+    "Password": fields.String,
+    "FirstName": fields.String,
+    "MiddleName": fields.String,
+    "LastName": fields.String,
+    "ContactDetails": fields.String,
+    "Birthdate": fields.Date,
+    "Gender": fields.String,
+    "Address": fields.String,
+    "SkillsInterest": fields.String,
+})
+
 admin_model = api.model("Admin", {
     "AdminId": fields.String,
     "FirstName": fields.String,
