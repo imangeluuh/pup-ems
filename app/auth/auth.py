@@ -1,14 +1,16 @@
 from app.auth import bp
-from flask import render_template, url_for, request, redirect, flash
+from flask import render_template, url_for, request, redirect, flash, session
 from .forms import BeneficiaryRegisterForm, StudentRegisterForm, LoginForm
 from ..models import Login, Beneficiary, User, Student
-from app import db
+from app import db, api
+from ..Api.resources import BeneficiaryLoginApi, StudentLoginApi
 from flask_login import login_user, logout_user, current_user
 from datetime import datetime, timedelta
 import uuid
-import requests
+import requests, json
 
 lockout_duration = timedelta(minutes=1)
+headers = {"Content-Type": "application/json"}
 
 @bp.route('/beneficiary', methods=['GET', 'POST'])
 # @limiter.limit('5 per day')
@@ -18,20 +20,24 @@ def beneficiaryLogin():
     current_url_path = request.path
     if current_user.is_authenticated:
         return redirect(url_for('home'))  # Temp route
-    
     form = LoginForm()
     if request.method == "POST":
         if form.validate_on_submit():
-            attempted_user = Login.query.filter_by(Email=form.email.data).first()
-            if attempted_user and attempted_user.RoleId == 2:
-                if attempted_user.check_password_correction(attempted_password=form.password.data):
-                    login_user(attempted_user, remember=True)
-                    return redirect(url_for('home')) # temp route
-                else:
-                    flash('The password you\'ve entered is incorrect.')
+            data={'Email': form.email.data,
+                'Password': form.password.data}
+            response = requests.post(api.url_for(BeneficiaryLoginApi, _external=True), json=data, headers=headers)
+            if response.status_code == 200:
+                response_data = response.json()
+                session['access_token'] = response_data.get('access_token')
+                user = Login.query.filter_by(Email=data['Email']).first()
+                login_user(user, remember=True)
+                return redirect(url_for('home'))
             else:
-                flash('The email you entered isn\'t connected to an account.')
-
+                try:
+                    response_data = response.json()
+                    flash(response_data.get('error'))
+                except json.JSONDecodeError:
+                    print(response)
     return render_template('auth/login.html', form=form, current_url_path=current_url_path)
 
 @bp.route('/beneficiary/signup', methods=['GET', 'POST'])
@@ -53,25 +59,28 @@ def beneficiarySignup():
 
 @bp.route('/student', methods=['GET', 'POST'])
 def studentLogin():
-    current_url_path = request.path
     # Prevents logged in users from accessing the page
+    current_url_path = request.path
     if current_user.is_authenticated:
         return redirect(url_for('home'))  # Temp route
-    
     form = LoginForm()
-
     if request.method == "POST":
         if form.validate_on_submit():
-            attempted_user = Login.query.filter_by(Email=form.email.data).first()
-            if attempted_user and attempted_user.RoleId == 3:
-                if attempted_user.check_password_correction(attempted_password=form.password.data):
-                    login_user(attempted_user, remember=True)
-                    return redirect(url_for('home')) # temp route
-                else:
-                    flash('The password you\'ve entered is incorrect.')
+            data={'Email': form.email.data,
+                'Password': form.password.data}
+            response = requests.post(api.url_for(StudentLoginApi, _external=True), json=data, headers=headers)
+            if response.status_code == 200:
+                response_data = response.json()
+                session['access_token'] = response_data.get('access_token')
+                user = Login.query.filter_by(Email=data['Email']).first()
+                login_user(user, remember=True)
+                return redirect(url_for('home'))
             else:
-                flash('The email you entered isn\'t connected to an account.')
-
+                try:
+                    response_data = response.json()
+                    flash(response_data.get('error'))
+                except json.JSONDecodeError:
+                    print(response)
     return render_template('auth/login.html', form=form, current_url_path=current_url_path)
 
 @bp.route('/student/signup', methods=['GET', 'POST'])

@@ -19,21 +19,24 @@ app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://pup:pup123@localhost:5432/
 app.config['SECRET_KEY'] = '95cb72ceb2b65d63f4195f84'
 app.config['REMEMBER_COOKIE_DURATION'] = timedelta(days=1)
 # app.config['SESSION_PROTECTION'] = 'strong' # not sure
-api = Api(app, doc='/docs')
 jwt = JWTManager(app)
+CORS(app)
 csrf = CSRFProtect(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 ckeditor = CKEditor(app)
-CORS(app)
 # route where user will be redirected if not logged in
 # login_manager.login_view = [enter route here]
 # limiter = Limiter(get_remote_address, app=app, default_limits=['5 per day'])
 
 from app import views, models
-# from app.api import bp as api_bp
+from .views import home
+# Register the root route from views.py
+app.add_url_rule("/", view_func=home)
+
+api = Api(app, doc='/docs', decorators=[csrf.exempt])
 from .Api.resources import ns
 api.add_namespace(ns)
 

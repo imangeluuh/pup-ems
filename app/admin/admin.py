@@ -1,11 +1,13 @@
 from app.admin import bp
-from flask import render_template, url_for, request, redirect, flash
+from flask import render_template, url_for, request, redirect, flash, session
+from flask_login import current_user, login_user, login_required, logout_user
 from .forms import LoginForm, ProgramForm, ProjectForm, AnnouncementForm, ActivityForm
 from ..models import Login, ExtensionProgram, Beneficiary, Project, Program, Student, Announcement, Registration, Activity
-from app import db
-from flask_login import current_user, login_user, login_required, logout_user
-import string
+from ..Api.resources import AdminLoginApi
+from app import db, api
+import string, requests
 
+headers = {"Content-Type": "application/json"}
 
 @bp.route('/', methods=['GET', 'POST'])
 def adminLogin():
@@ -14,18 +16,21 @@ def adminLogin():
     # Prevents logged in users from accessing the page
     if current_user.is_authenticated:
         return redirect(url_for('admin.programs'))  # Temp route
-
+    
     if request.method == "POST":
         if form.validate_on_submit():
-            attempted_user = Login.query.filter_by(Email=form.email.data).first()
-            if attempted_user and attempted_user.RoleId == 1: 
-                if attempted_user.check_password_correction(attempted_password=form.password.data):
-                    login_user(attempted_user, remember=True)
-                    return redirect(url_for('admin.programs')) # temp route
-                else:
-                    flash('The password you\'ve entered is incorrect.')
+            data={'Email': form.email.data,
+                'Password': form.password.data}
+            response = requests.post(api.url_for(AdminLoginApi, _external=True), json=data, headers=headers)
+            if response.status_code == 200:
+                response_data = response.json()
+                session['access_token'] = response_data.get('access_token')
+                user = Login.query.filter_by(Email=data['Email']).first()
+                login_user(user, remember=True)
+                return redirect(url_for('admin.programs')) # Temp route
             else:
-                flash('The email you entered isn\'t connected to an account.')
+                response_data = response.json()
+                flash(response_data.get('error'))
     return render_template('admin/admin_login.html', form=form)
 
 @bp.route('/logout')
