@@ -2,10 +2,11 @@ from app.auth import bp
 from flask import render_template, url_for, request, redirect, flash
 from .forms import BeneficiaryRegisterForm, StudentRegisterForm, LoginForm
 from ..models import Login, Beneficiary, User, Student
-import uuid
 from app import db
 from flask_login import login_user, logout_user, current_user
 from datetime import datetime, timedelta
+import uuid
+import requests
 
 lockout_duration = timedelta(minutes=1)
 
@@ -19,7 +20,6 @@ def beneficiaryLogin():
         return redirect(url_for('home'))  # Temp route
     
     form = LoginForm()
-
     if request.method == "POST":
         if form.validate_on_submit():
             attempted_user = Login.query.filter_by(Email=form.email.data).first()
@@ -32,7 +32,7 @@ def beneficiaryLogin():
             else:
                 flash('The email you entered isn\'t connected to an account.')
 
-    return render_template('auth/beneficiary/beneficiary_login.html', form=form, current_url_path=current_url_path)
+    return render_template('auth/login.html', form=form, current_url_path=current_url_path)
 
 @bp.route('/beneficiary/signup', methods=['GET', 'POST'])
 def beneficiarySignup():
@@ -72,7 +72,7 @@ def studentLogin():
             else:
                 flash('The email you entered isn\'t connected to an account.')
 
-    return render_template('auth/student/student_login.html', form=form, current_url_path=current_url_path)
+    return render_template('auth/login.html', form=form, current_url_path=current_url_path)
 
 @bp.route('/student/signup', methods=['GET', 'POST'])
 def studentSignup():

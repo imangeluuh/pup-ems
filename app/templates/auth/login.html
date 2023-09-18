@@ -16,7 +16,7 @@
                 <div class="flex justify-center">
                     <img src="{{ url_for('static', filename='images/PUPLogo.png')}}" alt="" class="mb-4" width="100rem">
                 </div>
-                <header><strong>PUPQC-ESIS</strong> Beneficiary Module</header>
+                <header><strong>PUPQC-ESIS</strong> {{ 'Beneficiary' if current_url_path == url_for('auth.beneficiaryLogin') else 'Student' }} Module</header>
                 {% with messages = get_flashed_messages() %}
                     {% if messages %}
                         {% for message in messages %}
@@ -32,25 +32,27 @@
                         {% endfor %}
                     {% endif %}
                 {% endwith %}
-                <form action="" method="post">
+                <form id="loginForm" method="POST">
                     {{ form.hidden_tag() }}
                     <div class="input-field">
-                        {{ form.email(class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0") }}
+                        {{ form.email(id="email", class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0") }}
                         {{ form.email.label(class="label") }}
                     </div> 
                     <div class="input-field">
-                        {{ form.password(class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0") }}
+                        {{ form.password(id="password", class="input focus:ring-0 focus:ring-offset-0 bg-transparent p-0") }}
                         {{ form.password.label(class="label") }}
                     </div> 
                     <div class="input-field">
                         {{ form.submit(class="submit") }}
                     </div> 
                     <div class="signin pb-3">
-                        <span>Don't have an account yet? <a href="{{ url_for('auth.beneficiarySignup') }}">Register here</a></span>
+                        <span>Don't have an account yet? <a href="{{ url_for('auth.beneficiarySignup') if current_url_path == url_for('auth.beneficiaryLogin') else url_for('auth.studentSignup') }}">Register here</a></span>
                     </div>
                 </form>
             </div>  
         </div>
     </div>
 </div>
+
 {% endblock %}
+
