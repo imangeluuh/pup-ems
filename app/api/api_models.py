@@ -50,3 +50,40 @@ user_model = api.model("User", {
     "Address": fields.String,
     # "UserLogin": fields.Nested(login_model)
 })
+
+agenda_model = api.model("Agenda", {
+    "AgendaId": fields.Integer,
+    "AgendaName": fields.String,
+})
+
+registration_model = api.model("Registration", {
+    "RegistrationId": fields.Integer,
+    "RegistrationDate": fields.Date,
+    "ProjectId": fields.Integer,
+    "User": fields.Nested(user_model)
+})
+
+extension_project_model = api.model("ExtensionProject", {
+    "ProjectId": fields.Integer,
+    "Name": fields.String,
+    "LeadProponent": fields.String,
+    "ProjectType": fields.String,
+    "Rationale": fields.String,
+    "Objectives": fields.String,
+    "StartDate": fields.Date,
+    "NumberOfBeneficiaries": fields.Integer,
+    "BeneficiariesClassifications": fields.String,
+    "ProjectScope": fields.String,
+    "ExtensionProgramId": fields.Integer,
+    "Registration": fields.List(fields.Nested(registration_model))
+})
+
+extension_program_model = api.model("ExtensionProgram", {
+    "ExtensionProgramId": fields.Integer,
+    "Name": fields.String,
+    "DateApproved": fields.Date,
+    "ImplementationDate": fields.Date,
+    "Status": fields.String,
+    "Agenda": fields.Nested(agenda_model),
+    "Project": fields.List(fields.Nested(extension_project_model))
+})

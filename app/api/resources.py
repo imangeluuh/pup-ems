@@ -96,6 +96,18 @@ class UsersListApi(Resource):
     def get(self):
         return User.query.all()
     
+@ns.route('/extension-programs')
+class ExtensionProgramListApi(Resource):
+    @ns.marshal_list_with(extension_program_model)
+    def get(self):
+        return ExtensionProgram.query.all()
+    
+@ns.route('/extension-projects')
+class ExtensionProjectListApi(Resource):
+    @ns.marshal_list_with(extension_project_model)
+    def get(self):
+        return Project.query.all()
+    
 
 def createUser(role):
     str_login_uuid = uuid.uuid4()
