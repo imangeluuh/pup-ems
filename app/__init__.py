@@ -12,12 +12,20 @@ from flask_ckeditor import CKEditor
 from flask_restx import Api
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
+from flask_mail import Mail
 
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://pup:pup123@localhost:5432/pup-ems"
 app.config['SECRET_KEY'] = '95cb72ceb2b65d63f4195f84'
 app.config['REMEMBER_COOKIE_DURATION'] = timedelta(days=1)
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_DEFAULT_SENDER'] = ('ESIS', 'test098sample@gmail.com')
+app.config['MAIL_USERNAME'] = 'test098sample@gmail.com'
+app.config['MAIL_PASSWORD'] = 'rhhnhvcdlyizaegu'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
 # app.config['SESSION_PROTECTION'] = 'strong' # not sure
 jwt = JWTManager(app)
 CORS(app)
@@ -27,6 +35,7 @@ migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 ckeditor = CKEditor(app)
+mail = Mail(app)
 # route where user will be redirected if not logged in
 # login_manager.login_view = [enter route here]
 # limiter = Limiter(get_remote_address, app=app, default_limits=['5 per day'])

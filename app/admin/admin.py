@@ -2,10 +2,11 @@ from app.admin import bp
 from flask import render_template, url_for, request, redirect, flash, session
 from flask_login import current_user, login_user, login_required, logout_user
 from .forms import LoginForm, ProgramForm, ProjectForm, AnnouncementForm, ActivityForm
-from ..models import Login, ExtensionProgram, Beneficiary, Project, Program, Student, Announcement, Registration, Activity
+from ..models import Login, ExtensionProgram, Beneficiary, Project, Program, Student, Announcement, Registration, Activity, User
 from ..Api.resources import AdminLoginApi
 from ..decorators.decorators import login_required
-from app import db, api
+from app import db, api, app
+from ..email import sendEmail
 import string, requests
 
 headers = {"Content-Type": "application/json"}
@@ -335,7 +336,33 @@ def createAnnouncement():
                                                 Slug=generateSlug(form.title.data),
                                                 ProjectId=form.project.data)
             db.session.add(announcement_to_create)
+            print(form.recipient.data, 'lenght=', len(form.recipient.data))
             db.session.commit()
+            if 'Email' in form.medium.data and form.recipient.data is not [] and is_live == 1:
+                if len(form.recipient.data) == 2:
+                    emails = (
+                        User.query
+                        .join(Registration)
+                        .join(Project)
+                        .join(Login, User.LoginId == Login.LoginId)
+                        .filter(Project.ProjectId == 10)
+                        .with_entities(Login.Email)
+                        .all()
+                    )
+                else:
+                    emails = (
+                        User.query
+                        .join(Registration)
+                        .join(Project)
+                        .join(Login, User.LoginId == Login.LoginId)
+                        .filter(Project.ProjectId == 10, Login.RoleId == form.recipient.data[0])
+                        .with_entities(Login.Email)
+                        .all()
+                    )
+                # Extract the emails from the query result
+                list_email = [email for (email,) in emails]
+                sendEmail(form.title.data, list_email, form.content.data, form.content.data)
+                flash('Announcement is successfully sent to email', category='success')
             flash('Announcement is successfully inserted.', category='success')
             return redirect(url_for('admin.announcement'))
         if form.errors != {}: # If there are errors from the validations
@@ -434,3 +461,9 @@ def fetch_activities(selected_project_id=None):
         query = query.filter(Activity.ProjectId == selected_project_id)
 
     return query.with_entities(Activity.ActivityName, Activity.Date, Project.Name).join(Project).all()
+
+
+@bp.route('/email/test')
+def emailTest():
+    sendEmail('test again', ['imangeluuh1@gmail.com'], 'where does this go', '<h1>testing again</h1>')
+    return redirect(url_for('admin.programs'))
