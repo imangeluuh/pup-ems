@@ -12,6 +12,11 @@ import requests, json
 lockout_duration = timedelta(minutes=1)
 headers = {"Content-Type": "application/json"}
 
+@bp.route('/')
+def login():
+    current_url_path = request.path
+    return render_template('auth/login.html', current_url_path=current_url_path)
+
 @bp.route('/beneficiary', methods=['GET', 'POST'])
 # @limiter.limit('5 per day')
 # @limiter.limit("3 per day", key_func=lambda: request.method == "POST")

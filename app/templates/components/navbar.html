@@ -5,6 +5,7 @@
         <span class="self-center text-2xl font-semibold whitespace-nowrap">PUPQC-ESIS</span>
     </a>
     <div class="flex items-center md:order-2">
+        {% if current_user.is_authenticated %}
         <button type="button" class="flex mr-3 text-sm rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
             <span class="sr-only">Open user menu</span>
             <svg class="w-8 h-8 rounded-full" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 2a2 2 0 0 0-2 2a2 2 0 0 0 2 2a2 2 0 0 0 2-2a2 2 0 0 0-2-2m0 7c2.67 0 8 1.33 8 4v3H4v-3c0-2.67 5.33-4 8-4m0 1.9c-2.97 0-6.1 1.46-6.1 2.1v1.1h12.2V17c0-.64-3.13-2.1-6.1-2.1Z"/></svg>
@@ -12,7 +13,6 @@
         <!-- Dropdown menu -->
         <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow" id="user-dropdown">
             <ul class="py-2" aria-labelledby="user-menu-button">
-                {% if current_user.is_authenticated %}
                 <li>
                     <a href="#" class="block px-4 py-2 text-sm">Profile</a>
                 </li>
@@ -22,14 +22,6 @@
                 <li>
                     <a href="{{ url_for('auth.logout') }}" class="block px-4 py-2 text-sm">Sign out</a>
                 </li>
-                {% else %}
-                <li>
-                    <a href="{{ url_for('auth.beneficiaryLogin') }}" class="block px-4 py-2 text-sm">Beneficiary Login</a>
-                </li>
-                <li>
-                    <a href="{{ url_for('auth.studentLogin') }}" class="block px-4 py-2 text-sm">Student Login</a>
-                </li>
-                {% endif %}
             </ul>
         </div>
         <button data-collapse-toggle="navbar-user" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200" aria-controls="navbar-user" aria-expanded="false">
@@ -38,6 +30,9 @@
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
             </svg>
         </button>
+        {% else %}
+        <a href="{{ url_for('auth.login') }}" class="font-semibold">Login</a>
+        {% endif %}
     </div>
     {% if current_user.is_authenticated %}
     <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-user">
