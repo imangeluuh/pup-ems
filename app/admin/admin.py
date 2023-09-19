@@ -4,6 +4,7 @@ from flask_login import current_user, login_user, login_required, logout_user
 from .forms import LoginForm, ProgramForm, ProjectForm, AnnouncementForm, ActivityForm
 from ..models import Login, ExtensionProgram, Beneficiary, Project, Program, Student, Announcement, Registration, Activity
 from ..Api.resources import AdminLoginApi
+from ..decorators.decorators import login_required
 from app import db, api
 import string, requests
 
@@ -39,12 +40,12 @@ def logout():
     return redirect(url_for('admin.adminLogin'))
 
 @bp.route('/home')
-@login_required
+@login_required(role=["Admin"])
 def home():
     pass
 
 @bp.route('/programs')
-@login_required
+@login_required(role=["Admin"])
 def programs():
     form = ProgramForm()
     project_form = ProjectForm()
@@ -55,7 +56,7 @@ def programs():
 
 
 @bp.route('/extension-program/insert', methods=['POST'])
-@login_required
+@login_required(role=["Admin"])
 def insertExtensionProgram():
     form = ProgramForm()
     if request.method == "POST":
@@ -77,7 +78,7 @@ def insertExtensionProgram():
 
 
 @bp.route('/update/extension-program/<int:id>', methods=['POST'])
-@login_required
+@login_required(role=["Admin"])
 def updateExtensionProgram(id):
     form = ProgramForm()
     extension_program = ExtensionProgram.query.get_or_404(id)
@@ -105,7 +106,7 @@ def updateExtensionProgram(id):
 
 
 @bp.route('/delete/extension-program/<int:id>', methods=['POST'])
-@login_required
+@login_required(role=["Admin"])
 def deleteExtensionProgram(id):
     extension_program = ExtensionProgram.query.get_or_404(id)
     try:
@@ -119,7 +120,7 @@ def deleteExtensionProgram(id):
 
 
 @bp.route('/extension-program/project/insert', methods=['POST'])
-@login_required
+@login_required(role=["Admin"])
 def insertProject():
     form = ProjectForm()
     if request.method == "POST":
@@ -145,7 +146,7 @@ def insertProject():
 
 
 @bp.route('/extension-program/project/<int:id>', methods=['GET', 'POST'])
-@login_required
+@login_required(role=["Admin"])
 def viewProject(id):
     form = ProjectForm()
     activity_form = ActivityForm()
@@ -193,7 +194,7 @@ def viewProject(id):
 
 
 @bp.route('/update/extension-program/project/<int:id>', methods=['POST'])
-@login_required
+@login_required(role=["Admin"])
 def updateProject(id):
     form = ProjectForm()
     extension_project = Project.query.get_or_404(id)
@@ -225,7 +226,7 @@ def updateProject(id):
 
 
 @bp.route('/delete/extension-program/project/<int:id>', methods=['POST'])
-@login_required
+@login_required(role=["Admin"])
 def deleteProject(id):
     project = Project.query.get_or_404(id)
     try:
@@ -240,7 +241,7 @@ def deleteProject(id):
 
 
 @bp.route('<int:id>/activity/create', methods=['POST'])
-@login_required
+@login_required(role=["Admin"])
 def insertActivity(id):
     activity_form = ActivityForm()
     if activity_form.validate_on_submit():
@@ -261,7 +262,7 @@ def insertActivity(id):
 
 
 @bp.route('/beneficiaries')
-@login_required
+@login_required(role=["Admin"])
 def beneficiaries():
     users = Beneficiary.query.all()
     current_url_path = request.path
@@ -269,7 +270,7 @@ def beneficiaries():
 
 
 @bp.route('/students')
-@login_required
+@login_required(role=["Admin"])
 def students():
     users = Student.query.all()
     current_url_path = request.path
@@ -277,7 +278,7 @@ def students():
 
 
 @bp.route('/calendar')
-@login_required
+@login_required(role=["Admin"])
 def calendar():
     projects = Project.query.all()
     selected_project_id = request.args.get('project_id', None)
@@ -289,7 +290,7 @@ def calendar():
 
 @bp.route('/announcement/<string:project>')
 @bp.route('/announcement', defaults={'project': None})
-@login_required
+@login_required(role=["Admin"])
 def announcement(project):
     bool_is_published_empty = True
     bool_is_draft_empty = True
@@ -314,7 +315,7 @@ def announcement(project):
 
 
 @bp.route('/announcement/create', methods=['GET', 'POST'])
-@login_required
+@login_required(role=["Admin"])
 def createAnnouncement():
     form = AnnouncementForm()
     if request.method == "POST":
@@ -345,7 +346,7 @@ def createAnnouncement():
 
 
 @bp.route('/announcement/update/<int:id>', methods=['GET', 'POST'])
-@login_required
+@login_required(role=["Admin"])
 def updateAnnouncement(id):
     form = AnnouncementForm()
     announcement = Announcement.query.get_or_404(id)
@@ -384,7 +385,7 @@ def updateAnnouncement(id):
 
 
 @bp.route('/delete/announcement/<int:id>', methods=['POST'])
-@login_required
+@login_required(role=["Admin"])
 def deleteAnnouncement(id):
     announcement = Announcement.query.get_or_404(id)
     try:
@@ -398,7 +399,7 @@ def deleteAnnouncement(id):
 
 
 @bp.route('/unpublish/announcement/<int:id>', methods=['POST'])
-@login_required
+@login_required(role=["Admin"])
 def unpublishAnnouncement(id):
     announcement = Announcement.query.get_or_404(id)
     announcement.IsLive = 0
@@ -412,7 +413,7 @@ def unpublishAnnouncement(id):
 
 
 @bp.route('/view/announcement/<int:id>/<string:slug>')
-@login_required
+@login_required(role=["Admin"])
 def viewAnnouncement(id, slug):
     announcement = Announcement.query.filter_by(AnnouncementId=id, Slug=slug).first_or_404()
     return render_template('admin/view_announcement.html', announcement=announcement)

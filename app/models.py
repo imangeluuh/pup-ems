@@ -64,6 +64,9 @@ class Login(db.Model, UserMixin):
 
     def get_id(self):
         return (self.LoginId)
+    
+    def get_role(self):
+        return(self.Role.RoleName)
 
 
 class Admin(db.Model):
@@ -88,37 +91,6 @@ class User(PaginatedAPIMixin, db.Model):
     Address = db.Column(db.String(255), nullable=False)
     LoginId = db.Column(db.String(36), db.ForeignKey('Login.LoginId', ondelete='CASCADE'), nullable=False)
     Registration = db.relationship('Registration', backref='User', cascade='all, delete-orphan', passive_deletes=True)
-
-
-    def to_dict(self, include_email=False):
-        data = {
-            'LoginId': self.UserId,
-            'Email': self.UserLogin.Email,
-            'Status': self.UserLogin.Status,
-            'RoleId': self.UserLogin.RoleId,
-            'FistName': self.FirstName,
-            'MiddleName': self.MiddleName,
-            'LastName': self.LastName,
-            'ContactDetails': self.ContactDetails,
-            'Birthdate': self.Birthdate,
-            'Gender': self.Gender,
-            'Address': self.Address,
-            '_links': {
-                'self': url_for('api.get_user', id=self.UserId),
-            }
-        }
-        if include_email:
-            data['Email'] = self.UserLogin.Email
-        return data
-    
-
-    def from_dict(self, data, new_user=False):
-        setattr(Login, Login.LoginId, uuid.uuid4())
-        for field in ['FirstName', 'MiddleName', 'LastName', 'ContactDetails', 'Birthdate', 'Gender', 'Address']:
-            if field in data:
-                setattr(self, field, data[field])
-        if new_user and 'Password' in data:
-            self.set_password(data['Password'])
 
 
 class Beneficiary(db.Model):
