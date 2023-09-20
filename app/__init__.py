@@ -18,14 +18,7 @@ app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://pup:pup123@localhost:5432/pup-ems"
 app.config['SECRET_KEY'] = '95cb72ceb2b65d63f4195f84'
-app.config['REMEMBER_COOKIE_DURATION'] = timedelta(days=1)
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 465
-app.config['MAIL_DEFAULT_SENDER'] = ('ESIS', 'test098sample@gmail.com')
-app.config['MAIL_USERNAME'] = 'test098sample@gmail.com'
-app.config['MAIL_PASSWORD'] = 'rhhnhvcdlyizaegu'
-app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USE_SSL'] = True
+app.config['REMEMBER_COOKIE_DURATION'] = timedelta(days=1)
 # app.config['SESSION_PROTECTION'] = 'strong' # not sure
 jwt = JWTManager(app)
 CORS(app)
