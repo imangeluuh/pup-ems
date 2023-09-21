@@ -33,7 +33,7 @@ mail = Mail(app)
 # login_manager.login_view = [enter route here]
 # limiter = Limiter(get_remote_address, app=app, default_limits=['5 per day'])
 
-from app import views, models
+from app import views, models, errors
 from .views import home
 # Register the root route from views.py
 app.add_url_rule("/", view_func=home)

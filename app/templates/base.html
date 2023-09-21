@@ -22,6 +22,10 @@
         {% if current_user.is_authenticated or not (current_url_path in [url_for('auth.beneficiaryLogin'), url_for('auth.beneficiarySignup'), url_for('auth.studentLogin'), url_for('auth.studentSignup'), url_for('auth.login')]) %}
             {% include 'components/footer.html'%}
         {% endif %}
+
         <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
+        {% block script %}
+        
+        {% endblock %}
     </body>
 </html>
