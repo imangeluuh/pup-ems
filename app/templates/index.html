@@ -81,6 +81,25 @@
         </div>
     </div>
     {% endif %}
+    <!-- events -->
+    <div class="mx-64 mt-8">
+        <h2 class="font-semibold text-3xl text-gray-600 mb-4">Upcoming Events</h2>
+        <hr class="h-1">
+        <div class="grid grid-cols-3 mt-4">
+            <div class="col-span-2">
+                {% include 'admin/components/calendar.html' %}
+            </div>
+            <div class="col-span-1">
+                {% if events_list %}
+                    {% for event in events_list %}
+                    {% include 'components/_event.html' %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <!-- /events -->
+
 
 
     <script>

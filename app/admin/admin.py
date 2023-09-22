@@ -37,8 +37,8 @@ def adminLogin():
 
 @bp.route('/logout')
 def logout():
-    logout_user()
     session.clear()
+    logout_user()
     return redirect(url_for('admin.adminLogin'))
 
 @bp.route('/home')
