@@ -38,6 +38,7 @@ def adminLogin():
 @bp.route('/logout')
 def logout():
     logout_user()
+    session.clear()
     return redirect(url_for('admin.adminLogin'))
 
 @bp.route('/home')
@@ -325,6 +326,9 @@ def createAnnouncement():
         if form.validate_on_submit():
             if 'publish' in request.form:
                 if not all(request.form.values()):
+                    # Save the input to session
+                    session['announcement_title']= form.title.data
+                    session['announcement_body'] = form.content.data
                     flash('Please fill out all the fields before publishing.')
                     return redirect(url_for('admin.createAnnouncement'))
                 is_live = 1
@@ -338,8 +342,13 @@ def createAnnouncement():
                                                 Slug=generateSlug(form.title.data),
                                                 ProjectId=form.project.data)
             db.session.add(announcement_to_create)
-            print(form.recipient.data, 'lenght=', len(form.recipient.data))
             db.session.commit()
+            # If announcement session is not empty, clear the session after saving to database
+            if 'announcement_title' in session:
+                session.pop('announcement_title', None)
+            if 'announcement_body' in session:
+                session.pop('announcement_body', None)
+            # If Email checkbox is checked, send the announcement to desired recipients
             if 'Email' in form.medium.data and form.recipient.data is not [] and is_live == 1:
                 if len(form.recipient.data) == 2:
                     emails = (
@@ -370,7 +379,10 @@ def createAnnouncement():
         if form.errors != {}: # If there are errors from the validations
             for err_msg in form.errors.values():
                 flash(err_msg, category='error')
-
+    if 'announcement_title' in session:
+        form.title.data = session['announcement_title']
+    if 'announcement_body' in session:
+        form.content.data = session['announcement_body']
     return render_template('admin/create_announcement.html', form=form)
 
 
