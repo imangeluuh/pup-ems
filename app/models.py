@@ -41,7 +41,7 @@ class Login(db.Model, UserMixin):
     __tablename__ = 'Login'
 
     LoginId = db.Column(db.String(36), primary_key=True)
-    Email = db.Column(db.String(100), nullable=False, unique=True)
+    Email = db.Column(db.String(100), nullable=False, index=True, unique=True)
     Password = db.Column(db.String(60), nullable=False)
     Status = db.Column(db.String(20), default='Active')
     RoleId = db.Column(db.Integer, db.ForeignKey('Role.RoleId', ondelete='CASCADE'), nullable=False)
@@ -161,7 +161,7 @@ class Activity(db.Model):
 
     ActivityId = db.Column(db.Integer, primary_key=True)
     ActivityName = db.Column(db.String(255), nullable=False)
-    Date = db.Column(db.Date, nullable=False)
+    Date = db.Column(db.Date, index=True, nullable=False)
     StartTime = db.Column(db.Time, nullable=False)
     EndTime = db.Column(db.Time, nullable=False)
     Description = db.Column(db.String(255), nullable=False)
@@ -176,10 +176,10 @@ class Announcement(db.Model):
     Title = db.Column(db.String(255), nullable=False)
     Content= db.Column(db.Text)
     CreatorId = db.Column(db.String(36), db.ForeignKey('Admin.AdminId', ondelete='CASCADE'), nullable=False)
-    IsLive = db.Column(db.Boolean, nullable=False)
+    IsLive = db.Column(db.Boolean, index=True, nullable=False)
     Slug = db.Column(db.String(255), nullable=False)
-    Created = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    Updated = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    Created = db.Column(db.DateTime, default=datetime.utcnow, index=True, nullable=False)
+    Updated = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, index=True, nullable=False)
     ProjectId = db.Column(db.Integer, db.ForeignKey('Project.ProjectId', ondelete='CASCADE'), nullable=False)
     Project = db.relationship('Project', backref='Announcement')
     Creator = db.relationship('Admin', backref='Announcement')

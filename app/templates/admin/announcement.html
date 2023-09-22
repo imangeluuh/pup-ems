@@ -33,8 +33,8 @@
             </div>
             <div id="myTabContent" class="p-4">
                 <div class="hidden" id="published" role="tabpanel" aria-labelledby="published-tab">
-                    {% if not bool_is_published_empty %}
-                        {% for announcement in announcements %}
+                    {% if published_announcements %}
+                        {% for announcement in published_announcements %}
                             {% if announcement.IsLive == 1 %}
                             <p class="font-medium mb-2">Published at {{ announcement.Created.strftime("%m/%d/%Y, %H:%M:%S")}}</p>
                             <div class="p-4 mb-4 rounded-2xl bg-gray-200 flex justify-between">
@@ -77,13 +77,19 @@
                             </div>
                             {% endif %}
                         {% endfor %}
+                        {% if published_prev_url %}
+                        <a href="{{ published_prev_url }}" class="pr-4">Newer announcements</a>
+                        {% endif %}
+                        {% if published_next_url %}
+                        <a href="{{ published_next_url }}">Older announcements</a>
+                        {% endif %}
                     {% else %}
                         <p class="text-gray-500 text-xl text-center">No Published Announcement</p>
                     {% endif %}
                 </div>
                 <div class="hidden" id="draft" role="tabpanel" aria-labelledby="draft-tab">
-                    {% if not bool_is_draft_empty %}
-                        {% for announcement in announcements %}
+                    {% if draft_announcements %}
+                        {% for announcement in draft_announcements %}
                             {% if announcement.IsLive == 0 %}
                             <p class="font-medium mb-2">Last Updated at {{ announcement.Updated.strftime("%m/%d/%Y, %H:%M:%S")}}</p>
                             <div class="p-4 mb-4 rounded-2xl bg-gray-200 flex justify-between">
@@ -122,6 +128,12 @@
                             {% include 'admin/delete_announcement.html' %}
                             {% endif %}
                         {% endfor %}
+                        {% if draft_prev_url %}
+                        <a href="{{ draft_prev_url }}" class="pr-4">Newer announcements</a>
+                        {% endif %}
+                        {% if draft_next_url %}
+                        <a href="{{ draft_next_url }}">Older announcements</a>
+                        {% endif %}
                     {% else %}
                         <p class="text-gray-500 text-xl text-center">No Draft Announcement</p>
                     {% endif %}

@@ -293,26 +293,28 @@ def calendar():
 @bp.route('/announcement', defaults={'project': None})
 @login_required(role=["Admin"])
 def announcement(project):
-    bool_is_published_empty = True
-    bool_is_draft_empty = True
+    page = request.args.get('page', 1, type=int)
     if project is not None:
-        announcements = Announcement.query.join(Project).filter(Project.Name == project).all()
+        project_id = Project.query.filter_by(Name=project).first()
+        published_announcements = Announcement.query.filter_by(IsLive=True, ProjectId=project_id.ProjectId).paginate(page=page, per_page=3, error_out=False)
+        draft_announcements = Announcement.query.filter_by(IsLive=False, ProjectId=project_id.ProjectId).paginate(page=page, per_page=3, error_out=False)
     else:
-        announcements = Announcement.query.all()
-
-    if announcements:
-        # bool_is_published_empty = announcements.query.filter_by(IsLive = 1).first()
-        # bool_is_draft_empty = announcements.query.filter_by(IsLive = 0).first()
-        for announcement in announcements:
-            if announcement.IsLive == 1:
-                bool_is_published_empty = False
-                break
-        for announcement in announcements:
-            if announcement.IsLive == 0:
-                bool_is_draft_empty = False
-                break
+        published_announcements = Announcement.query.filter_by(IsLive=True).paginate(page=page, per_page=3, error_out=False)
+        draft_announcements = Announcement.query.filter_by(IsLive=False).paginate(page=page, per_page=3, error_out=False)
+    
+    published_next_url = url_for('admin.announcement', page=published_announcements.next_num) \
+        if published_announcements.has_next else None
+    published_prev_url = url_for('admin.announcement', page=published_announcements.prev_num) \
+        if published_announcements.has_prev else None
+    draft_next_url = url_for('admin.announcement', page=draft_announcements.next_num) \
+        if draft_announcements.has_next else None
+    draft_prev_url = url_for('admin.announcement', page=draft_announcements.prev_num) \
+        if draft_announcements.has_prev else None
+    
     programs = Program.query.all()
-    return render_template('admin/announcement.html', programs=programs, announcements=announcements, bool_is_published_empty=bool_is_published_empty, bool_is_draft_empty=bool_is_draft_empty)
+    return render_template('admin/announcement.html', programs=programs, published_announcements=published_announcements.items, \
+                            draft_announcements=draft_announcements, published_next_url=published_next_url, published_prev_url=published_prev_url, \
+                                draft_next_url=draft_next_url, draft_prev_url=draft_prev_url)
 
 
 @bp.route('/announcement/create', methods=['GET', 'POST'])
@@ -461,9 +463,3 @@ def fetch_activities(selected_project_id=None):
         query = query.filter(Activity.ProjectId == selected_project_id)
 
     return query.with_entities(Activity.ActivityName, Activity.Date, Project.Name).join(Project).all()
-
-
-@bp.route('/email/test')
-def emailTest():
-    sendEmail('test again', ['imangeluuh1@gmail.com'], 'where does this go', '<h1>testing again</h1>')
-    return redirect(url_for('admin.programs'))
