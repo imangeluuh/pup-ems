@@ -6,8 +6,10 @@ from ..models import Login, ExtensionProgram, Beneficiary, Project, Program, Stu
 from ..Api.resources import AdminLoginApi
 from ..decorators.decorators import login_required
 from app import db, api, app
+from ..store import uploadImage, purgeImage
 from ..email import sendEmail
-import string, requests
+from werkzeug.utils import secure_filename
+import string, requests, os
 
 headers = {"Content-Type": "application/json"}
 
@@ -63,15 +65,33 @@ def insertExtensionProgram():
     form = ProgramForm()
     if request.method == "POST":
         if form.validate_on_submit():
-            program_to_add = ExtensionProgram(Name = form.program_name.data,
-                                Status = form.status.data, 
-                                AgendaId = form.agenda.data,
-                                ProgramId = form.program.data,
-                                DateApproved = form.date_approved.data,
-                                ImplementationDate = form.implementation_date.data,)
-            db.session.add(program_to_add)
-            db.session.commit()
-            flash('Extension progam is successfully inserted.', category='success')
+            image = form.image.data
+            imagepath = os.path.join(
+                app.config["UPLOAD_FOLDER"], secure_filename(image.filename)
+            )
+            imagename = secure_filename(image.filename)
+            image.save(imagepath)
+            # upload image to imagekit
+            status = uploadImage(imagepath, imagename)
+            if status.error is not None:
+                flash("File Upload Error")
+            else:
+                str_image_url = status.url
+                str_image_file_id = status.file_id
+                program_to_add = ExtensionProgram(Name = form.program_name.data,
+                                    Status = form.status.data, 
+                                    AgendaId = form.agenda.data,
+                                    ProgramId = form.program.data,
+                                    DateApproved = form.date_approved.data,
+                                    ImplementationDate = form.implementation_date.data,
+                                    ImageUrl=str_image_url,
+                                    ImageFileId=str_image_file_id)
+                db.session.add(program_to_add)
+                db.session.commit()
+                flash('Extension progam is successfully inserted.', category='success')
+            # Delete file from local storage
+            if os.path.exists(imagepath):
+                os.remove(imagepath)
             return redirect(url_for('admin.programs'))
         if form.errors != {}: # If there are errors from the validations
             for err_msg in form.errors.values():
@@ -85,6 +105,24 @@ def updateExtensionProgram(id):
     form = ProgramForm()
     extension_program = ExtensionProgram.query.get_or_404(id)
     if form.validate_on_submit():
+        if form.image.data is not None:
+            image = form.image.data
+            imagepath = os.path.join(
+                app.config["UPLOAD_FOLDER"], secure_filename(image.filename)
+            )
+            imagename = secure_filename(image.filename)
+            image.save(imagepath)
+            # upload image to imagekit
+            status = uploadImage(imagepath, imagename)
+            if status.error is not None:
+                flash("File Upload Error")
+                return redirect(url_for('admin.programs'))
+            else:
+                extension_program.ImageUrl = status.url
+                extension_program.ImageFileId = status.file_id
+            # Delete file from local storage
+            if os.path.exists(imagepath):
+                os.remove(imagepath)
         extension_program.Name = form.program_name.data
         extension_program.Status = form.status.data
         extension_program.AgendaId = int(form.agenda.data)
@@ -111,6 +149,8 @@ def updateExtensionProgram(id):
 @login_required(role=["Admin"])
 def deleteExtensionProgram(id):
     extension_program = ExtensionProgram.query.get_or_404(id)
+    if extension_program.ImageFileId is not None:
+        status = purgeImage(extension_program.ImageFileId)
     try:
         db.session.delete(extension_program)
         db.session.commit()

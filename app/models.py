@@ -115,7 +115,9 @@ class ExtensionProgram(db.Model):
     Name = db.Column(db.String(255), nullable=False)
     DateApproved = db.Column(db.Date, nullable=False)
     ImplementationDate = db.Column(db.Date)
-    Status = db.Column(db.String(20), nullable=False)
+    Status = db.Column(db.String(20), nullable=False) # move to Project Model
+    ImageUrl = db.Column(db.Text)
+    ImageFileId = db.Column(db.Text)
     AgendaId = db.Column(db.Integer, db.ForeignKey('Agenda.AgendaId', ondelete='CASCADE'), nullable=False)
     Agenda = db.relationship("Agenda", backref='ExtensionProgram', lazy=True, passive_deletes=True)
     ProgramId = db.Column(db.Integer, db.ForeignKey('Program.ProgramId', ondelete='CASCADE'), nullable=False)
@@ -147,7 +149,7 @@ class Program(db.Model):
 
     ProgramId = db.Column(db.Integer, primary_key=True)
     ProgramName = db.Column(db.String(255), nullable=False)
-    
+
 
 class Agenda(db.Model):
     __tablename__ = 'Agenda'

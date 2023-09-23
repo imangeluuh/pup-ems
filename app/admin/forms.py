@@ -3,6 +3,7 @@ from flask_wtf import FlaskForm
 from flask_ckeditor import CKEditorField
 from wtforms import StringField, PasswordField, SubmitField, DateField, SelectField, TextAreaField, IntegerField, HiddenField, TimeField, SelectMultipleField, widgets
 from wtforms.validators import Length, Email, DataRequired, Optional
+from flask_wtf.file import FileField, FileAllowed
 from ..models import Agenda, Program, Project
 
 class MultiCheckboxField(SelectMultipleField):
@@ -19,6 +20,7 @@ class LoginForm(FlaskForm):
 class ProgramForm(FlaskForm):
     program_name = StringField('Extension Program Name', validators=[DataRequired()])
     agenda = SelectField('Agenda', validators=[DataRequired()])
+    image = FileField('Upload Image', validators=[FileAllowed(['jpg', 'png', 'jpeg', 'gif'])])
     program = SelectField('Program', validators=[DataRequired()])
     date_approved = DateField('Date Approved', validators=[Optional()])
     implementation_date = DateField('Implementation Date', validators=[Optional()])
