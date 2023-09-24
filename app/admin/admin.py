@@ -58,6 +58,11 @@ def programs():
     
     return render_template('admin/program_management.html', programs=programs, projects=projects, form=form, project_form=project_form)
 
+def saveImage(image, imagepath):
+    imagename = secure_filename(image.filename)
+    image.save(imagepath)
+    # Upload image to imagekit
+    return uploadImage(imagepath, imagename)
 
 @bp.route('/extension-program/insert', methods=['POST'])
 @login_required(role=["Admin"])
@@ -65,19 +70,19 @@ def insertExtensionProgram():
     form = ProgramForm()
     if request.method == "POST":
         if form.validate_on_submit():
-            image = form.image.data
-            imagepath = os.path.join(
-                app.config["UPLOAD_FOLDER"], secure_filename(image.filename)
-            )
-            imagename = secure_filename(image.filename)
-            image.save(imagepath)
-            # upload image to imagekit
-            status = uploadImage(imagepath, imagename)
-            if status.error is not None:
-                flash("File Upload Error")
-            else:
-                str_image_url = status.url
-                str_image_file_id = status.file_id
+            if form.image.data is not None:
+                # Get the input image path
+                imagepath = os.path.join(
+                        app.config["UPLOAD_FOLDER"], secure_filename(form.image.data.filename)
+                    )
+                # Save image
+                status = saveImage(form.image.data, imagepath)
+                if status.error is not None:
+                    flash("File Upload Error")
+                    return redirect(url_for('admin.programs'))
+                else:
+                    str_image_url = status.url
+                    str_image_file_id = status.file_id
                 program_to_add = ExtensionProgram(Name = form.program_name.data,
                                     Status = form.status.data, 
                                     AgendaId = form.agenda.data,
@@ -106,14 +111,15 @@ def updateExtensionProgram(id):
     extension_program = ExtensionProgram.query.get_or_404(id)
     if form.validate_on_submit():
         if form.image.data is not None:
-            image = form.image.data
+            # If extension program has previous image, remove it from imagekit
+            if extension_program.ImageFileId is not None:
+                status = purgeImage(extension_program.ImageFileId)
+            # Get the input image path
             imagepath = os.path.join(
-                app.config["UPLOAD_FOLDER"], secure_filename(image.filename)
-            )
-            imagename = secure_filename(image.filename)
-            image.save(imagepath)
-            # upload image to imagekit
-            status = uploadImage(imagepath, imagename)
+                    app.config["UPLOAD_FOLDER"], secure_filename(form.image.data.filename)
+                )
+            # Save image
+            status = saveImage(form.image.data, imagepath)
             if status.error is not None:
                 flash("File Upload Error")
                 return redirect(url_for('admin.programs'))
@@ -149,9 +155,9 @@ def updateExtensionProgram(id):
 @login_required(role=["Admin"])
 def deleteExtensionProgram(id):
     extension_program = ExtensionProgram.query.get_or_404(id)
-    if extension_program.ImageFileId is not None:
-        status = purgeImage(extension_program.ImageFileId)
     try:
+        if extension_program.ImageFileId is not None:
+            status = purgeImage(extension_program.ImageFileId)
         db.session.delete(extension_program)
         db.session.commit()
         flash('Extension program is successfully deleted.', category='success')
