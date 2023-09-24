@@ -38,12 +38,14 @@ class ProgramForm(FlaskForm):
 class ProjectForm(FlaskForm):
     project_name = StringField("Project Name", validators=[DataRequired()])
     lead_proponent = StringField("Lead Proponent", validators=[DataRequired()])
+    status = StringField('Status', validators=[DataRequired()])
     project_type = SelectField("Project Type", choices=[('Need-Based', 'Need-Based'),
                                                             ('Quick Response', 'Quick Response'),
                                                             ('Other Related Activities/Collaboration', 'Other Related Activities/Collaboration')],
                                                             validators=[DataRequired()])
     rationale = TextAreaField("Rationale / Description of the Project", validators=[DataRequired()])
     objectives = TextAreaField("Objective of the Project", validators=[DataRequired()])
+    image = FileField('Upload Image', validators=[FileAllowed(['jpg', 'png', 'jpeg', 'gif'])])
     start_date = DateField("Start Date", validators=[Optional()])
     num_of_beneficiaries = IntegerField("Specific Numbers of Target Beneficiaries", validators=[Optional()])
     beneficiaries_classifications = StringField("Target Beneficiaries Classifications", validators=[Optional()])
@@ -74,6 +76,7 @@ class ActivityForm(FlaskForm):
     start_time = TimeField("Start Time", validators=[DataRequired()])
     end_time = TimeField('End Time', validators=[DataRequired()])
     description = TextAreaField('Description', validators=[DataRequired()])
+    image = FileField('Upload Image', validators=[FileAllowed(['jpg', 'png', 'jpeg', 'gif'])])
     project = SelectField('Extension Project')
     save = SubmitField("Save Activity") 
 

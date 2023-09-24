@@ -134,6 +134,9 @@ class Project(db.Model):
     ProjectType = db.Column(db.String(100), nullable=False)
     Rationale = db.Column(db.String(255), nullable=False)
     Objectives = db.Column(db.String(255), nullable=False)
+    Status = db.Column(db.String(20), nullable=False) 
+    ImageUrl = db.Column(db.Text)
+    ImageFileId = db.Column(db.Text)
     StartDate = db.Column(db.Date)
     NumberOfBeneficiaries = db.Column(db.Integer, nullable=False)
     BeneficiariesClassifications = db.Column(db.String(255), nullable=False)
@@ -167,6 +170,8 @@ class Activity(db.Model):
     StartTime = db.Column(db.Time, nullable=False)
     EndTime = db.Column(db.Time, nullable=False)
     Description = db.Column(db.String(255), nullable=False)
+    ImageUrl = db.Column(db.Text)
+    ImageFileId = db.Column(db.Text)
     ProjectId = db.Column(db.Integer, db.ForeignKey('Project.ProjectId', ondelete='CASCADE'), nullable=False)
     Project = db.relationship('Project', backref='Activity')
 

@@ -636,6 +636,14 @@ video {
   top: 1.25rem;
 }
 
+.-top-6 {
+  top: -1.5rem;
+}
+
+.-top-60 {
+  top: -15rem;
+}
+
 .z-40 {
   z-index: 40;
 }
@@ -980,6 +988,14 @@ video {
 
 .h-32 {
   height: 8rem;
+}
+
+.h-52 {
+  height: 13rem;
+}
+
+.h-56 {
+  height: 14rem;
 }
 
 .max-h-10 {
@@ -2229,6 +2245,14 @@ video {
 
   .sm\:col-span-6 {
     grid-column: span 6 / span 6;
+  }
+
+  .sm\:col-span-8 {
+    grid-column: span 8 / span 8;
+  }
+
+  .sm\:col-span-7 {
+    grid-column: span 7 / span 7;
   }
 
   .sm\:mx-48 {

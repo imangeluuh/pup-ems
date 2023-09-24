@@ -2,7 +2,7 @@
 <div id="add-project-{{program.ExtensionProgramId}}" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 items-center justify-center hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative w-full max-w-2xl max-h-full">
         <!-- Modal content -->
-        <form action="{{ url_for('admin.insertProject') }}" method="post" class="relative bg-white rounded-lg shadow">
+        <form action="{{ url_for('admin.insertProject') }}" enctype="multipart/form-data" method="post" class="relative bg-white rounded-lg shadow">
             {{ project_form.csrf_token() }}
             {{ project_form.extension_program(value=program.ExtensionProgramId)}}
             <!-- Modal header -->
@@ -23,10 +23,20 @@
                         {{ project_form.project_name.label(class="block mb-2 text-sm font-medium text-gray-900") }}
                         {{ project_form.project_name(class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5")}}
                     </div>
-                    <div class="col-span-6">
+                    <div class="col-span-6 sm:col-span-3">
                         <!-- lead project proponent -->
                         {{ project_form.lead_proponent.label(class="block mb-2 text-sm font-medium text-gray-900") }}
                         {{ project_form.lead_proponent(class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5")}}
+                    </div>
+                    <div class="col-span-6 sm:col-span-3">
+                        <!-- status -->
+                        {{ form.status.label(class="block mb-2 text-sm font-medium text-gray-900") }}
+                        {{ form.status(class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5")}}
+                    </div>
+                    <div class="col-span-6">
+                        <!-- image -->
+                        {{ form.image.label(class="block mb-2 text-sm font-medium text-gray-900") }}
+                        {{ form.image(class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none")}}
                     </div>
                     <div class="col-span-6 sm:col-span-3">
                         <!-- project type -->

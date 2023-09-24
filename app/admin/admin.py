@@ -89,8 +89,8 @@ def insertExtensionProgram():
                                     ProgramId = form.program.data,
                                     DateApproved = form.date_approved.data,
                                     ImplementationDate = form.implementation_date.data,
-                                    ImageUrl=str_image_url,
-                                    ImageFileId=str_image_file_id)
+                                    ImageUrl=str_image_url if str_image_url else None,
+                                    ImageFileId=str_image_file_id if str_image_file_id else None)
                 db.session.add(program_to_add)
                 db.session.commit()
                 flash('Extension progam is successfully inserted.', category='success')
@@ -135,7 +135,6 @@ def updateExtensionProgram(id):
         extension_program.ProgramId = int(form.program.data)
         extension_program.DateApproved = form.date_approved.data
         extension_program.ImplementationDate = form.implementation_date.data
-
         try:
             db.session.commit()
             flash('Extension progam is successfully updated.', category='success')
@@ -173,11 +172,29 @@ def insertProject():
     form = ProjectForm()
     if request.method == "POST":
         if form.validate_on_submit():
+            str_image_url = None
+            str_image_file_id = None
+            if form.image.data is not None:
+                # Get the input image path
+                imagepath = os.path.join(
+                        app.config["UPLOAD_FOLDER"], secure_filename(form.image.data.filename)
+                    )
+                # Save image
+                status = saveImage(form.image.data, imagepath)
+                if status.error is not None:
+                    flash("File Upload Error")
+                    return redirect(url_for('admin.programs'))
+                else:
+                    str_image_url = status.url
+                    str_image_file_id = status.file_id
             project_to_add = Project(Name = form.project_name.data,
                                 LeadProponent = form.lead_proponent.data, 
                                 ProjectType = form.project_type.data,
                                 Rationale = form.rationale.data,
                                 Objectives = form.objectives.data,
+                                Status = form.status.data,
+                                ImageUrl=str_image_url if str_image_url else None,
+                                ImageFileId=str_image_file_id if str_image_file_id else None,
                                 StartDate = form.start_date.data,
                                 NumberOfBeneficiaries = form.num_of_beneficiaries.data,
                                 BeneficiariesClassifications = form.beneficiaries_classifications.data,
@@ -185,6 +202,9 @@ def insertProject():
                                 ExtensionProgramId = form.extension_program.data)
             db.session.add(project_to_add)
             db.session.commit()
+            # Delete file from local storage
+            if os.path.exists(imagepath):
+                os.remove(imagepath)
             flash('Extension project is successfully inserted.', category='success')
             return redirect(url_for('admin.programs'))
         if form.errors != {}: # If there are errors from the validations
@@ -202,36 +222,13 @@ def viewProject(id):
     registered = Registration.query.filter_by(ProjectId=project.ProjectId)
     # for calendar - temp
     events = fetch_activities(id)
-    if request.method == "POST":
-        if form.validate_on_submit():
-            project.Name = form.project_name.data
-            project.LeadProponent= form.lead_proponent.data
-            project.ProjectType = form.project_type.data
-            project.Rationale = form.rationale.data
-            project.Objectives = form.objectives.data
-            project.StartDate = form.start_date.data
-            project.NumberOfBeneficiaries = form.num_of_beneficiaries.data
-            project.BeneficiariesClassifications = form.beneficiaries_classifications.data
-            project.ProjectScope = form.project_scope.data
-
-            try:
-                db.session.commit()
-                flash('Extension project is successfully updated.', category='success')
-                return redirect(url_for('admin.viewProject', id=project.ProjectId))
-            except:
-                flash('There was an issue updating the extension project.', category='error')
-
-        if form.errors != {}: # If there are errors from the validations
-            for err_msg in form.errors.values():
-                flash(err_msg)
-
-        return redirect(url_for('admin.viewProject', id=project.ProjectId))
     
     form.lead_proponent.data = project.LeadProponent
     form.project_type.data = project.ProjectType
     form.project_name.data = project.Name
     form.rationale.data = project.Rationale
     form.objectives.data = project.Objectives
+    form.status.data = project.Status
     form.start_date.data = project.StartDate
     form.num_of_beneficiaries.data = project.NumberOfBeneficiaries
     form.beneficiaries_classifications.data = project.BeneficiariesClassifications
@@ -241,22 +238,41 @@ def viewProject(id):
     return render_template('admin/view_project.html', project=project, form=form, activity_form=activity_form, registered=registered, events=events)
 
 
-@bp.route('/update/extension-program/project/<int:id>', methods=['POST'])
+@bp.route('/extension-program/project/update/<int:id>', methods=['POST'])
 @login_required(role=["Admin"])
 def updateProject(id):
     form = ProjectForm()
     extension_project = Project.query.get_or_404(id)
     if form.validate_on_submit():
+        if form.image.data is not None:
+            # If extension project has previous image, remove it from imagekit
+            if extension_project.ImageFileId is not None:
+                status = purgeImage(extension_project.ImageFileId)
+            # Get the input image path
+            imagepath = os.path.join(
+                    app.config["UPLOAD_FOLDER"], secure_filename(form.image.data.filename)
+                )
+            # Save image
+            status = saveImage(form.image.data, imagepath)
+            if status.error is not None:
+                flash("File Upload Error")
+                return redirect(url_for('admin.programs'))
+            else:
+                extension_project.ImageUrl = status.url
+                extension_project.ImageFileId = status.file_id
+            # Delete file from local storage
+            if os.path.exists(imagepath):
+                os.remove(imagepath)
         extension_project.Name = form.project_name.data
         extension_project.LeadProponent= form.lead_proponent.data
         extension_project.ProjectType = form.project_type.data
         extension_project.Rationale = form.rationale.data
         extension_project.Objectives = form.objectives.data
+        extension_project.Status = form.status.data
         extension_project.StartDate = form.start_date.data
         extension_project.NumberOfBeneficiaries = form.num_of_beneficiaries.data
         extension_project.BeneficiariesClassifications = form.beneficiaries_classifications.data
         extension_project.ProjectScope = form.project_scope.data
-        extension_project.ExtensionProgramId = form.extension_program.data
 
         try:
             db.session.commit()
@@ -264,13 +280,13 @@ def updateProject(id):
         except:
             flash('There was an issue updating the extension project.', category='error')
 
-        return redirect(url_for('admin.programs'))
+        return redirect(url_for('admin.viewProject', id=extension_project.ProjectId))
     
     if form.errors != {}: # If there are errors from the validations
         for err_msg in form.errors.values():
             flash(err_msg)
 
-    return redirect(url_for('admin.programs'))
+    return redirect(url_for('admin.viewProject', id=extension_project.ProjectId))
 
 
 @bp.route('/delete/extension-program/project/<int:id>', methods=['POST'])
@@ -278,6 +294,8 @@ def updateProject(id):
 def deleteProject(id):
     project = Project.query.get_or_404(id)
     try:
+        if project.ImageFileId is not None:
+            status = purgeImage(project.ImageFileId)
         db.session.delete(project)
         db.session.commit()
         flash('Extension project is successfully deleted.', category='success')

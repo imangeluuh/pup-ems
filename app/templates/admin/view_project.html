@@ -7,7 +7,7 @@
     <link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
     <!--Responsive Extension Datatables CSS-->
     <link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('admin.static', filename='css/table_style.css') }}">  
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/table_style.css') }}">  
 {% endblock %}
 
 {% block content %}
@@ -38,11 +38,20 @@
             </ol>
         </nav>
     </div>
-    <form id="projectForm" action="" method="post">
+    <form id="projectForm" action="{{ url_for('admin.updateProject', id=project.ProjectId) }}" enctype="multipart/form-data" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div class="ml-8 md:ml-72 md:mr-10 mt-6 p-4 shadow rounded-md bg-white">
+        <!-- Image -->
+        {% if project.ImageUrl %}
+        <div class="flex">
+            <img src="{{ project.ImageUrl }}" alt="{{ project.Name }}" class="h-56 w-full object-cover">
+        </div>
+        {% endif %}
         <!-- name -->
         {{ form.project_name(class="input text-black text-3xl font-bold mb-4 mt-2 border-0 bg-transparent", disabled="disabled")}}
+        {% for error in form.project_name.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
         <!-- tabs -->
         <div class="mb-4 border-b border-gray-200">
             <div class="grid grid-cols-6 ">
@@ -91,6 +100,9 @@
                             <div>{{ form.lead_proponent.label(class="text-sm text-gray-600") }}</div>
                             {{ form.lead_proponent(class="input text-black border-0 bg-transparent pl-0", disabled="disabled")}}
                         </div>
+                        {% for error in form.lead_proponent.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
                     </div>
                     <div class="col-span-12 sm:col-span-4 flex mb-4">
                         <i class="fa-solid fa-user text-gray-700 pt-3 mr-4"></i>
@@ -102,6 +114,9 @@
                                 {% endfor %}
                             </select>
                         </div>
+                        {% for error in form.project_type.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
                     </div>
                     <div class="col-span-12 sm:col-span-4 flex mb-4">
                         <i class="fa-regular fa-calendar fa-lg text-gray-700 pt-3 mr-4"></i>
@@ -109,6 +124,39 @@
                             <div>{{ form.start_date.label(class="text-sm text-gray-600") }}</div>
                             {{ form.start_date(class="input text-black border-0 bg-transparent pl-0 focus:ring-0", disabled="disabled") }}
                         </div>
+                        {% for error in form.start_date.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </div>
+                    <div class="col-span-12 sm:col-span-4 flex mb-4">
+                        <i class="fa-regular fa-calendar fa-lg text-gray-700 pt-3 mr-4"></i>
+                        <div>
+                            <div>{{ form.num_of_beneficiaries.label(class="text-sm text-gray-600") }}</div>
+                            {{ form.num_of_beneficiaries(class="input text-black border-0 bg-transparent pl-0 focus:ring-0", disabled="disabled") }}
+                        </div>
+                        {% for error in form.num_of_beneficiaries.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </div>
+                    <div class="col-span-12 sm:col-span-4 flex mb-4">
+                        <i class="fa-solid fa-users fa-lg text-gray-700 pt-3 mr-3.5"></i>
+                        <div>
+                            <div>{{ form.beneficiaries_classifications.label(class="text-sm text-gray-600") }}</div>
+                            {{ form.beneficiaries_classifications(class="input text-black border-0 bg-transparent pl-0 focus:ring-0", disabled="disabled") }}
+                        </div>
+                        {% for error in form.beneficiaries_classifications.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </div>
+                    <div class="col-span-12 sm:col-span-4 flex mb-4">
+                        <i class="fa-solid fa-users fa-lg text-gray-700 pt-3 mr-3.5"></i>
+                        <div>
+                            <div>{{ form.status.label(class="text-sm text-gray-600") }}</div>
+                            {{ form.status(class="input text-black border-0 bg-transparent pl-0 focus:ring-0", disabled="disabled") }}
+                        </div>
+                        {% for error in form.status.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
                     </div>
                     <div class="col-span-12 flex mb-6">
                         <i class="fa-regular fa-calendar fa-lg text-gray-700 pt-3 mr-4"></i>
@@ -116,6 +164,9 @@
                             <div>{{ form.rationale.label(class="text-sm text-gray-600") }}</div>
                             {{ form.rationale(class="input text-black border-0 bg-transparent pl-0 focus:ring-0 ", cols=100, disabled="disabled") }}
                         </div>
+                        {% for error in form.rationale.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
                     </div>
                     <div class="col-span-12 flex mb-4">
                         <i class="fa-regular fa-calendar fa-lg text-gray-700 pt-3 mr-4"></i>
@@ -123,20 +174,9 @@
                             <div>{{ form.objectives.label(class="text-sm text-gray-600") }}</div>
                             {{ form.objectives(class="input text-black border-0 bg-transparent pl-0 focus:ring-0", cols=100, disabled="disabled") }}
                         </div>
-                    </div>
-                    <div class="col-span-12 sm:col-span-6 flex mb-4">
-                        <i class="fa-regular fa-calendar fa-lg text-gray-700 pt-3 mr-4"></i>
-                        <div>
-                            <div>{{ form.num_of_beneficiaries.label(class="text-sm text-gray-600") }}</div>
-                            {{ form.num_of_beneficiaries(class="input text-black border-0 bg-transparent pl-0 focus:ring-0", disabled="disabled") }}
-                        </div>
-                    </div>
-                    <div class="col-span-12 sm:col-span-6 flex mb-4">
-                        <i class="fa-solid fa-users fa-lg text-gray-700 pt-3 mr-3.5"></i>
-                        <div>
-                            <div>{{ form.beneficiaries_classifications.label(class="text-sm text-gray-600") }}</div>
-                            {{ form.beneficiaries_classifications(class="input text-black border-0 bg-transparent pl-0 focus:ring-0", disabled="disabled") }}
-                        </div>
+                        {% for error in form.objectives.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
                     </div>
                     <div class="col-span-12 flex mb-4">
                         <i class="fa-solid fa-users fa-lg text-gray-700 pt-3 mr-3.5"></i>
@@ -144,6 +184,20 @@
                             <div>{{ form.project_scope.label(class="text-sm text-gray-600") }}</div>
                             {{ form.project_scope(class="input text-black border-0 bg-transparent pl-0 focus:ring-0", cols=100, disabled="disabled") }}
                         </div>
+                        {% for error in form.project_scope.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </div>
+                    <!-- image -->
+                    <div id="image-div" class="hidden col-span-12 sm:col-span-7 mb-4">
+                        <i class="fa-solid fa-users fa-lg text-gray-700 pt-3 mr-3.5"></i>
+                        <div class="flex flex-col w-full">
+                            <div>{{ form.image.label(class="block mb-2 text-sm font-medium text-gray-900") }}</div>
+                            {{ form.image(class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none")}}
+                        </div>
+                        {% for error in form.image.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
                     </div>
                     <div id="submit-project" class="hidden col-span-12 mb-4">
                         {{ form.submit(class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-4") }}
@@ -246,6 +300,7 @@
 
         const editButton = document.getElementById('edit-project');
         const cancelButton = document.getElementById('cancel-project');
+        const imageDiv= document.getElementById('image-div')
         const submitProjectDiv= document.getElementById('submit-project')
         const form = document.getElementById('projectForm');
 
@@ -262,6 +317,8 @@
             });
             submitProjectDiv.classList.remove('hidden');
             submitProjectDiv.classList.add('flex');
+            imageDiv.classList.remove('hidden');
+            imageDiv.classList.add('flex');
         });
         cancelButton.addEventListener('click', function () {
             // Get all input, textarea, and select elements within the form
@@ -275,6 +332,8 @@
             });
             submitProjectDiv.classList.remove('flex');
             submitProjectDiv.classList.add('hidden');
+            imageDiv.classList.remove('flex');
+            imageDiv.classList.add('hidden');
         });
 
         
