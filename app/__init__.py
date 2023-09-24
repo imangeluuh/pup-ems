@@ -7,7 +7,6 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from datetime import timedelta
 from flask_ckeditor import CKEditor
 from flask_restx import Api
 from flask_jwt_extended import JWTManager
@@ -15,11 +14,9 @@ from flask_cors import CORS
 from flask_mail import Mail
 
 app = Flask(__name__)
+from config import Config
 
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://pup:pup123@localhost:5432/pup-ems"
-app.config['SECRET_KEY'] = '95cb72ceb2b65d63f4195f84'
-app.config['REMEMBER_COOKIE_DURATION'] = timedelta(days=1)
-# app.config['SESSION_PROTECTION'] = 'strong' # not sure
+app.config.from_object(Config)
 jwt = JWTManager(app)
 CORS(app)
 csrf = CSRFProtect(app)
