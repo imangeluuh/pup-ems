@@ -51,22 +51,36 @@ class Login(db.Model, UserMixin):
     @property
     def password_hash(self):
         return self.password_hash
-    
 
     @password_hash.setter
     def password_hash(self, plain_text_password):
         self.Password = bcrypt.generate_password_hash(plain_text_password).decode('utf-8')
 
-
     def check_password_correction(self, attempted_password):
         return bcrypt.check_password_hash(self.Password, attempted_password)
     
+    def set_user_data(self, login_data):
+        self.LoginId = login_data['LoginId']
+        self.Email = login_data['Email']
+        self.Password = login_data['Password']
+        self.Status = login_data['Status']
+        self.RoleId = login_data['RoleId']
 
     def get_id(self):
-        return (self.LoginId)
-    
+        return self.LoginId
+
     def get_role(self):
         return(self.Role.RoleName)
+    
+    def to_dict(self):
+        data = {
+            'LoginId': self.LoginId,
+            'Email': self.Email,
+            'Password': self.Password,
+            'Status': self.Status,
+            'RoleId': self.RoleId,
+        }
+        return data
 
 
 class Admin(db.Model):

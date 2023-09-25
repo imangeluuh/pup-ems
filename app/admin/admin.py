@@ -29,8 +29,9 @@ def adminLogin():
             if response.status_code == 200:
                 response_data = response.json()
                 session['access_token'] = response_data.get('access_token')
-                user = Login.query.filter_by(Email=data['Email']).first()
-                login_user(user, remember=True)
+                instance_user = Login()
+                instance_user.set_user_data(login_data=response_data['admin'])
+                login_user(instance_user, remember=True)
                 return redirect(url_for('admin.programs')) # Temp route
             else:
                 response_data = response.json()
