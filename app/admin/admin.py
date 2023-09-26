@@ -362,11 +362,11 @@ def announcement(project):
     page = request.args.get('page', 1, type=int)
     if project is not None:
         project_id = Project.query.filter_by(Name=project).first()
-        published_announcements = Announcement.query.filter_by(IsLive=True, ProjectId=project_id.ProjectId).paginate(page=page, per_page=3, error_out=False)
-        draft_announcements = Announcement.query.filter_by(IsLive=False, ProjectId=project_id.ProjectId).paginate(page=page, per_page=3, error_out=False)
+        published_announcements = Announcement.query.filter_by(IsLive=True, ProjectId=project_id.ProjectId).order_by(Announcement.Updated.desc()).paginate(page=page, per_page=3, error_out=False)
+        draft_announcements = Announcement.query.filter_by(IsLive=False, ProjectId=project_id.ProjectId).order_by(Announcement.Updated.desc()).paginate(page=page, per_page=3, error_out=False)
     else:
-        published_announcements = Announcement.query.filter_by(IsLive=True).paginate(page=page, per_page=3, error_out=False)
-        draft_announcements = Announcement.query.filter_by(IsLive=False).paginate(page=page, per_page=3, error_out=False)
+        published_announcements = Announcement.query.filter_by(IsLive=True).order_by(Announcement.Updated.desc()).paginate(page=page, per_page=3, error_out=False)
+        draft_announcements = Announcement.query.filter_by(IsLive=False).order_by(Announcement.Updated.desc()).paginate(page=page, per_page=3, error_out=False)
     
     published_next_url = url_for('admin.announcement', page=published_announcements.next_num) \
         if published_announcements.has_next else None
