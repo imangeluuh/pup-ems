@@ -17,8 +17,9 @@ def programsList():
 
 @bp.route('/projects/<int:program_id>', methods=['GET', 'POST'])
 def projectsList(program_id):
+    extension_program = ExtensionProgram.query.filter_by(ExtensionProgramId=program_id).first()
     projects = Project.query.filter_by(ExtensionProgramId=program_id).all()
-    return render_template('programs/projects_list.html', projects=projects)
+    return render_template('programs/projects_list.html', extension_program=extension_program, projects=projects)
     # if 'submit' in request.args:
     #     dict_filter_conditions = {} 
 

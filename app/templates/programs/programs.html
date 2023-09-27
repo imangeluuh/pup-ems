@@ -62,9 +62,8 @@
         <div class="col-span-2">
             <div class="">
                 {% for extension_program in extension_programs %}
-                
                 <div class="flex flex-col items-center mb-4 bg-white border border-gray-200 rounded-lg shadow-md md:flex-row md:max-w-4xl hover:bg-gray-100">
-                    <img class="object-cover w-full rounded-t-lg md:h-48 md:w-48 md:rounded-none md:rounded-l-lg" src="https://flowbite.com/docs/images/blog/image-4.jpg" alt="">
+                    <img class="object-cover w-full rounded-t-lg md:h-48 md:w-48 md:rounded-none md:rounded-l-lg" src="{{ extension_program.ImageUrl if extension_program.ImageUrl else url_for('static', filename='images/logo_tagline.jpg')}}" alt="">
                     <div class="flex flex-col justify-between p-4 leading-normal">
                         <a href="{{url_for('programs.projectsList', program_id=extension_program.ExtensionProgramId)}}" class="mb-2 text-lg font-bold tracking-tight text-rose-700 w-fit hover:underline">
                             {{ extension_program.Name }}

@@ -100,9 +100,11 @@
 {% block content %}
     <div class="mx-auto">
     <div class="p-0">
+        {% if project.ImageUrl %}
         <div class="header-container">
-            <img src="{{url_for('static', filename='images/pup-qc-162.jpg')}}" alt="Project Image" class="header-bg">
+            <img src="{{ project.ImageUrl }}" alt="Project Image" class="header-bg">
         </div>
+        {% endif %}
         <div class="ml-8 pt-2 md:mx-64">
             <h1 class="text-black text-3xl font-bold my-8">{{ project.Name }}</h1>
             <!-- tabs -->
