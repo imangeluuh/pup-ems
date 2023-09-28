@@ -90,8 +90,8 @@ def insertExtensionProgram():
                                     ProgramId = form.program.data,
                                     DateApproved = form.date_approved.data,
                                     ImplementationDate = form.implementation_date.data,
-                                    ImageUrl=str_image_url if str_image_url else None,
-                                    ImageFileId=str_image_file_id if str_image_file_id else None)
+                                    ImageUrl=str_image_url,
+                                    ImageFileId=str_image_file_id)
                 db.session.add(program_to_add)
                 db.session.commit()
                 flash('Extension progam is successfully inserted.', category='success')
@@ -194,8 +194,8 @@ def insertProject():
                                 Rationale = form.rationale.data,
                                 Objectives = form.objectives.data,
                                 Status = form.status.data,
-                                ImageUrl=str_image_url if str_image_url else None,
-                                ImageFileId=str_image_file_id if str_image_file_id else None,
+                                ImageUrl=str_image_url,
+                                ImageFileId=str_image_file_id,
                                 StartDate = form.start_date.data,
                                 NumberOfBeneficiaries = form.num_of_beneficiaries.data,
                                 BeneficiariesClassifications = form.beneficiaries_classifications.data,
@@ -307,26 +307,42 @@ def deleteProject(id):
 
 
 
-@bp.route('<int:id>/activity/create', methods=['POST'])
+@bp.route('/activity/create', methods=['POST'])
 @login_required(role=["Admin"])
-def insertActivity(id):
-    activity_form = ActivityForm()
-    if activity_form.validate_on_submit():
-        activity_to_create = Activity(ActivityName=activity_form.name.data,
-                                        Date=activity_form.date.data,
-                                        StartTime=activity_form.start_time.data,
-                                        EndTime=activity_form.end_time.data,
-                                        Description=activity_form.description.data,
-                                        ProjectId=id)
+def insertActivity():
+    form = ActivityForm()
+    if form.validate_on_submit():
+        str_image_url = None
+        str_image_file_id = None
+        if form.image.data is not None:
+            # Get the input image path
+            imagepath = os.path.join(
+                    app.config["UPLOAD_FOLDER"], secure_filename(form.image.data.filename)
+                )
+            # Save image
+            status = saveImage(form.image.data, imagepath)
+            if status.error is not None:
+                flash("File Upload Error")
+                return redirect(url_for('admin.viewProject', id=form.project.data))
+            else:
+                str_image_url = status.url
+                str_image_file_id = status.file_id
+        activity_to_create = Activity(ActivityName=form.name.data,
+                                        Date=form.date.data,
+                                        StartTime=form.start_time.data,
+                                        EndTime=form.end_time.data,
+                                        Description=form.description.data,
+                                        ProjectId=form.project.data,
+                                        ImageUrl=str_image_url,
+                                        ImageFileId=str_image_file_id)
         db.session.add(activity_to_create)
         db.session.commit()
         flash('Activity is successfully inserted.', category='success')
-        return redirect(url_for('admin.viewProject', id=id))
-    if activity_form.errors != {}: # If there are errors from the validations
-        for err_msg in activity_form.errors.values():
+        return redirect(url_for('admin.viewProject', id=form.project.data))
+    if form.errors != {}: # If there are errors from the validations
+        for err_msg in form.errors.values():
             flash(err_msg, category='error')
-    return redirect(url_for('admin.viewProject', id=id))
-
+    return redirect(url_for('admin.viewProject', id=form.project.data))
 
 @bp.route('/beneficiaries')
 @login_required(role=["Admin"])
@@ -334,7 +350,6 @@ def beneficiaries():
     users = Beneficiary.query.all()
     current_url_path = request.path
     return render_template('admin/users.html', users=users,current_url_path=current_url_path)
-
 
 @bp.route('/students')
 @login_required(role=["Admin"])

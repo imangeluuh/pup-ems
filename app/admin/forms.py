@@ -77,7 +77,7 @@ class ActivityForm(FlaskForm):
     end_time = TimeField('End Time', validators=[DataRequired()])
     description = TextAreaField('Description', validators=[DataRequired()])
     image = FileField('Upload Image', validators=[FileAllowed(['jpg', 'png', 'jpeg', 'gif'])])
-    project = SelectField('Extension Project')
+    project = HiddenField()
     save = SubmitField("Save Activity") 
 
     def __init__(self, *args, **kwargs):

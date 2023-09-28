@@ -38,7 +38,6 @@
             </ol>
         </nav>
     </div>
-    <form id="projectForm" action="{{ url_for('admin.updateProject', id=project.ProjectId) }}" enctype="multipart/form-data" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div class="ml-8 md:ml-72 md:mr-10 mt-6 p-4 shadow rounded-md bg-white">
         <!-- Image -->
@@ -47,6 +46,7 @@
             <img src="{{ project.ImageUrl }}" alt="{{ project.Name }}" class="h-56 w-full object-cover">
         </div>
         {% endif %}
+        <form id="projectForm" action="{{ url_for('admin.updateProject', id=project.ProjectId) }}" enctype="multipart/form-data" method="post">
         <!-- name -->
         {{ form.project_name(class="input text-black text-3xl font-bold mb-4 mt-2 border-0 bg-transparent", disabled="disabled")}}
         {% for error in form.project_name.errors %}
@@ -207,40 +207,53 @@
             </div>
         </form>
         {% include 'admin/delete_project.html' %}
+        {% include 'admin/add_activity.html' %}
             <div class="hidden p-4" id="activity-outline" role="tabpanel" aria-labelledby="activity-outline-tab">
                 <div class="activity-content">
                     <h1 class="text-black text-3xl font-bold mb-8">Activity Outline</h1>
                     {% for activity in project.Activity %}
-                    <div class="flex justify-between">
-                        <h1 class="text-black text-xl font-bold mb-4">{{ activity.ActivityName }}</h1>
-                        <div class="flex">
-                            <button type="button" class="flex items-center font-semibold text-2xl text-blue-600 mr-4">
-                                <iconify-icon icon="bx:edit"></iconify-icon>
-                            </button>
-                            <button type="button" class="flex items-center font-semibold text-2xl text-red-700 mr-4">
-                                <iconify-icon icon="ion:trash-outline"></iconify-icon>
-                            </button>
+                    <div class="grid grid-cols-6 mb-2">
+                        <div class="col-span-1">
+                            {% if activity.ImageUrl %}
+                            <div class="w-40 h-48">
+                                <img src="{{ activity.ImageUrl }}" alt="{{ activity.ActivityName }}" class="w-full h-full object-cover">
+                            </div>
+                            {% else %}
+                            <div class="w-40 h-48 bg-gray-500 justify-center text-lg">No Image</div>
+                            {% endif %}
                         </div>
-                    </div>
-                    <hr class="h-1 mb-4">
-                    <div class="flex mb-4">
-                        <i class="fa-regular fa-calendar fa-lg text-gray-700 pt-3 mr-4"></i>
-                        <div>
-                            <div class="text-sm text-gray-600">{{ activity.Date}}</div>
-                            <p class="text-black"></p>
-                        </div>
-                    </div>
-                    <div class="flex mb-6">
-                        <i class="fa-solid fa-bars fa-lg text-gray-700 pt-3 mr-4"></i>
-                        <div>
-                            <div class="text-sm text-gray-600">{{ activity.Description }}</div>
-                            <p class="text-black"></p>
+                        <div class="col-span-5">
+                            <div class="flex justify-between">
+                                <h1 class="text-black text-xl font-bold mb-4">{{ activity.ActivityName }}</h1>
+                                <div class="flex">
+                                    <button type="button" class="flex items-center font-semibold text-2xl text-blue-600 mr-4">
+                                        <iconify-icon icon="bx:edit"></iconify-icon>
+                                    </button>
+                                    <button type="button" class="flex items-center font-semibold text-2xl text-red-700 mr-4">
+                                        <iconify-icon icon="ion:trash-outline"></iconify-icon>
+                                    </button>
+                                </div>
+                            </div>
+                            <hr class="h-1 mb-4">
+                            <div class="flex mb-4">
+                                <i class="fa-regular fa-calendar fa-lg text-gray-700 pt-3 mr-4"></i>
+                                <div>
+                                    <div class="text-sm text-gray-600">{{ activity.Date}}</div>
+                                    <p class="text-black"></p>
+                                </div>
+                            </div>
+                            <div class="flex mb-6">
+                                <i class="fa-solid fa-bars fa-lg text-gray-700 pt-3 mr-4"></i>
+                                <div>
+                                    <div class="text-sm text-gray-600">{{ activity.Description }}</div>
+                                    <p class="text-black"></p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     {% endfor %}
                 </div>
             </div>
-            {% include 'admin/add_activity.html' %}
             <!-- activity calendar -->
             <div class="hidden p-4 min-h-screen" id="activity-calendar" role="tabpanel" aria-labelledby="activity-calendar-tab">
                 <div class="activity-calendar-content">
