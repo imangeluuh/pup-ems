@@ -226,7 +226,7 @@
                             <div class="flex justify-between">
                                 <h1 class="text-black text-xl font-bold mb-4">{{ activity.ActivityName }}</h1>
                                 <div class="flex">
-                                    <button type="button" class="flex items-center font-semibold text-2xl text-blue-600 mr-4">
+                                    <button type="button" data-modal-target="edit-activity-{{activity.ActivityId}}" data-modal-show="edit-activity-{{activity.ActivityId}}"  class="flex items-center font-semibold text-2xl text-blue-600 mr-4">
                                         <iconify-icon icon="bx:edit"></iconify-icon>
                                     </button>
                                     <button  type="button" data-modal-target="delete-activity-{{activity.ActivityId}}" data-modal-show="delete-activity-{{activity.ActivityId}}" class="flex items-center font-semibold text-2xl text-red-700 mr-4">
@@ -242,6 +242,13 @@
                                     <p class="text-black"></p>
                                 </div>
                             </div>
+                            <div class="flex mb-4">
+                                <i class="fa-regular fa-clock fa-lg text-gray-700 pt-3 mr-4"></i>
+                                <div>
+                                    <div class="text-sm text-gray-600">{{ activity.StartTime.strftime("%I:%M%p") }} - {{ activity.EndTime.strftime("%I:%M%p") }}</div>
+                                    <p class="text-black"></p>
+                                </div>
+                            </div>
                             <div class="flex mb-6">
                                 <i class="fa-solid fa-bars fa-lg text-gray-700 pt-3 mr-4"></i>
                                 <div>
@@ -252,6 +259,7 @@
                         </div>
                     </div>
                     {% include 'admin/delete_activity.html' %}
+                    {% include 'admin/add_activity.html' %}
                     {% endfor %}
                 </div>
             </div>

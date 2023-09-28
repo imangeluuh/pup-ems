@@ -344,6 +344,44 @@ def insertActivity():
             flash(err_msg, category='error')
     return redirect(url_for('admin.viewProject', id=form.project.data))
 
+@bp.route('/activity/<int:id>', methods=['POST'])
+@login_required(role=["Admin"])
+def updateActivity(id):
+    form = ActivityForm()
+    activity = Activity.query.filter_by(ActivityId=id).first()
+    if form.validate_on_submit():
+        if form.image.data is not None:
+            # If extension project has previous image, remove it from imagekit
+            if activity.ImageFileId is not None:
+                status = purgeImage(activity.ImageFileId)
+            # Get the input image path
+            imagepath = os.path.join(
+                    app.config["UPLOAD_FOLDER"], secure_filename(form.image.data.filename)
+                )
+            # Save image
+            status = saveImage(form.image.data, imagepath)
+            if status.error is not None:
+                flash("File Upload Error")
+                return redirect(url_for('admin.programs'))
+            else:
+                activity.ImageUrl = status.url
+                activity.ImageFileId = status.file_id
+            # Delete file from local storage
+            if os.path.exists(imagepath):
+                os.remove(imagepath)
+        activity.ActivityName=form.name.data,
+        activity.Date=form.date.data,
+        activity.StartTime=form.start_time.data,
+        activity.EndTime=form.end_time.data,
+        activity.Description=form.description.data
+        db.session.commit()
+        flash('Activity is successfully updated.', category='success')
+        return redirect(url_for('admin.viewProject', id=activity.ProjectId))
+    if form.errors != {}: # If there are errors from the validations
+        for err_msg in form.errors.values():
+            flash(err_msg, category='error')
+    return redirect(url_for('admin.viewProject', id=activity.ProjectId))
+
 @bp.route('/delete/activity/<int:id>', methods=['POST'])
 @login_required(role=["Admin"])
 def deleteActivity(id):
