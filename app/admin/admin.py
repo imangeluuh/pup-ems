@@ -524,6 +524,20 @@ def viewAnnouncement(id, slug):
     announcement = Announcement.query.filter_by(AnnouncementId=id, Slug=slug).first_or_404()
     return render_template('admin/view_announcement.html', announcement=announcement)
 
+@bp.route('/beneficiaries/<string:id>')
+@login_required(role=["Admin"])
+def viewUser(id):
+    user = User.query.filter_by(UserId=id).first()
+    user_projects = (
+    Project.query
+    .join(Registration, Registration.ProjectId == Project.ProjectId)
+    .join(User, User.UserId == Registration.UserId)
+    .filter(User.UserId == id)
+    .all()
+    )
+    print(user_projects)
+    return render_template('admin/view_user.html', user=user, user_projects=user_projects)
+
 
 def generateSlug(title, separator='-', lower=True):
     title = title.translate(str.maketrans('', '', string.punctuation))
