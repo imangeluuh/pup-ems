@@ -344,6 +344,22 @@ def insertActivity():
             flash(err_msg, category='error')
     return redirect(url_for('admin.viewProject', id=form.project.data))
 
+@bp.route('/delete/activity/<int:id>', methods=['POST'])
+@login_required(role=["Admin"])
+def deleteActivity(id):
+    activity = Activity.query.get_or_404(id)
+    project_id = activity.ProjectId
+    try:
+        if activity.ImageFileId is not None:
+            status = purgeImage(activity.ImageFileId)
+        db.session.delete(activity)
+        db.session.commit()
+        flash('Activity is successfully deleted.', category='success')
+    except Exception as e:
+        flash('There was an issue deleting the activity.', category='error')
+
+    return redirect(url_for('admin.viewProject', id=project_id))
+
 @bp.route('/beneficiaries')
 @login_required(role=["Admin"])
 def beneficiaries():

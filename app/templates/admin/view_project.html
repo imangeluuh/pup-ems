@@ -219,7 +219,7 @@
                                 <img src="{{ activity.ImageUrl }}" alt="{{ activity.ActivityName }}" class="w-full h-full object-cover">
                             </div>
                             {% else %}
-                            <div class="w-40 h-48 bg-gray-500 justify-center text-lg">No Image</div>
+                            <div class="w-40 h-48 bg-gray-400 p-4 flex justify-center items-center text-center text-3xl font-semibold text-white">No Image</div>
                             {% endif %}
                         </div>
                         <div class="col-span-5">
@@ -229,7 +229,7 @@
                                     <button type="button" class="flex items-center font-semibold text-2xl text-blue-600 mr-4">
                                         <iconify-icon icon="bx:edit"></iconify-icon>
                                     </button>
-                                    <button type="button" class="flex items-center font-semibold text-2xl text-red-700 mr-4">
+                                    <button  type="button" data-modal-target="delete-activity-{{activity.ActivityId}}" data-modal-show="delete-activity-{{activity.ActivityId}}" class="flex items-center font-semibold text-2xl text-red-700 mr-4">
                                         <iconify-icon icon="ion:trash-outline"></iconify-icon>
                                     </button>
                                 </div>
@@ -251,6 +251,7 @@
                             </div>
                         </div>
                     </div>
+                    {% include 'admin/delete_activity.html' %}
                     {% endfor %}
                 </div>
             </div>

@@ -1,0 +1,15 @@
+{% extends 'admin/components/delete_modal.html' %}
+
+{% block id %}delete-activity-{{activity.ActivityId}}{% endblock %}
+
+{% block id1 %}delete-activity-{{activity.ActivityId}}{% endblock %}
+
+{% block id2 %}delete-activity-{{activity.ActivityId}}{% endblock %}
+
+{% block url %}
+    {{ url_for('admin.deleteActivity', id=activity.ActivityId) }}
+{% endblock %}
+
+{% block item %}
+    {{activity.ActivityName}}
+{% endblock %}
