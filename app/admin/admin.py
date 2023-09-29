@@ -10,6 +10,7 @@ from ..store import uploadImage, purgeImage
 from ..email import sendEmail
 from werkzeug.utils import secure_filename
 import string, requests, os
+import datetime
 
 headers = {"Content-Type": "application/json"}
 
@@ -214,7 +215,7 @@ def insertProject():
     return redirect(url_for('admin.programs'))
 
 
-@bp.route('/extension-program/project/<int:id>', methods=['GET', 'POST'])
+@bp.route('/project/<int:id>', methods=['GET', 'POST'])
 @login_required(role=["Admin"])
 def viewProject(id):
     form = ProjectForm()
@@ -239,7 +240,7 @@ def viewProject(id):
     return render_template('admin/view_project.html', project=project, form=form, activity_form=activity_form, registered=registered, events=events)
 
 
-@bp.route('/extension-program/project/update/<int:id>', methods=['POST'])
+@bp.route('/project/update/<int:id>', methods=['POST'])
 @login_required(role=["Admin"])
 def updateProject(id):
     form = ProjectForm()
@@ -290,7 +291,7 @@ def updateProject(id):
     return redirect(url_for('admin.viewProject', id=extension_project.ProjectId))
 
 
-@bp.route('/delete/extension-program/project/<int:id>', methods=['POST'])
+@bp.route('/delete/project/<int:id>', methods=['POST'])
 @login_required(role=["Admin"])
 def deleteProject(id):
     project = Project.query.get_or_404(id)
@@ -304,8 +305,6 @@ def deleteProject(id):
         flash('There was an issue deleting the extension project.', category='error')
 
     return redirect(url_for('admin.programs'))
-
-
 
 @bp.route('/activity/create', methods=['POST'])
 @login_required(role=["Admin"])
@@ -369,17 +368,17 @@ def updateActivity(id):
             # Delete file from local storage
             if os.path.exists(imagepath):
                 os.remove(imagepath)
-        activity.ActivityName=form.name.data,
-        activity.Date=form.date.data,
-        activity.StartTime=form.start_time.data,
-        activity.EndTime=form.end_time.data,
+        activity.ActivityName=form.name.data
+        activity.Date=form.date.data
         activity.Description=form.description.data
+        activity.StartTime=form.start_time.data
+        activity.EndTime=form.end_time.data
         db.session.commit()
         flash('Activity is successfully updated.', category='success')
         return redirect(url_for('admin.viewProject', id=activity.ProjectId))
     if form.errors != {}: # If there are errors from the validations
-        for err_msg in form.errors.values():
-            flash(err_msg, category='error')
+        for field, error in form.errors.items():
+             flash(f"Field '{field}' has an error: {error}", category='error')
     return redirect(url_for('admin.viewProject', id=activity.ProjectId))
 
 @bp.route('/delete/activity/<int:id>', methods=['POST'])

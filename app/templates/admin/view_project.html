@@ -213,7 +213,7 @@
                     <h1 class="text-black text-3xl font-bold mb-8">Activity Outline</h1>
                     {% for activity in project.Activity %}
                     <div class="grid grid-cols-6 mb-2">
-                        <div class="col-span-1">
+                        <div class="col-span-1 flex justify-center">
                             {% if activity.ImageUrl %}
                             <div class="w-40 h-48">
                                 <img src="{{ activity.ImageUrl }}" alt="{{ activity.ActivityName }}" class="w-full h-full object-cover">

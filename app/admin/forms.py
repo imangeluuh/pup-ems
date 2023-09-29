@@ -73,15 +73,9 @@ class AnnouncementForm(FlaskForm):
 class ActivityForm(FlaskForm):
     name = StringField("Activity Name", validators=[DataRequired()])
     date = DateField("Date", validators=[DataRequired()])
-    start_time = TimeField("Start Time", validators=[DataRequired()])
-    end_time = TimeField('End Time', validators=[DataRequired()])
+    start_time = TimeField("Start Time", format='%H:%M', validators=[DataRequired()])
+    end_time = TimeField('End Time', format='%H:%M', validators=[DataRequired()])
     description = TextAreaField('Description', validators=[DataRequired()])
     image = FileField('Upload Image', validators=[FileAllowed(['jpg', 'png', 'jpeg', 'gif'])])
     project = HiddenField()
     save = SubmitField("Save Activity") 
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        
-        with current_app.app_context():
-            self.project.choices = [(project.ProjectId, project.Name) for project in Project.query.all()]
