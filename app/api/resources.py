@@ -51,7 +51,8 @@ class BeneficiaryLoginApi(Resource):
         attempted_user = Login.query.filter_by(Email=ns.payload['Email'], RoleId=2).first()
         if attempted_user and attempted_user.Status == 'Active': 
             if attempted_user.check_password_correction(attempted_password=ns.payload['Password']):
-                return {'access_token': create_access_token(attempted_user.LoginId)}
+                return {'access_token': create_access_token(attempted_user.LoginId),
+                        'admin': attempted_user.to_dict()}
             else:
                 return {'error': 'The password you\'ve entered is incorrect.'}, 404
         else:
@@ -65,7 +66,25 @@ class StudentLoginApi(Resource):
         attempted_user = Login.query.filter_by(Email=ns.payload['Email'], RoleId=3).first()
         if attempted_user and attempted_user.Status == 'Active': 
             if attempted_user.check_password_correction(attempted_password=ns.payload['Password']):
-                return {'access_token': create_access_token(attempted_user.LoginId)}
+                return {'access_token': create_access_token(attempted_user.LoginId),
+                        'admin': attempted_user.to_dict()}
+            else:
+                return {'error': 'The password you\'ve entered is incorrect.'}, 404
+        else:
+            return {'error': 'The email you entered isn\'t connected to an account.'}, 404
+        
+@ns.route('/login/faculty')
+class FacultyLoginApi(Resource):
+    
+    @ns.expect(login_input_model)
+    def post(self):
+        attempted_user = Login.query.filter_by(Email=ns.payload['Email'], RoleId=4).first()
+        print(ns.payload)
+        print(attempted_user)
+        if attempted_user and attempted_user.Status == 'Active': 
+            if attempted_user.check_password_correction(attempted_password=ns.payload['Password']):
+                return {'access_token': create_access_token(attempted_user.LoginId),
+                        'admin': attempted_user.to_dict()}
             else:
                 return {'error': 'The password you\'ve entered is incorrect.'}, 404
         else:

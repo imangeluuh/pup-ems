@@ -25,12 +25,12 @@
                 <a href="{{ url_for('auth.studentLogin') }}">
                     <div class="flex justify-center  mb-2  p-2 bg-yellow-400">Student</div>
                 </a>
-                <a href="">
+                <a href="{{ url_for('auth.facultyLogin') }}">
                     <div class="flex justify-center  mb-2  p-2 bg-red-800 text-white">Faculty</div>
                 </a>
 
                 {% else %}
-                <header><strong>PUPQC-ESIS</strong> {{ 'Beneficiary' if current_url_path == url_for('auth.beneficiaryLogin') else 'Student' }} Module</header>
+                <header><strong>PUPQC-ESIS</strong> {{ current_url_path.split('/')[2] | capitalize }} Module</header>
                 {% with messages = get_flashed_messages() %}
                     {% if messages %}
                         {% for message in messages %}
@@ -59,9 +59,11 @@
                     <div class="input-field">
                         {{ form.submit(class="submit") }}
                     </div> 
+                    {% if current_url_path != url_for('auth.facultyLogin') %}
                     <div class="signin pb-3">
                         <span>Don't have an account yet? <a href="{{ url_for('auth.beneficiarySignup') if current_url_path == url_for('auth.beneficiaryLogin') else url_for('auth.studentSignup') }}">Register here</a></span>
                     </div>
+                    {% endif %}
                 </form>
                 {% endif %}
                 

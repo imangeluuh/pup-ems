@@ -51,7 +51,7 @@ def home():
     pass
 
 @bp.route('/programs')
-@login_required(role=["Admin"])
+@login_required(role=["Admin", "Faculty"])
 def programs():
     form = ProgramForm()
     project_form = ProjectForm()
@@ -452,7 +452,7 @@ def announcement(project):
 
 
 @bp.route('/announcement/create', methods=['GET', 'POST'])
-@login_required(role=["Admin"])
+@login_required(role=["Admin", "Faculty"])
 def createAnnouncement():
     form = AnnouncementForm()
     if request.method == "POST":

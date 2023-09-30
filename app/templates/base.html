@@ -11,7 +11,7 @@
         <link href="https://cdn.pup.edu.ph/img/ico/favicon.ico" rel="icon" type="image/x-icon" />
     </head>
     <body class="bg-gray-50">
-        {% if current_user.is_authenticated or not (current_url_path in [url_for('auth.beneficiaryLogin'), url_for('auth.beneficiarySignup'), url_for('auth.studentLogin'), url_for('auth.studentSignup'), url_for('auth.login')]) %}
+        {% if current_user.is_authenticated or request.blueprint != 'auth' %}
             {% include 'components/navbar.html' %}
             {% include 'components/toast_notif.html' %}
         {% endif %}
@@ -19,7 +19,7 @@
         
         {% endblock %}
         
-        {% if current_user.is_authenticated or not (current_url_path in [url_for('auth.beneficiaryLogin'), url_for('auth.beneficiarySignup'), url_for('auth.studentLogin'), url_for('auth.studentSignup'), url_for('auth.login')]) %}
+        {% if current_user.is_authenticated or request.blueprint != 'auth' %}
             {% include 'components/footer.html'%}
         {% endif %}
 

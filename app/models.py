@@ -8,7 +8,6 @@ import uuid
 def load_user(user_id):
     return Login.query.get(user_id)
 
-
 class PaginatedAPIMixin(object):
     @staticmethod
     def to_collection_dict(query, page, per_page, endpoint, **kwargs):
@@ -91,6 +90,15 @@ class Admin(db.Model):
     LastName = db.Column(db.String(50), nullable=False)
     LoginId = db.Column(db.String(36), db.ForeignKey('Login.LoginId', ondelete='CASCADE'), nullable=False)
 
+
+class Faculty(db.Model):
+    __tablename__ = 'Faculty'
+
+    FacultyId = db.Column(db.String(36), primary_key=True)
+    FirstName = db.Column(db.String(50), nullable=False)
+    LastName = db.Column(db.String(50), nullable=False)
+    LoginId = db.Column(db.String(36), db.ForeignKey('Login.LoginId', ondelete='CASCADE'), nullable=False)
+    Login = db.relationship("Login", backref='Faculty', lazy=True, passive_deletes=True)
 
 class User(PaginatedAPIMixin, db.Model):
     __tablename__ = 'User'

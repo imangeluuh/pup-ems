@@ -3,7 +3,7 @@ from flask import render_template, url_for, request, redirect, flash, session
 from .forms import BeneficiaryRegisterForm, StudentRegisterForm, LoginForm
 from ..models import Login, Beneficiary, User, Student
 from app import db, api
-from ..Api.resources import BeneficiaryLoginApi, StudentLoginApi, BeneficiaryRegisterApi, StudentRegisterApi
+from ..Api.resources import BeneficiaryLoginApi, StudentLoginApi, FacultyLoginApi, BeneficiaryRegisterApi, StudentRegisterApi
 from flask_login import login_user, logout_user, current_user
 from datetime import datetime, timedelta
 import uuid
@@ -136,6 +136,32 @@ def studentSignup():
             for err_msg in form.errors.values():
                 flash(err_msg)
     return render_template('auth/student_signup.html', form=form, current_url_path=current_url_path)
+
+@bp.route('/faculty', methods=['GET', 'POST'])
+def facultyLogin():
+    # Prevents logged in users from accessing the page
+    current_url_path = request.path
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))  # Temp route
+    form = LoginForm()
+    if request.method == "POST":
+        if form.validate_on_submit():
+            data={'Email': form.email.data,
+                'Password': form.password.data}
+            response = requests.post(api.url_for(FacultyLoginApi, _external=True), json=data, headers=headers)
+            if response.status_code == 200:
+                response_data = response.json()
+                session['access_token'] = response_data.get('access_token')
+                user = Login.query.filter_by(Email=data['Email']).first()
+                login_user(user, remember=True)
+                return redirect(url_for('admin.programs'))
+            else:
+                try:
+                    response_data = response.json()
+                    flash(response_data.get('error'))
+                except json.JSONDecodeError:
+                    print(response)
+    return render_template('auth/login.html', form=form, current_url_path=current_url_path)
 
 @bp.route('/logout')
 def logout():
