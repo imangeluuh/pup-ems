@@ -2,7 +2,7 @@
 <div id="{{'edit-activity-' ~ activity.ActivityId if activity else 'addActivityModal'}}" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 items-center justify-center hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative w-full max-w-2xl max-h-full">
         <!-- Modal content -->
-        <form id="activity{{activity.ActivityId if activity}}" action="{{ url_for('admin.updateActivity', id=activity.ActivityId) if activity else url_for('admin.insertActivity', id=project.ProjectId) }}" enctype="multipart/form-data" method="post" class="relative bg-white rounded-lg shadow">
+        <form id="activity{{activity.ActivityId if activity}}" action="{{ url_for('programs.updateActivity', id=activity.ActivityId) if activity else url_for('programs.insertActivity', id=project.ProjectId) }}" enctype="multipart/form-data" method="post" class="relative bg-white rounded-lg shadow">
             {{ activity_form.csrf_token() }}
             {{ activity_form.project(value=project.ProjectId)}}
             <!-- Modal header -->

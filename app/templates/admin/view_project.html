@@ -15,7 +15,7 @@
 <div class="p-0">
     <div class="ml-8 md:ml-64 p-4 bg-white flex ">
         <!-- Breadcrumb -->
-        <a href="{{ url_for('admin.programs' )}}" class="flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
+        <a href="{{ url_for('programs.programs' )}}" class="flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
             <svg class="w-5 h-5 mx-2"aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 5H1m0 0 4 4M1 5l4-4"></path>
             </svg>
@@ -24,7 +24,7 @@
             <ol class="inline-flex items-center mb-3 space-x-1 md:space-x-3 sm:mb-0">
                 <li>
                     <div class="flex items-center">
-                    <a href="{{ url_for('admin.programs') }}" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2">Program</a>
+                    <a href="{{ url_for('programs.programs') }}" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2">Program</a>
                     </div>
                 </li>
                 <li aria-current="page">
@@ -38,7 +38,6 @@
             </ol>
         </nav>
     </div>
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div class="ml-8 md:ml-72 md:mr-10 mt-6 p-4 shadow rounded-md bg-white">
         <!-- Image -->
         {% if project.ImageUrl %}
@@ -46,7 +45,8 @@
             <img src="{{ project.ImageUrl }}" alt="{{ project.Name }}" class="h-56 w-full object-cover">
         </div>
         {% endif %}
-        <form id="projectForm" action="{{ url_for('admin.updateProject', id=project.ProjectId) }}" enctype="multipart/form-data" method="post">
+        <form id="projectForm" action="{{ url_for('programs.updateProject', id=project.ProjectId) }}" enctype="multipart/form-data" method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <!-- name -->
         {{ form.project_name(class="input text-black text-3xl font-bold mb-4 mt-2 border-0 bg-transparent", disabled="disabled")}}
         {% for error in form.project_name.errors %}
@@ -281,7 +281,9 @@
                                 <th data-priority="3">Last Name</th>
                                 <th data-priority="4">Email</th>
                                 <th data-priority="5">Role</th>
+                                {% if current_user.Role.RoleName == 'Admin' %}
                                 <th data-priority="6">Action</th>
+                                {% endif %}
                             </tr>
                         </thead>
                         <tbody>
@@ -292,7 +294,9 @@
                                 <td>{{ user.User.LastName }}</td>
                                 <td>{{ user.User.UserLogin.Email }}</td>
                                 <td>{{ user.User.UserLogin.Role.RoleName }}</td>
+                                {% if current_user.Role.RoleName == 'Admin' %}
                                 <td class="flex justify-center"><a href="{{ url_for('admin.viewUser', id=user.User.UserId) }}" class="bg-green-100 text-green-800 text-base font-medium mr-2 px-2.5 py-0.5 rounded">View</a></td>
+                                {% endif %}
                             </tr>
                             {% endfor %}
                         </tbody>

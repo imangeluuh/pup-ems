@@ -6,7 +6,7 @@
 	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.css" />
 	<!--Responsive Extension Datatables CSS-->
 	<link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('admin.static', filename='css/table_style.css') }}">  
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/table_style.css') }}">  
     <style>
         .tree-view ul {
             list-style: none;
@@ -111,7 +111,7 @@
                                                 <h2>
                                                     <div class="flex items-center  w-full p-5 rounded-xl font-medium text-left bg-white border border-gray-400 hover:bg-gray-100">
                                                         <div class="flex items-center">
-                                                            <a href="{{url_for('admin.viewProject', id=project.ProjectId)}}" class="hover:underline">
+                                                            <a href="{{url_for('programs.viewProject', id=project.ProjectId)}}" class="hover:underline">
                                                                 <span>{{ project.Name }}</span>
                                                             </a>
                                                         </div>
