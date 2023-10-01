@@ -97,12 +97,9 @@
                     <div class="col-span-12 sm:col-span-4 flex mb-4">
                         <i class="fa-solid fa-user text-gray-700 pt-3 mr-4"></i>
                         <div>
-                            <div>{{ form.lead_proponent.label(class="text-sm text-gray-600") }}</div>
-                            {{ form.lead_proponent(class="input text-black border-0 bg-transparent pl-0", disabled="disabled")}}
+                            <div class="text-sm text-gray-600">Lead Proponent</div>
+                            <p class="input text-black border-0 bg-transparent pl-0">{{project.LeadProponent.FirstName}} {{project.LeadProponent.MiddleName[0]~'.' if project.LeadProponent.MiddleName}} {{project.LeadProponent.LastName}}</p> 
                         </div>
-                        {% for error in form.lead_proponent.errors %}
-                            <span style="color: red;">[{{ error }}]</span>
-                        {% endfor %}
                     </div>
                     <div class="col-span-12 sm:col-span-4 flex mb-4">
                         <i class="fa-solid fa-user text-gray-700 pt-3 mr-4"></i>

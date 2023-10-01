@@ -156,9 +156,9 @@ def insertProject():
                 # Delete file from local storage
                 if os.path.exists(imagepath):
                     os.remove(imagepath)
-
+            lead_proponent = current_user.User[0]
             project_to_add = Project(Name = form.project_name.data,
-                                LeadProponent = form.lead_proponent.data, 
+                                LeadProponentId = lead_proponent.UserId,
                                 ProjectType = form.project_type.data,
                                 Rationale = form.rationale.data,
                                 Objectives = form.objectives.data,
@@ -190,7 +190,6 @@ def viewProject(id):
     # for calendar - temp
     events = fetch_activities(id)
     
-    form.lead_proponent.data = project.LeadProponent
     form.project_type.data = project.ProjectType
     form.project_name.data = project.Name
     form.rationale.data = project.Rationale
@@ -231,7 +230,6 @@ def updateProject(id):
             if os.path.exists(imagepath):
                 os.remove(imagepath)
         extension_project.Name = form.project_name.data
-        extension_project.LeadProponent= form.lead_proponent.data
         extension_project.ProjectType = form.project_type.data
         extension_project.Rationale = form.rationale.data
         extension_project.Objectives = form.objectives.data

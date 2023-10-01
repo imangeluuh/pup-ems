@@ -24,7 +24,6 @@ class ProgramForm(FlaskForm):
 
 class ProjectForm(FlaskForm):
     project_name = StringField("Project Name", validators=[DataRequired()])
-    lead_proponent = StringField("Lead Proponent", validators=[DataRequired()])
     status = StringField('Status', validators=[DataRequired()])
     project_type = SelectField("Project Type", choices=[('Need-Based', 'Need-Based'),
                                                             ('Quick Response', 'Quick Response'),
