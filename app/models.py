@@ -28,6 +28,7 @@ class PaginatedAPIMixin(object):
         }
         return data
 
+
 class Role(db.Model):
     __tablename__ = 'Role'
 
@@ -44,8 +45,6 @@ class Login(db.Model, UserMixin):
     Password = db.Column(db.String(60), nullable=False)
     Status = db.Column(db.String(20), default='Active')
     RoleId = db.Column(db.Integer, db.ForeignKey('Role.RoleId', ondelete='CASCADE'), nullable=False)
-    AdminLogin = db.relationship("Admin", backref='AdminLogin', lazy=True, passive_deletes=True)
-    UserLogin = db.relationship("User", backref='UserLogin', lazy=True, passive_deletes=True)
 
     @property
     def password_hash(self):
@@ -82,24 +81,6 @@ class Login(db.Model, UserMixin):
         return data
 
 
-class Admin(db.Model):
-    __tablename__ = 'Admin'
-
-    AdminId = db.Column(db.String(36), primary_key=True)
-    FirstName = db.Column(db.String(50), nullable=False)
-    LastName = db.Column(db.String(50), nullable=False)
-    LoginId = db.Column(db.String(36), db.ForeignKey('Login.LoginId', ondelete='CASCADE'), nullable=False)
-
-
-class Faculty(db.Model):
-    __tablename__ = 'Faculty'
-
-    FacultyId = db.Column(db.String(36), primary_key=True)
-    FirstName = db.Column(db.String(50), nullable=False)
-    LastName = db.Column(db.String(50), nullable=False)
-    LoginId = db.Column(db.String(36), db.ForeignKey('Login.LoginId', ondelete='CASCADE'), nullable=False)
-    Login = db.relationship("Login", backref='Faculty', lazy=True, passive_deletes=True)
-
 class User(PaginatedAPIMixin, db.Model):
     __tablename__ = 'User'
 
@@ -113,6 +94,21 @@ class User(PaginatedAPIMixin, db.Model):
     Address = db.Column(db.String(255), nullable=False)
     LoginId = db.Column(db.String(36), db.ForeignKey('Login.LoginId', ondelete='CASCADE'), nullable=False)
     Registration = db.relationship('Registration', backref='User', cascade='all, delete-orphan', passive_deletes=True)
+    Login = db.relationship("Login", backref='User', lazy=True, passive_deletes=True)
+
+
+class Admin(db.Model):
+    __tablename__ = 'Admin'
+
+    AdminId = db.Column(db.String(36), db.ForeignKey('User.UserId', ondelete='CASCADE'), primary_key=True)
+    User = db.relationship("User", backref='Admin', lazy=True, passive_deletes=True)
+
+
+class Faculty(db.Model):
+    __tablename__ = 'Faculty'
+
+    FacultyId = db.Column(db.String(36), db.ForeignKey('User.UserId', ondelete='CASCADE'), primary_key=True)
+    User = db.relationship("User", backref='Faculty', lazy=True, passive_deletes=True)
 
 
 class Beneficiary(db.Model):
@@ -152,7 +148,6 @@ class Project(db.Model):
 
     ProjectId = db.Column(db.Integer, primary_key=True)
     Name = db.Column(db.String(255), nullable=False)
-    LeadProponent = db.Column(db.String(255), nullable=False) # Can be integer for FacultyID foreign key
     ProjectType = db.Column(db.String(100), nullable=False)
     Rationale = db.Column(db.String(255), nullable=False)
     Objectives = db.Column(db.String(255), nullable=False)
@@ -160,11 +155,13 @@ class Project(db.Model):
     ImageUrl = db.Column(db.Text)
     ImageFileId = db.Column(db.Text)
     StartDate = db.Column(db.Date)
+    LeadProponentId = db.Column(db.String(36), db.ForeignKey('User.UserId', ondelete='CASCADE'), nullable=False)
     NumberOfBeneficiaries = db.Column(db.Integer, nullable=False)
     BeneficiariesClassifications = db.Column(db.String(255), nullable=False)
     ProjectScope = db.Column(db.String(255), nullable=False)
     ExtensionProgramId = db.Column(db.Integer, db.ForeignKey('ExtensionProgram.ExtensionProgramId', ondelete='CASCADE'), nullable=False)
     Registration = db.relationship('Registration', backref='Project', cascade='all, delete-orphan', passive_deletes=True)
+    LeadProponent = db.relationship('User', backref='Project', lazy=True, passive_deletes=True)
     # CommunityAssessment =
     # MOU/MOAAssessment = 
 
