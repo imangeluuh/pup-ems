@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 
 {% block head %}
-    <link rel="stylesheet" href="{{ url_for('auth.static', filename='css/signup_style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth/signup_style.css') }}">
     <title>PUP-ESIS Signup</title>
-    <script src="{{ url_for('auth.static', filename='js/index.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/index.js')}}"></script>
 {% endblock %}
 
 {% block content %}
