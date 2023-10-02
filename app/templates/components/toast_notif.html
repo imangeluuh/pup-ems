@@ -2,10 +2,18 @@
     {% if messages %}
         {% for category, message in messages %}
             <div>
-                <div id="toast" class="fixed top-5 right-5 max-w-xs {{ 'bg-green-500' if category == 'success' else 'bg-red-500' }} text-sm text-white rounded-lg shadow" style="z-index: 999;" role="alert">
+                <div id="toast" class="fixed top-5 right-5 max-w-xs 
+                    {% if category == 'success' %} bg-green-500
+                    {% elif category == 'info' %} bg-blue-400
+                    {% elif category == 'danger' %} bg-red-500
+                    {% endif %}
+                    text-sm text-white rounded-lg shadow" style="z-index: 999;" role="alert">
                     <div class="flex p-4 items-center">
                         <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                            <path fill="white" d="{{ 'M9 16.17L4.83 12l-1.42 1.41L9 19L21 7l-1.41-1.41z' if category == 'success' else 'M12 17q.425 0 .713-.288T13 16q0-.425-.288-.713T12 15q-.425 0-.713.288T11 16q0 .425.288.713T12 17Zm-1-4h2V7h-2v6Zm1 9q-2.075 0-3.9-.788t-3.175-2.137q-1.35-1.35-2.137-3.175T2 12q0-2.075.788-3.9t2.137-3.175q1.35-1.35 3.175-2.137T12 2q2.075 0 3.9.788t3.175 2.137q1.35 1.35 2.138 3.175T22 12q0 2.075-.788 3.9t-2.137 3.175q-1.35 1.35-3.175 2.138T12 22Zm0-2q3.35 0 5.675-2.325T20 12q0-3.35-2.325-5.675T12 4Q8.65 4 6.325 6.325T4 12q0 3.35 2.325 5.675T12 20Zm0-8Z' }}"/>
+                            <path fill="white" d="{% if category == 'success' %} M9 16.17L4.83 12l-1.42 1.41L9 19L21 7l-1.41-1.41z
+                                                {% elif category == 'info' %} M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8s8 3.59 8 8s-3.59 8-8 8z
+                                                {% elif category == 'danger' %} M12 17q.425 0 .713-.288T13 16q0-.425-.288-.713T12 15q-.425 0-.713.288T11 16q0 .425.288.713T12 17Zm-1-4h2V7h-2v6Zm1 9q-2.075 0-3.9-.788t-3.175-2.137q-1.35-1.35-2.137-3.175T2 12q0-2.075.788-3.9t2.137-3.175q1.35-1.35 3.175-2.137T12 2q2.075 0 3.9.788t3.175 2.137q1.35 1.35 2.138 3.175T22 12q0 2.075-.788 3.9t-2.137 3.175q-1.35 1.35-3.175 2.138T12 22Zm0-2q3.35 0 5.675-2.325T20 12q0-3.35-2.325-5.675T12 4Q8.65 4 6.325 6.325T4 12q0 3.35 2.325 5.675T12 20Zm0-8Z
+                                                {% endif %}"/>
                         </svg>
                         <div class="ml-3 font-normal">{{ message }}</div>
                         <div class="ml-4">
