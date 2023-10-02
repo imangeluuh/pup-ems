@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
 
 {% block head %}
-    <link rel="stylesheet" href="{{ url_for('auth.static', filename='css/signin_style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth/signin_style.css') }}">
     <title>PUPQC-ESIS Login</title>
 {% endblock %}
 
 {% block content %}
+{% include 'components/toast_notif.html' %}
 <div class="container-main">
     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 h-screen">
         <div class="col-span-2 side-image hidden md:block">
@@ -28,24 +29,8 @@
                 <a href="{{ url_for('auth.facultyLogin') }}">
                     <div class="flex justify-center  mb-2  p-2 bg-red-800 text-white">Faculty</div>
                 </a>
-
                 {% else %}
                 <header><strong>PUPQC-ESIS</strong> {{ current_url_path.split('/')[2] | capitalize }} Module</header>
-                {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                        {% for message in messages %}
-                        <div class="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50" role="alert">
-                            <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                            </svg>
-                            <span class="sr-only">Info</span>
-                            <div>
-                                {{ message }}
-                            </div>
-                        </div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
                 <form id="loginForm" method="POST">
                     {{ form.hidden_tag() }}
                     <div class="input-field">
@@ -59,14 +44,16 @@
                     <div class="input-field">
                         {{ form.submit(class="submit") }}
                     </div> 
-                    {% if current_url_path != url_for('auth.facultyLogin') %}
+                </form>
+                <div class="my-3 flex justify-center">
+                    <a href="{{ url_for('auth.resetPasswordRequest') }}" class="font-light text-xs">Forgot password?</a>
+                </div>
+                {% if current_url_path != url_for('auth.facultyLogin') %}
                     <div class="signin pb-3">
                         <span>Don't have an account yet? <a href="{{ url_for('auth.beneficiarySignup') if current_url_path == url_for('auth.beneficiaryLogin') else url_for('auth.studentSignup') }}">Register here</a></span>
                     </div>
-                    {% endif %}
-                </form>
                 {% endif %}
-                
+                {% endif %}
             </div>  
         </div>
     </div>

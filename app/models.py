@@ -1,8 +1,9 @@
 from flask import url_for
 from app import db, bcrypt, login_manager
 from flask_login import UserMixin
-from datetime import datetime
-import uuid
+from datetime import datetime, timedelta
+from time import time
+from flask_jwt_extended import create_access_token, decode_token
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -57,12 +58,17 @@ class Login(db.Model, UserMixin):
     def check_password_correction(self, attempted_password):
         return bcrypt.check_password_hash(self.Password, attempted_password)
     
-    def set_user_data(self, login_data):
-        self.LoginId = login_data['LoginId']
-        self.Email = login_data['Email']
-        self.Password = login_data['Password']
-        self.Status = login_data['Status']
-        self.RoleId = login_data['RoleId']
+    def get_reset_password_token(self, expires_in=10):
+        return create_access_token(identity={'reset_password': self.LoginId},expires_delta=timedelta(minutes=expires_in))
+
+    @staticmethod
+    def verify_reset_password_token(token):
+        try:
+            decoded_token = decode_token(token)
+            login_id= decoded_token['sub']['reset_password']
+        except:
+            return
+        return Login.query.get(login_id)
 
     def get_id(self):
         return self.LoginId
@@ -70,6 +76,13 @@ class Login(db.Model, UserMixin):
     def get_role(self):
         return(self.Role.RoleName)
     
+    def set_user_data(self, login_data):
+        self.LoginId = login_data['LoginId']
+        self.Email = login_data['Email']
+        self.Password = login_data['Password']
+        self.Status = login_data['Status']
+        self.RoleId = login_data['RoleId']
+
     def to_dict(self):
         data = {
             'LoginId': self.LoginId,

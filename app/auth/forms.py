@@ -65,3 +65,12 @@ class StudentRegisterForm(FlaskForm):
 
         if birthdate.data > ten_years_ago:
             raise ValidationError("Invalid date of birth")
+        
+class ResetPasswordRequestForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Request Password Reset')
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('Password', validators=[DataRequired()])
+    password2 = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Request Password Reset')

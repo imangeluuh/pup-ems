@@ -1,13 +1,14 @@
 from app.auth import bp
 from flask import render_template, url_for, request, redirect, flash, session
-from .forms import BeneficiaryRegisterForm, StudentRegisterForm, LoginForm
-from ..models import Login, Beneficiary, User, Student
+from .forms import BeneficiaryRegisterForm, StudentRegisterForm, LoginForm, ResetPasswordRequestForm, ResetPasswordForm
+from ..models import Login, User
 from app import db, api
 from ..Api.resources import BeneficiaryLoginApi, StudentLoginApi, FacultyLoginApi, BeneficiaryRegisterApi, StudentRegisterApi
 from flask_login import login_user, logout_user, current_user
-from datetime import datetime, timedelta
+from datetime import timedelta
 import uuid
 import requests, json
+from ..email import sendPasswordResetEmail
 
 lockout_duration = timedelta(minutes=1)
 headers = {"Content-Type": "application/json"}
@@ -40,7 +41,7 @@ def beneficiaryLogin():
             else:
                 try:
                     response_data = response.json()
-                    flash(response_data.get('error'))
+                    flash(response_data.get('error'), category='danger')
                 except json.JSONDecodeError:
                     print(response)
     return render_template('auth/login.html', form=form, current_url_path=current_url_path)
@@ -188,3 +189,33 @@ def createUser(form, role):
     db.session.add(user_to_create)
     db.session.commit()
     return str_user_id
+
+@bp.route('/reset_password_request', methods=['GET', 'POST'])
+def resetPasswordRequest():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))  # Temp route
+    form = ResetPasswordRequestForm()
+    if request.method == "POST":
+        if form.validate_on_submit():
+            user = Login.query.filter_by(Email=form.email.data).first()
+            if user:
+                sendPasswordResetEmail(user)
+                flash('Check your email for the instructions to reset your password', category='info')
+                return redirect(url_for('auth.login'))
+    return render_template('auth/reset_password_request.html', form=form)
+
+@bp.route('/reset_password/<token>', methods=['GET', 'POST'])
+def resetPassword(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))  # Temp route
+    user = Login.verify_reset_password_token(token)
+    if not user:
+        return redirect(url_for('home'))
+    form = ResetPasswordForm()
+    if request.method == "POST":
+        if form.validate_on_submit():
+            user.password_hash = form.password.data
+            db.session.commit()
+            flash('Your password has been reset.', category='success')
+            return redirect(url_for('auth.login'))
+    return render_template('auth/reset_password.html', form=form)
