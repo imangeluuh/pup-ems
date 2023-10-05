@@ -8,8 +8,9 @@ from datetime import datetime
 from app import db, app
 from ..store import uploadImage, purgeImage
 from werkzeug.utils import secure_filename
-import os
+import os, io
 from ..decorators.decorators import login_required
+from threading import Thread
 
 # ============== Admin/Faculty views ===========================
 
@@ -43,30 +44,29 @@ def insertExtensionProgram():
                 # Save image
                 status = saveImage(form.image.data, imagepath)
                 if status.error is not None:
-                    flash("File Upload Error")
-                    return redirect(url_for('programs.programs'))
+                    return {"error": True, "msg": "File Upload Error"}
                 else:
                     str_image_url = status.url
                     str_image_file_id = status.file_id
-                program_to_add = ExtensionProgram(Name = form.program_name.data,
-                                    Status = form.status.data, 
-                                    AgendaId = form.agenda.data,
-                                    ProgramId = form.program.data,
-                                    DateApproved = form.date_approved.data,
-                                    ImplementationDate = form.implementation_date.data,
-                                    ImageUrl=str_image_url,
-                                    ImageFileId=str_image_file_id)
-                db.session.add(program_to_add)
-                db.session.commit()
-                flash('Extension progam is successfully inserted.', category='success')
                 # Delete file from local storage
                 if os.path.exists(imagepath):
                     os.remove(imagepath)
-            return redirect(url_for('programs.programs'))
+            program_to_add = ExtensionProgram(Name = form.program_name.data,
+                                Status = form.status.data, 
+                                AgendaId = form.agenda.data,
+                                ProgramId = form.program.data,
+                                DateApproved = form.date_approved.data,
+                                ImplementationDate = form.implementation_date.data,
+                                ImageUrl=str_image_url,
+                                ImageFileId=str_image_file_id)
+            db.session.add(program_to_add)
+            db.session.commit()
+            program_html = render_template('admin/components/program_item.html', program=program_to_add)
+            return {"success": True, "msg": "Extension progam is successfully inserted.", "program_html": program_html}
         if form.errors != {}: # If there are errors from the validations
             for err_msg in form.errors.values():
-                flash(err_msg, category='error')
-    return redirect(url_for('programs.programs'))
+                return {"error": True, "msg": err_msg}
+
 
 
 @bp.route('/extension-program/update/<int:id>', methods=['POST'])
@@ -381,8 +381,8 @@ def programsList():
 def projectsList(program_id):
     extension_program = ExtensionProgram.query.filter_by(ExtensionProgramId=program_id).first()
     projects = Project.query.filter_by(ExtensionProgramId=program_id).all()
-    return render_template('programs/projects_list.html', extension_program=extension_program, projects=projects)
-
+    return render_template('programs/projects_list.html', extension_program=extension_program, projects=projects)
+    
 
 @bp.route('/filters')
 def filters():
