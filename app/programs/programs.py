@@ -381,29 +381,8 @@ def programsList():
 def projectsList(program_id):
     extension_program = ExtensionProgram.query.filter_by(ExtensionProgramId=program_id).first()
     projects = Project.query.filter_by(ExtensionProgramId=program_id).all()
-    return render_template('programs/projects_list.html', extension_program=extension_program, projects=projects)
-    # if 'submit' in request.args:
-    #     dict_filter_conditions = {} 
+    return render_template('programs/projects_list.html', extension_program=extension_program, projects=projects)
 
-    #     filter_value = request.args.get('filter')  
-    #     option_value = request.args.get('option') 
-    #     if filter_value == "All":
-    #         return render_template('programs/projects_list.html', projects=projects)
-    #     elif filter_value == "Month":
-    #         dict_month = dict((month, index) for index, month in enumerate(calendar.month_name) if month)
-    #         # Convert the selected option to a month number (1 for January, 2 for February, etc.)
-    #         int_month = dict_month[option_value]
-    #         dict_filter_conditions['Month'] =  extract('month', Project.StartDate) == int_month
-    #     elif filter_value == "ExtensionProgram":
-    #         dict_filter_conditions['ExtensionProgram'] =  Project.ExtensionProgram.Name = option_value
-
-
-    #     # Get the projects based on the selected filter and option
-    #     filtered_projects = Project.query.filter(dict_filter_conditions.get(filter_value)).all()
-
-    #     return render_template('programs/projects_list.html', projects=filtered_projects)
-
-    
 
 @bp.route('/filters')
 def filters():
