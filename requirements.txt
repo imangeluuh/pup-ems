@@ -60,7 +60,7 @@ rpds-py==0.10.3
 six==1.16.0
 SQLAlchemy==2.0.20
 typing_extensions==4.7.1
-urllib3==1.26.15
+urllib3==1.26.17
 Werkzeug==2.3.7
 wrapt==1.15.0
 WTForms==3.0.1
