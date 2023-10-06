@@ -257,7 +257,6 @@ def viewUser(id):
     .filter(User.UserId == id)
     .all()
     )
-    print(user_projects)
     return render_template('admin/view_user.html', user=user, user_projects=user_projects)
 
 

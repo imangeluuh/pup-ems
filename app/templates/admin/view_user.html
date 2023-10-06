@@ -27,7 +27,7 @@
                         <li class="mr-2" role="presentation">
                             <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300" id="projects-tab" data-tabs-target="#projects" type="button" role="tab" aria-controls="projects" aria-selected="false">Projects</button>
                         </li>
-                        {% if user.UserLogin.RoleId == 2 %}
+                        {% if user.Login.RoleId == 2 %}
                         <li class="mr-2" role="presentation">
                             <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300" id="attendance-tab" data-tabs-target="#attendance" type="button" role="tab" aria-controls="attendance" aria-selected="false">Attendance</button>
                         </li>
@@ -71,7 +71,7 @@
                                 <!-- email -->
                                 <span class="block mb-2 text-sm font-medium text-gray-900">Email</span>
                                 <div class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
-                                    {{ user.UserLogin.Email}}
+                                    {{ user.Login.Email}}
                                 </div>
                             </div>
                             <div class="sm:col-span-3">
@@ -126,7 +126,7 @@
                             </tbody>
                         </table>
                     </div>
-                    {% if user.UserLogin.RoleId == 2 %}
+                    {% if user.Login.RoleId == 2 %}
                     <div class="hidden p-4 rounded-lg" id="attendance" role="tabpanel" aria-labelledby="attendance-tab">
                         <div id="accordion-collapse" data-accordion="collapse">
                             {% if user_projects %}
