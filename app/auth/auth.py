@@ -8,7 +8,7 @@ from flask_login import login_user, logout_user, current_user
 from datetime import timedelta
 import uuid
 import requests, json
-from ..email import sendPasswordResetEmail
+from .email import sendPasswordResetEmail
 
 lockout_duration = timedelta(minutes=1)
 headers = {"Content-Type": "application/json"}

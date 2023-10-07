@@ -1,4 +1,4 @@
-from app import app
+from flask import current_app
 from datetime import timedelta
 import os
 from pathlib import Path
@@ -21,8 +21,6 @@ class Config(object):
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     MAIL_USE_TLS = False
     MAIL_USE_SSL = True
-    # ====================== ImageKit =======================
-    UPLOAD_FOLDER = os.path.join(app.root_path, "media")
     
 
 

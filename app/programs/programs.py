@@ -1,11 +1,11 @@
 from app.programs import bp
-from flask import render_template, url_for, request, redirect, flash
+from flask import render_template, url_for, request, redirect, flash, current_app
 from flask_login import current_user
 from ..models import Project, ExtensionProgram, Program, Registration, Agenda, ExtensionProgram, Activity
 from .forms import ProgramForm, ProjectForm, ActivityForm
 import calendar
 from datetime import datetime
-from app import db, app
+from app import db
 from ..store import uploadImage, purgeImage
 from werkzeug.utils import secure_filename
 import os, io
@@ -39,7 +39,7 @@ def insertExtensionProgram():
             if form.image.data is not None:
                 # Get the input image path
                 imagepath = os.path.join(
-                        app.config["UPLOAD_FOLDER"], secure_filename(form.image.data.filename)
+                        current_app.config["UPLOAD_FOLDER"], secure_filename(form.image.data.filename)
                     )
                 # Save image
                 status = saveImage(form.image.data, imagepath)
@@ -81,7 +81,7 @@ def updateExtensionProgram(id):
                 status = purgeImage(extension_program.ImageFileId)
             # Get the input image path
             imagepath = os.path.join(
-                    app.config["UPLOAD_FOLDER"], secure_filename(form.image.data.filename)
+                    current_app.config["UPLOAD_FOLDER"], secure_filename(form.image.data.filename)
                 )
             # Save image
             status = saveImage(form.image.data, imagepath)
@@ -142,7 +142,7 @@ def insertProject():
             if form.image.data is not None:
                 # Get the input image path
                 imagepath = os.path.join(
-                        app.config["UPLOAD_FOLDER"], secure_filename(form.image.data.filename)
+                        current_app.config["UPLOAD_FOLDER"], secure_filename(form.image.data.filename)
                     )
                 # Save image
                 status = saveImage(form.image.data, imagepath)
@@ -216,7 +216,7 @@ def updateProject(id):
                 status = purgeImage(extension_project.ImageFileId)
             # Get the input image path
             imagepath = os.path.join(
-                    app.config["UPLOAD_FOLDER"], secure_filename(form.image.data.filename)
+                    current_app.config["UPLOAD_FOLDER"], secure_filename(form.image.data.filename)
                 )
             # Save image
             status = saveImage(form.image.data, imagepath)
@@ -279,7 +279,7 @@ def insertActivity():
         if form.image.data is not None:
             # Get the input image path
             imagepath = os.path.join(
-                    app.config["UPLOAD_FOLDER"], secure_filename(form.image.data.filename)
+                    current_app.config["UPLOAD_FOLDER"], secure_filename(form.image.data.filename)
                 )
             # Save image
             status = saveImage(form.image.data, imagepath)
@@ -323,7 +323,7 @@ def updateActivity(id):
                 status = purgeImage(activity.ImageFileId)
             # Get the input image path
             imagepath = os.path.join(
-                    app.config["UPLOAD_FOLDER"], secure_filename(form.image.data.filename)
+                    current_app.config["UPLOAD_FOLDER"], secure_filename(form.image.data.filename)
                 )
             # Save image
             status = saveImage(form.image.data, imagepath)
