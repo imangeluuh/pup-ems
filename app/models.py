@@ -184,6 +184,7 @@ class Program(db.Model):
 
     ProgramId = db.Column(db.Integer, primary_key=True)
     ProgramName = db.Column(db.String(255), nullable=False)
+    Abbreviation = db.Column(db.String(255), nullable=False)
 
 
 class Agenda(db.Model):
