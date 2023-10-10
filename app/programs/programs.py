@@ -5,12 +5,12 @@ from ..models import Project, ExtensionProgram, Program, Registration, Agenda, E
 from .forms import ProgramForm, ProjectForm, ActivityForm
 import calendar
 from datetime import datetime
-from app import db
+from app import db, api
 from ..store import uploadImage, purgeImage
 from werkzeug.utils import secure_filename
-import os, io
+import os, requests
 from ..decorators.decorators import login_required
-from threading import Thread
+from ..Api.resources import ExtensionProgramListApi
 
 # ============== Admin/Faculty views ===========================
 
@@ -19,7 +19,13 @@ from threading import Thread
 def programs():
     form = ProgramForm()
     project_form = ProjectForm()
-    programs = ExtensionProgram.query.all()
+    response = requests.get(api.url_for(ExtensionProgramListApi, _external=True))
+    programs = None
+    if response.status_code == 200:
+        programs = response.json()
+        print(programs)
+    else:
+        flash('Error')
     projects = Project.query.all()
     
     return render_template('admin/program_management.html', programs=programs, projects=projects, form=form, project_form=project_form)
