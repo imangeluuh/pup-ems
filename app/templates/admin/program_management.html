@@ -70,27 +70,27 @@
                     {% for program in programs %}
                     <li>
                         <div id="accordion-collapse" data-accordion="collapse">
-                            <h2 id="accordion-collapse-heading-{{ program.ExtensionProgramId }}">
+                            <h2 id="accordion-collapse-heading-{{ program['ExtensionProgramId'] }}">
                                 <div class="flex items-center justify-between w-full p-5 mb-2 font-medium text-left bg-white border border-gray-400  hover:bg-gray-100 rounded-xl">
                                     <div class="flex items-center">
-                                        <button class="bg-transparent mr-5" data-accordion-target="#accordion-collapse-body-{{ program.ExtensionProgramId }}" aria-expanded="false" aria-controls="accordion-collapse-body-{{ program.ExtensionProgramId }}"> 
+                                        <button class="bg-transparent mr-5" data-accordion-target="#accordion-collapse-body-{{ program['ExtensionProgramId'] }}" aria-expanded="false" aria-controls="accordion-collapse-body-{{ program['ExtensionProgramId'] }}"> 
                                             <svg data-accordion-icon class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 8">
                                                 <path stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 5.326 5.7a.909.909 0 0 0 1.348 0L13 1"/>
                                             </svg>
                                         </button>
-                                        <span>{{ program.Name }}</span>
+                                        <span>{{ program['Name'] }}</span>
                                     </div>
                                     <div class="flex items-center">
-                                        <button data-modal-target="viewProjectModal{{program.ExtensionProgramId}}" data-modal-show="viewProjectModal{{program.ExtensionProgramId}}" class="flex items-center font-semibold text-2xl text-blue-600 mr-4">
+                                        <button data-modal-target="viewProjectModal{{program['ExtensionProgramId']}}" data-modal-show="viewProjectModal{{program['ExtensionProgramId']}}" class="flex items-center font-semibold text-2xl text-blue-600 mr-4">
                                             <iconify-icon icon="ph:eye"></iconify-icon>
                                         </button>
-                                        <button data-modal-target="editProjectModal{{program.ExtensionProgramId}}" data-modal-show="editProjectModal{{program.ExtensionProgramId}}" class="flex items-center font-semibold text-2xl text-gray-500 mr-4">
+                                        <button data-modal-target="editProjectModal{{program['ExtensionProgramId']}}" data-modal-show="editProjectModal{{program['ExtensionProgramId']}}" class="flex items-center font-semibold text-2xl text-gray-500 mr-4">
                                             <iconify-icon icon="bx:edit"></iconify-icon>
                                         </button>
-                                        <button data-modal-target="deleteModal{{ program.ExtensionProgramId }}" data-modal-show="deleteModal{{ program.ExtensionProgramId }}" class="flex items-center font-semibold text-2xl text-gray-500 mr-4">
+                                        <button data-modal-target="deleteModal{{ program['ExtensionProgramId'] }}" data-modal-show="deleteModal{{ program['ExtensionProgramId'] }}" class="flex items-center font-semibold text-2xl text-gray-500 mr-4">
                                             <iconify-icon icon="ion:trash-outline"></iconify-icon>
                                         </button>
-                                        <button data-modal-target="add-project-{{program.ExtensionProgramId}}" data-modal-show="add-project-{{program.ExtensionProgramId}}">
+                                        <button data-modal-target="add-project-{{program['ExtensionProgramId']}}" data-modal-show="add-project-{{program['ExtensionProgramId']}}">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                                                 <path fill="currentColor" d="M19 12.998h-6v6h-2v-6H5v-2h6v-6h2v6h6z"/>
                                             </svg>
@@ -105,21 +105,21 @@
                                 <div class="pb-4 pt-2 pl-16">
                                     <!-- Nested accordion -->
                                     <ul>
-                                        {% for project in program.Project %}
+                                        {% for project in program['Project'] %}
                                         <li>
                                             <div class="mb-4">
                                                 <h2>
                                                     <div class="flex items-center  w-full p-5 rounded-xl font-medium text-left bg-white border border-gray-400 hover:bg-gray-100">
                                                         <div class="flex items-center">
-                                                            <a href="{{url_for('programs.viewProject', id=project.ProjectId)}}" class="hover:underline">
-                                                                <span>{{ project.Name }}</span>
+                                                            <a href="{{url_for('programs.viewProject', id=project['ProjectId'])}}" class="hover:underline">
+                                                                <span>{{ project['Name'] }}</span>
                                                             </a>
                                                         </div>
                                                     </div>
                                                 </h2>
-                                                <div id="accordion-nested-collapse-body-{{ project.ProjectId }}" class="hidden" aria-labelledby="accordion-nested-collapse-heading-{{ project.ProjectId }}">
+                                                <div id="accordion-nested-collapse-body-{{ project['ProjectId'] }}" class="hidden" aria-labelledby="accordion-nested-collapse-heading-{{ project['ProjectId'] }}">
                                                     <div class="p-5 border border-b-0 border-gray-200">
-                                                        <p class="text-gray-500">{{ project.Rationale }}</p>
+                                                        <p class="text-gray-500">{{ project['Rationale'] }}</p>
                                                     </div>
                                                 </div>
                                             </div>

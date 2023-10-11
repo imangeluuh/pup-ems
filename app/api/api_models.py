@@ -78,12 +78,21 @@ extension_project_model = api.model("ExtensionProject", {
     "Registration": fields.List(fields.Nested(registration_model))
 })
 
+program_model = api.model("Program", {
+    "ProgramId": fields.Integer,
+    "ProgramName": fields.String,
+    "Abbreviation": fields.String
+})
+
 extension_program_model = api.model("ExtensionProgram", {
     "ExtensionProgramId": fields.Integer,
     "Name": fields.String,
     "DateApproved": fields.Date,
     "ImplementationDate": fields.Date,
     "Status": fields.String,
+    "ImageUrl": fields.String,
+    "ImageFileId": fields.String,
     "Agenda": fields.Nested(agenda_model),
+    "Program": fields.Nested(program_model),
     "Project": fields.List(fields.Nested(extension_project_model))
 })

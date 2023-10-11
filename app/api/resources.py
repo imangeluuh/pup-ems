@@ -32,6 +32,7 @@ class AccountsApi(Resource):
 class AdminLoginApi(Resource):
     
     @ns.expect(login_input_model)
+    @ns.header('Content-Type', 'application/json')
     def post(self):
         attempted_user = Login.query.filter_by(Email=ns.payload['Email'], RoleId=1).first()
         if attempted_user and attempted_user.Status == 'Active': 

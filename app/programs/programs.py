@@ -26,9 +26,8 @@ def programs():
         print(programs)
     else:
         flash('Error')
-    projects = Project.query.all()
     
-    return render_template('admin/program_management.html', programs=programs, projects=projects, form=form, project_form=project_form)
+    return render_template('admin/program_management.html', programs=programs, form=form, project_form=project_form)
 
 def saveImage(image, imagepath):
     imagename = secure_filename(image.filename)
@@ -219,7 +218,10 @@ def updateProject(id):
         if form.image.data is not None:
             # If extension project has previous image, remove it from imagekit
             if extension_project.ImageFileId is not None:
-                status = purgeImage(extension_project.ImageFileId)
+                try:
+                    status = purgeImage(extension_project.ImageFileId)
+                except:
+                    print("image not found")
             # Get the input image path
             imagepath = os.path.join(
                     current_app.config["UPLOAD_FOLDER"], secure_filename(form.image.data.filename)

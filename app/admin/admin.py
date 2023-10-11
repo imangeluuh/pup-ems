@@ -2,7 +2,7 @@ from app.admin import bp
 from flask import render_template, url_for, request, redirect, flash, session
 from flask_login import current_user, login_user, login_required, logout_user
 from .forms import LoginForm, AnnouncementForm
-from ..models import Login, Beneficiary, Project, Program, Student, Announcement, Registration, Activity, User
+from ..models import Login, Beneficiary, Project, Program, Student, Announcement, Registration, User
 from ..Api.resources import AdminLoginApi
 from ..decorators.decorators import login_required
 from app import db, api
@@ -12,7 +12,6 @@ from werkzeug.utils import secure_filename
 import string, requests
 from ..programs.programs import fetch_activities
 
-headers = {"Content-Type": "application/json"}
 
 def saveImage(image, imagepath):
     imagename = secure_filename(image.filename)
@@ -32,7 +31,7 @@ def adminLogin():
         if form.validate_on_submit():
             data={'Email': form.email.data,
                 'Password': form.password.data}
-            response = requests.post(api.url_for(AdminLoginApi, _external=True), json=data, headers=headers)
+            response = requests.post(api.url_for(AdminLoginApi, _external=True), json=data)
             if response.status_code == 200:
                 response_data = response.json()
                 session['access_token'] = response_data.get('access_token')

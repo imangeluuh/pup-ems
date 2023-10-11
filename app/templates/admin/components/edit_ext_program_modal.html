@@ -1,13 +1,13 @@
 <!-- Add Project modal -->
-<div id="editProjectModal{{program.ExtensionProgramId}}" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 items-center justify-center hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+<div id="editProjectModal{{program['ExtensionProgramId']}}" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 items-center justify-center hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative w-full max-w-2xl max-h-full bg-white">
         <!-- Modal content -->
-        <form action="{{ url_for('programs.updateExtensionProgram', id=program.ExtensionProgramId) }}" method="post" enctype="multipart/form-data" class="relative bg-white rounded-lg shadow">
+        <form action="{{ url_for('programs.updateExtensionProgram', id=program['ExtensionProgramId']) }}" method="post" enctype="multipart/form-data" class="relative bg-white rounded-lg shadow">
             {{ form.hidden_tag() }}
             <!-- Modal header -->
             <div class="flex items-start justify-between p-4 border-b rounded-t">
                 <h3 class="text-xl font-semibold text-gray-900">Extension Program</h3>
-                <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center" data-modal-hide="editProjectModal{{program.ExtensionProgramId}}">
+                <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center" data-modal-hide="editProjectModal{{program['ExtensionProgramId']}}">
                 <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                 </svg>
@@ -20,20 +20,20 @@
                     <div class="col-span-6 flex items-center">
                         <!-- ID -->
                         <span class="block pr-4 font-semibold">ID: </span>
-                        <span class="font-semibold">{{ program.ExtensionProgramId }}</span>
+                        <span class="font-semibold">{{ program['ExtensionProgramId'] }}</span>
                     </div>
                     <div class="col-span-6 sm:col-span-6">
                         <!-- name -->
                         {{ form.program_name.label(class="block mb-2 text-sm font-medium text-gray-900") }}
-                        {{ form.program_name(class="input shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5", value=program.Name)}}
+                        {{ form.program_name(class="input shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5", value=program['Name'])}}
                     </div>
                     <div class="col-span-6 sm:col-span-6">
                         <!-- agenda -->
-                        {% set agenda = program.Agenda %}
+                        {% set agenda = program['Agenda'] %}
                         {{ form.agenda.label(class="block mb-2 text-sm font-medium text-gray-900") }}
                         <select name="{{ form.agenda.name }}" class="input shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5">
                             {% for option in form.agenda.choices %}
-                                <option value="{{ option[0] }}" {% if option[0] == agenda.AgendaId %}selected{% endif %}>{{ option[1] }}</option>
+                                <option value="{{ option[0] }}" {% if option[0] == agenda['AgendaId'] %}selected{% endif %}>{{ option[1] }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -44,28 +44,28 @@
                     </div>
                     <div class="col-span-6 sm:col-span-3">
                         <!-- program -->
-                        {% set course = program.Program %}
+                        {% set course = program['Program'] %}
                         {{ form.program.label(class="block mb-2 text-sm font-medium text-gray-900") }}
                         <select name="{{ form.program.name }}" class="input shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5">
                             {% for option in form.program.choices %}
-                                <option value="{{ option[0] }}" {% if option[0] == course.ProgramId %}selected{% endif %}>{{ option[1] }}</option>
+                                <option value="{{ option[0] }}" {% if option[0] == course['ProgramId'] %}selected{% endif %}>{{ option[1] }}</option>
                             {% endfor %}
                         </select>
                         </div>
                     <div class="col-span-6 sm:col-span-3">
                         <!-- status -->
                         {{ form.status.label(class="block mb-2 text-sm font-medium text-gray-900") }}
-                        {{ form.status(class="input shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5", value=program.Status)}}
+                        {{ form.status(class="input shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5", value=program['Status'])}}
                     </div>
                     <div class="col-span-6 sm:col-span-3">
                         <!-- date approved -->
                         {{ form.date_approved.label(class="block mb-2 text-sm font-medium text-gray-900") }}
-                        {{ form.date_approved(class="input shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5", value=program.DateApproved)}}
+                        {{ form.date_approved(class="input shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5", value=program['DateApproved'])}}
                     </div>
                     <div class="col-span-6 sm:col-span-3">
                         <!-- implementation date -->
                         {{ form.implementation_date.label(class="block mb-2 text-sm font-medium text-gray-900") }}
-                        {{ form.implementation_date(class="input shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5", value=program.ImplementationDate)}}
+                        {{ form.implementation_date(class="input shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5", value=program['ImplementationDate'])}}
                     </div>
                 </div>
             </div>
