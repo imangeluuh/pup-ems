@@ -12,7 +12,7 @@
 
 {% block content %}
 {% include 'admin/components/toast_notif.html' %}
-<div class="p-0">
+<div class="p-0 mt-14">
     <div class="ml-8 md:ml-64 p-4 bg-white flex ">
         <!-- Breadcrumb -->
         <a href="{{ url_for('programs.programs' )}}" class="flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
@@ -24,7 +24,7 @@
             <ol class="inline-flex items-center mb-3 space-x-1 md:space-x-3 sm:mb-0">
                 <li>
                     <div class="flex items-center">
-                    <a href="{{ url_for('programs.programs') }}" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2">Program</a>
+                    <a href="{{ url_for('programs.programs') }}" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2">{{project.ExtensionProgram.Name}}</a>
                     </div>
                 </li>
                 <li aria-current="page">

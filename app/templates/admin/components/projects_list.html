@@ -1,21 +1,21 @@
 
-<div class="mb-6 text-sm font-medium text-gray-900 border border-gray-200 rounded-lg shadow">
+<div class="mb-6 text-sm font-medium text-gray-900 border border-gray-200 rounded-xl shadow bg-white">
     <div id="accordion-collapse" data-accordion="collapse">
         {% for program in programs %}
-            <h2 id="accordion-collapse-heading-{{ program.ProgramName }}" class="block w-full px-4 py-2 text-white  bg-dark-grayish-navy ">
-                <button type="button" class="flex items-center justify-between w-full font-medium text-left" style="background-color: #2b2d42!important; color: white!important" data-accordion-target="#accordion-collapse-body-{{ program.ProgramName }}" aria-expanded="true" aria-controls="accordion-collapse-body-{{ program.ProgramName }}">
-                    <span>{{ program.ProgramName }}</span>
+            <h2 id="accordion-collapse-heading-{{ program.Abbreviation }}" class="block w-full px-4 py-2 border-b-2">
+                <button type="button" class="flex items-center justify-between w-full font-medium text-left bg-transparent" data-accordion-target="#accordion-collapse-body-{{ program.Abbreviation }}" aria-expanded="true" aria-controls="accordion-collapse-body-{{ program.ProgramName }}">
+                    <span class="text-black">{{ program.ProgramName }}</span>
                     <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 8">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 5.326 5.7a.909.909 0 0 0 1.348 0L13 1"/>
                     </svg>
                 </button>
             </h2>
-            <div id="accordion-collapse-body-{{ program.ProgramName }}" class="hidden" aria-labelledby="accordion-collapse-heading-{{ program.ProgramName }}">
+            <div id="accordion-collapse-body-{{ program.Abbreviation }}" class="hidden" aria-labelledby="accordion-collapse-heading-{{ program.Abbreviation }}">
                 <div id="accordion-nested-collapse" data-accordion="collapse">
                     {% for ext_program in program.ExtensionProgram %}
-                    <h2 id="accordion-nested-collapse-heading-{{ ext_program.ExtensionProgramId }}" class="block w-full px-4 py-2 text-white bg-light-grayish-blue ">
-                        <button type="button" class="flex items-center justify-between w-full font-medium text-left" style="background-color: #8d99ae!important; color: white!important" data-accordion-target="#accordion-nested-collapse-body-{{ ext_program.ExtensionProgramId }}" aria-expanded="true" aria-controls="accordion-nested-collapse-body-{{ ext_program.ExtensionProgramId }}">
-                            <span>{{ ext_program.Name }}</span>
+                    <h2 id="accordion-nested-collapse-heading-{{ ext_program.ExtensionProgramId }}" class="block w-full px-4 py-2 border-b-2">
+                        <button type="button" class="flex items-center justify-between w-full font-medium text-left bg-transparent" data-accordion-target="#accordion-nested-collapse-body-{{ ext_program.ExtensionProgramId }}" aria-expanded="true" aria-controls="accordion-nested-collapse-body-{{ ext_program.ExtensionProgramId }}">
+                            <span class="text-black">{{ ext_program.Name }}</span>
                             <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 8">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 5.326 5.7a.909.909 0 0 0 1.348 0L13 1"/>
                             </svg>
