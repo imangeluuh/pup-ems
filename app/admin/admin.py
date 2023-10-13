@@ -41,7 +41,7 @@ def adminLogin():
                 return redirect(url_for('programs.programs')) # Temp route
             else:
                 response_data = response.json()
-                flash(response_data.get('error'))
+                flash(response_data.get('error'), category='error')
     return render_template('admin/admin_login.html', form=form)
 
 @bp.route('/logout')
@@ -115,7 +115,7 @@ def createAnnouncement():
                     # Save the input to session
                     session['announcement_title']= form.title.data
                     session['announcement_body'] = form.content.data
-                    flash('Please fill out all the fields before publishing.')
+                    flash('Please fill out all the fields before publishing.', category='error')
                     return redirect(url_for('admin.createAnnouncement'))
                 is_live = 1
             elif 'draft' in request.form:
@@ -183,7 +183,7 @@ def updateAnnouncement(id):
         if form.validate_on_submit():
             if 'publish' in request.form:
                 if not all(request.form.values()):
-                    flash('Please fill out all the fields before publishing.')
+                    flash('Please fill out all the fields before publishing.', category='error')
                     return redirect(url_for('admin.updateAnnouncement'))
                 is_live = 1
             elif 'draft' in request.form:
