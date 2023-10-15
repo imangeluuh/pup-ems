@@ -2,7 +2,7 @@ from app.programs import bp
 from flask import render_template, url_for, request, redirect, flash, current_app
 from flask_login import current_user
 from ..models import Project, ExtensionProgram, Program, Registration, Agenda, ExtensionProgram, Activity
-from .forms import ProgramForm, ProjectForm, ActivityForm
+from .forms import ProgramForm, ProjectForm, ActivityForm, CombinedForm
 import calendar
 from datetime import datetime
 from app import db, api
@@ -35,12 +35,122 @@ def saveImage(image, imagepath):
     # Upload image to imagekit
     return uploadImage(imagepath, imagename)
 
+@bp.route('/extension-program/add', methods=['GET', 'POST'])
+def addProgram():
+    form = CombinedForm()
+    if request.method == 'POST':
+        str_image_url = None
+        str_image_file_id = None
+        if form.extension_program.image.data is not None:
+            # Get the input image path
+            imagepath = os.path.join(
+                    current_app.config["UPLOAD_FOLDER"], secure_filename(form.extension_program.image.data.filename)
+                )
+            # Save image
+            status = saveImage(form.extension_program.image.data, imagepath)
+            if status.error is not None:
+                flash("Extension program image upload failed", category="error")
+                return url_for('programs.addProgram')
+            else:
+                str_image_url = status.url
+                str_image_file_id = status.file_id
+            # Delete file from local storage
+            if os.path.exists(imagepath):
+                os.remove(imagepath)
+        program_to_add = ExtensionProgram(Name = form.extension_program.program_name.data,
+                            Status = form.extension_program.status.data, 
+                            ProposedBudget = form.extension_program.proposed_budget.data,
+                            ApprovedBudget = form.extension_program.approved_budget.data,
+                            AgendaId = form.extension_program.agenda.data,
+                            ProgramId = form.extension_program.program.data,
+                            CollaboratorId = form.extension_program.collaborator.data,
+                            DateApproved = form.extension_program.date_approved.data,
+                            ImplementationDate = form.extension_program.implementation_date.data,
+                            ImageUrl=str_image_url,
+                            ImageFileId=str_image_file_id)
+        db.session.add(program_to_add)
+        db.session.flush()
+        int_program_id = program_to_add.ExtensionProgramId
+        # Insert project
+        str_image_url = None
+        str_image_file_id = None
+        if form.project.image.data is not None:
+            # Get the input image path
+            imagepath = os.path.join(
+                    current_app.config["UPLOAD_FOLDER"], secure_filename(form.project.image.data.filename)
+                )
+            # Save image
+            status = saveImage(form.project.image.data, imagepath)
+            if status.error is not None:
+                flash("Project image upload failed", category="error")
+                return redirect(url_for('programs.addProgram'))
+            else:
+                str_image_url = status.url
+                str_image_file_id = status.file_id
+            # Delete file from local storage
+            if os.path.exists(imagepath):
+                os.remove(imagepath)
+        lead_proponent = current_user.User[0]
+        project_to_add = Project(Name = form.project.project_name.data,
+                            LeadProponentId = lead_proponent.UserId,
+                            ProjectType = form.project.project_type.data,
+                            Rationale = form.project.rationale.data,
+                            Objectives = form.project.objectives.data,
+                            Status = form.project.status.data,
+                            ImageUrl=str_image_url,
+                            ImageFileId=str_image_file_id,
+                            StartDate = form.project.start_date.data,
+                            NumberOfBeneficiaries = form.project.num_of_beneficiaries.data,
+                            BeneficiariesClassifications = form.project.beneficiaries_classifications.data,
+                            ProjectScope = form.project.project_scope.data,
+                            ExtensionProgramId = int_program_id)
+        db.session.add(project_to_add)
+        db.session.flush()
+        int_project_id = project_to_add.ProjectId
+        # Insert Activity
+        str_image_url = None
+        str_image_file_id = None
+        if form.activity.image.data is not None:
+            # Get the input image path
+            imagepath = os.path.join(
+                    current_app.config["UPLOAD_FOLDER"], secure_filename(form.activity.image.data.filename)
+                )
+            # Save image
+            status = saveImage(form.activity.image.data, imagepath)
+            if status.error is not None:
+                flash("Activity image upload failed", category="error")
+                return redirect(url_for('programs.addProgram'))
+            else:
+                str_image_url = status.url
+                str_image_file_id = status.file_id
+            # Delete file from local storage
+            if os.path.exists(imagepath):
+                os.remove(imagepath)
+        activity_to_create = Activity(ActivityName=form.activity.activity_name.data,
+                                        Date=form.activity.date.data,
+                                        StartTime=form.activity.start_time.data,
+                                        EndTime=form.activity.end_time.data,
+                                        Description=form.activity.activity_description.data,
+                                        ProjectId=int_project_id,
+                                        ImageUrl=str_image_url,
+                                        ImageFileId=str_image_file_id)
+        db.session.add(activity_to_create)
+        db.session.commit()
+        return redirect(url_for('programs.programs'))
+    if form.errors != {}: # If there are errors from the validations
+        for err_msg in form.errors.values():
+            flash(err_msg, category='error')
+
+    return render_template('programs/add_ext_program.html', form=form)
+
 @bp.route('/extension-program/insert', methods=['POST'])
 @login_required(role=["Admin", "Faculty"])
 def insertExtensionProgram():
     form = ProgramForm()
     if request.method == "POST":
         if form.validate_on_submit():
+            str_image_url = None
+            str_image_file_id = None
             if form.image.data is not None:
                 # Get the input image path
                 imagepath = os.path.join(

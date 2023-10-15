@@ -149,11 +149,15 @@ class ExtensionProgram(db.Model):
     Status = db.Column(db.String(20), nullable=False) # move to Project Model
     ImageUrl = db.Column(db.Text)
     ImageFileId = db.Column(db.Text)
+    ProposedBudget = db.Column(db.Numeric(12, 2), nullable=False)
+    ApprovedBudget = db.Column(db.Numeric(12, 2), nullable=False)
     AgendaId = db.Column(db.Integer, db.ForeignKey('Agenda.AgendaId', ondelete='CASCADE'), nullable=False)
-    Agenda = db.relationship("Agenda", backref='ExtensionProgram', lazy=True, passive_deletes=True)
+    Agenda = db.relationship("Agenda", back_populates='ExtensionPrograms', lazy=True, passive_deletes=True)
     ProgramId = db.Column(db.Integer, db.ForeignKey('Program.ProgramId', ondelete='CASCADE'), nullable=False)
-    Program = db.relationship("Program", backref='ExtensionProgram', lazy=True, passive_deletes=True)
-    Project = db.relationship("Project", backref='ExtensionProgram', lazy=True, passive_deletes=True)
+    Program = db.relationship("Program", back_populates='ExtensionPrograms', lazy=True, passive_deletes=True)
+    CollaboratorId = db.Column(db.Integer, db.ForeignKey('Collaborator.CollaboratorId', ondelete='CASCADE'), nullable=False)
+    Collaborator = db.relationship("Collaborator", back_populates='ExtensionPrograms', lazy=True)
+    Projects = db.relationship("Project", back_populates='ExtensionProgram', lazy=True)
 
 
 class Project(db.Model):
@@ -173,6 +177,7 @@ class Project(db.Model):
     BeneficiariesClassifications = db.Column(db.String(255), nullable=False)
     ProjectScope = db.Column(db.String(255), nullable=False)
     ExtensionProgramId = db.Column(db.Integer, db.ForeignKey('ExtensionProgram.ExtensionProgramId', ondelete='CASCADE'), nullable=False)
+    ExtensionProgram = db.relationship("ExtensionProgram", back_populates='Projects', lazy=True, passive_deletes=True)
     Registration = db.relationship('Registration', backref='Project', cascade='all, delete-orphan', passive_deletes=True)
     LeadProponent = db.relationship('User', backref='Project', lazy=True, passive_deletes=True)
     # CommunityAssessment =
@@ -185,6 +190,7 @@ class Program(db.Model):
     ProgramId = db.Column(db.Integer, primary_key=True)
     ProgramName = db.Column(db.String(255), nullable=False)
     Abbreviation = db.Column(db.String(255), nullable=False)
+    ExtensionPrograms = db.relationship("ExtensionProgram", back_populates='Program', lazy=True)
 
 
 class Agenda(db.Model):
@@ -192,6 +198,17 @@ class Agenda(db.Model):
 
     AgendaId = db.Column(db.Integer, primary_key=True)
     AgendaName = db.Column(db.String(255), nullable=False)
+    ExtensionPrograms = db.relationship("ExtensionProgram", back_populates='Agenda', lazy=True)
+
+
+class Collaborator(db.Model):
+    __tablename__ = 'Collaborator'
+
+    CollaboratorId = db.Column(db.Integer, primary_key=True)
+    Organization = db.Column(db.String(100), nullable=False)
+    KeyPersonnel = db.Column(db.String(100), nullable=False)
+    Location = db.Column(db.String(255), nullable=False)
+    ExtensionPrograms = db.relationship("ExtensionProgram", back_populates='Collaborator', lazy=True)
 
 
 class Activity(db.Model):
