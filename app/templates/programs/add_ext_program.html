@@ -189,8 +189,8 @@ input[type="file"]::-webkit-file-upload-button {
                     <fieldset>
                         <h2 class="fs-title font-semibold">Create extension program</h2>
                         <h3 class="fs-subtitle"></h3>
-                        <div class="grid grid-cols-2 gap-2">
-                            <div class="col-span-2 text-left flex flex-col">
+                        <div class="grid grid-cols-12 gap-2">
+                            <div class="col-span-12 text-left flex flex-col">
                                 <!-- name -->
                                 <label for="{{ form.extension_program.program_name.id }}">{{ form.extension_program.program_name.label }}</label>
                                 {{ form.extension_program.program_name(class="input")}}
@@ -200,7 +200,7 @@ input[type="file"]::-webkit-file-upload-button {
                                     {% endfor %}
                                 </ol>
                             </div>
-                            <div class="col-span-2 sm:col-span-1 text-left flex flex-col">
+                            <div class="col-span-12 sm:col-span-6 text-left flex flex-col">
                                 <!-- agenda -->
                                 <label for="{{ form.extension_program.agenda.id }}">{{ form.extension_program.agenda.label }}</label>
                                 {{ form.extension_program.agenda(class="input")}}
@@ -210,7 +210,7 @@ input[type="file"]::-webkit-file-upload-button {
                                     {% endfor %}
                                 </ol>
                             </div>
-                            <div class="col-span-2 sm:col-span-1 text-left flex flex-col">
+                            <div class="col-span-12 sm:col-span-6 text-left flex flex-col">
                                 <!-- collaborator -->
                                 <label for="{{ form.extension_program.collaborator.id }}">{{ form.extension_program.collaborator.label }}</label>
                                 {{ form.extension_program.collaborator(class="input")}}
@@ -220,7 +220,7 @@ input[type="file"]::-webkit-file-upload-button {
                                     {% endfor %}
                                 </ol>
                             </div>
-                            <div class="col-span-2 text-left flex flex-col">
+                            <div class="col-span-12 text-left flex flex-col">
                                 <!-- image -->
                                 <label for="{{ form.extension_program.image.id }}">{{ form.extension_program.image.label }}</label>
                                 {{ form.extension_program.image(class=" w-full text-sm text-gray-900 border border-gray-300 rounded-sm cursor-pointer")}}
@@ -230,17 +230,22 @@ input[type="file"]::-webkit-file-upload-button {
                                     {% endfor %}
                                 </ol>
                             </div>
-                            <div class="col-span-2 sm:col-span-1 text-left flex flex-col">
+                            <div class="col-span-12 sm:col-span-4 text-left flex flex-col">
                                 <!-- proposed budget -->
                                 <label for="{{ form.extension_program.proposed_budget.id }}">{{ form.extension_program.proposed_budget.label }}</label>
                                 {{ form.extension_program.proposed_budget(class="input")}}
                             </div>
-                            <div class="col-span-2 sm:col-span-1 text-left flex flex-col">
+                            <div class="col-span-12 sm:col-span-4 text-left flex flex-col">
                                 <!-- approved budget -->
                                 <label for="{{ form.extension_program.approved_budget.id }}">{{ form.extension_program.approved_budget.label }}</label>
                                 {{ form.extension_program.approved_budget(class="input")}}
                             </div>
-                            <div class="col-span-2 sm:col-span-1 text-left flex flex-col">
+                            <div class="col-span-12 sm:col-span-4 text-left flex flex-col">
+                                <!-- fund type -->
+                                <label for="{{ form.extension_program.fund_type.id }}">{{ form.extension_program.fund_type.label }}</label>
+                                {{ form.extension_program.fund_type(class="input")}}
+                            </div>
+                            <div class="col-span-12 sm:col-span-6 text-left flex flex-col">
                                 <!-- program -->
                                 <label for="{{ form.extension_program.program.id }}">{{ form.extension_program.program.label }}</label>
                                 {{ form.extension_program.program(class="input")}}
@@ -250,7 +255,7 @@ input[type="file"]::-webkit-file-upload-button {
                                     {% endfor %}
                                 </ol>
                             </div>
-                            <div class="col-span-2 sm:col-span-1 text-left flex flex-col">
+                            <div class="col-span-12 sm:col-span-6 text-left flex flex-col">
                                 <!-- status -->
                                 <label for="{{ form.extension_program.status.id }}">{{ form.extension_program.status.label }}</label>
                                 {{ form.extension_program.status(class="input")}}
@@ -260,7 +265,7 @@ input[type="file"]::-webkit-file-upload-button {
                                     {% endfor %}
                                 </ol>
                             </div>
-                            <div class="col-span-2 sm:col-span-1 text-left flex flex-col">
+                            <div class="col-span-12 sm:col-span-6 text-left flex flex-col">
                                 <!-- date approved -->
                                 <label for="{{ form.extension_program.date_approved.id }}">{{ form.extension_program.date_approved.label }}</label>
                                 {{ form.extension_program.date_approved(class="input")}}
@@ -270,7 +275,7 @@ input[type="file"]::-webkit-file-upload-button {
                                     {% endfor %}
                                 </ol>
                             </div>
-                            <div class="col-span-2 sm:col-span-1 text-left flex flex-col">
+                            <div class="col-span-12 sm:col-span-6 text-left flex flex-col">
                                 <!-- implementation date -->
                                 <label for="{{ form.extension_program.implementation_date.id }}">{{ form.extension_program.implementation_date.label }}</label>
                                 {{ form.extension_program.implementation_date(class="input")}}
@@ -407,7 +412,17 @@ input[type="file"]::-webkit-file-upload-button {
                             {% endfor %}
                         </ol>
                     </div>
-                    <div class="col-span-2 text-left">
+                    <div class="col-span-2 sm:col-span-1 text-left flex flex-col">
+                        <!-- image -->
+                        <label for="{{ form.activity.image.id }}">{{ form.activity.image.label }}</label>
+                        {{ form.activity.image(class="mt-1 mb-2 w-full text-sm text-gray-900 border border-gray-300 rounded-sm cursor-pointer")}}
+                        <ol>
+                            {% for error in form.activity.image.errors %}
+                            <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                            {% endfor %}
+                        </ol>
+                    </div>
+                    <div class="col-span-2 sm:col-span-1 text-left">
                         <!--date -->
                         <label for="{{ form.activity.date.id }}">{{ form.activity.date.label }}</label>
                         {{ form.activity.date(class="input")}}
@@ -443,16 +458,6 @@ input[type="file"]::-webkit-file-upload-button {
                         {{ form.activity.activity_description(class="input") }}
                         <ol>
                             {% for error in form.activity.activity_description.errors %}
-                            <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
-                            {% endfor %}
-                        </ol>
-                    </div>
-                    <div class="col-span-2 text-left flex flex-col">
-                        <!-- image -->
-                        <label for="{{ form.activity.image.id }}">{{ form.activity.image.label }}</label>
-                        {{ form.activity.image(class="mt-1 mb-2 w-full text-sm text-gray-900 border border-gray-300 rounded-sm cursor-pointer")}}
-                        <ol>
-                            {% for error in form.activity.image.errors %}
                             <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
                             {% endfor %}
                         </ol>
@@ -558,7 +563,6 @@ $(".previous").click(function () {
 
 
 $("form").on("submit", function (e) {
-   e.preventDefault();
    var requiredFields = $(this).parent().find("input[required]", "textarea[required]");
     var filledOut = true;
 
@@ -572,10 +576,10 @@ $("form").on("submit", function (e) {
 
     if (!filledOut) {
         toastr.error("Please fill out all the fields.");
-    animating = false;
-    return;
+        animating = false;
+        e.preventDefault();
+        return;
     }
-   $( this ).submit(); 
 });
     </script>
     

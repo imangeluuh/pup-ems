@@ -94,5 +94,5 @@ extension_program_model = api.model("ExtensionProgram", {
     "ImageFileId": fields.String,
     "Agenda": fields.Nested(agenda_model),
     "Program": fields.Nested(program_model),
-    "Project": fields.List(fields.Nested(extension_project_model))
+    "Projects": fields.List(fields.Nested(extension_project_model))
 })

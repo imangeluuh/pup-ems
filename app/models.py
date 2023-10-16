@@ -151,6 +151,7 @@ class ExtensionProgram(db.Model):
     ImageFileId = db.Column(db.Text)
     ProposedBudget = db.Column(db.Numeric(12, 2), nullable=False)
     ApprovedBudget = db.Column(db.Numeric(12, 2), nullable=False)
+    FundType = db.Column(db.String(20), nullable=False)
     AgendaId = db.Column(db.Integer, db.ForeignKey('Agenda.AgendaId', ondelete='CASCADE'), nullable=False)
     Agenda = db.relationship("Agenda", back_populates='ExtensionPrograms', lazy=True, passive_deletes=True)
     ProgramId = db.Column(db.Integer, db.ForeignKey('Program.ProgramId', ondelete='CASCADE'), nullable=False)

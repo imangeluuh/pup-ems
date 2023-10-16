@@ -35,8 +35,9 @@ def saveImage(image, imagepath):
     # Upload image to imagekit
     return uploadImage(imagepath, imagename)
 
-@bp.route('/extension-program/add', methods=['GET', 'POST'])
-def addProgram():
+@bp.route('/extension-program/insert', methods=['GET', 'POST'])
+@login_required(role=["Admin", "Faculty"])
+def insertExtensionProgram():
     form = CombinedForm()
     if request.method == 'POST':
         str_image_url = None
@@ -61,6 +62,7 @@ def addProgram():
                             Status = form.extension_program.status.data, 
                             ProposedBudget = form.extension_program.proposed_budget.data,
                             ApprovedBudget = form.extension_program.approved_budget.data,
+                            FundType = form.extension_program.fund_type.data,
                             AgendaId = form.extension_program.agenda.data,
                             ProgramId = form.extension_program.program.data,
                             CollaboratorId = form.extension_program.collaborator.data,
@@ -142,46 +144,6 @@ def addProgram():
             flash(err_msg, category='error')
 
     return render_template('programs/add_ext_program.html', form=form)
-
-@bp.route('/extension-program/insert', methods=['POST'])
-@login_required(role=["Admin", "Faculty"])
-def insertExtensionProgram():
-    form = ProgramForm()
-    if request.method == "POST":
-        if form.validate_on_submit():
-            str_image_url = None
-            str_image_file_id = None
-            if form.image.data is not None:
-                # Get the input image path
-                imagepath = os.path.join(
-                        current_app.config["UPLOAD_FOLDER"], secure_filename(form.image.data.filename)
-                    )
-                # Save image
-                status = saveImage(form.image.data, imagepath)
-                if status.error is not None:
-                    return {"error": True, "msg": "File Upload Error"}
-                else:
-                    str_image_url = status.url
-                    str_image_file_id = status.file_id
-                # Delete file from local storage
-                if os.path.exists(imagepath):
-                    os.remove(imagepath)
-            program_to_add = ExtensionProgram(Name = form.program_name.data,
-                                Status = form.status.data, 
-                                AgendaId = form.agenda.data,
-                                ProgramId = form.program.data,
-                                DateApproved = form.date_approved.data,
-                                ImplementationDate = form.implementation_date.data,
-                                ImageUrl=str_image_url,
-                                ImageFileId=str_image_file_id)
-            db.session.add(program_to_add)
-            db.session.commit()
-            program_html = render_template('admin/components/program_item.html', program=program_to_add)
-            return {"success": True, "msg": "Extension progam is successfully inserted.", "program_html": program_html}
-        if form.errors != {}: # If there are errors from the validations
-            for err_msg in form.errors.values():
-                return {"error": True, "msg": err_msg}
-
 
 
 @bp.route('/extension-program/update/<int:id>', methods=['POST'])

@@ -11,6 +11,9 @@ class ProgramForm(FlaskForm):
     collaborator = SelectField('Collaborator', validators=[DataRequired()])
     proposed_budget = StringField('Proposed Budget', validators=[DataRequired()])
     approved_budget = StringField('Approved Budget', validators=[DataRequired()])
+    fund_type = SelectField('Fund Type', choices=[('Internal', 'Internal'),
+                                                ('External', 'External')],
+                                                validators=[DataRequired()])
     image = FileField('Upload Image', validators=[FileAllowed(['jpg', 'png', 'jpeg', 'gif'])])
     program = SelectField('Program', validators=[DataRequired()])
     date_approved = DateField('Date Approved', validators=[DataRequired()])
