@@ -1,0 +1,582 @@
+{% extends 'admin/base.html' %}
+
+{% block head %}
+    <title>PUPQC Extension Services</title>
+    <!--Regular Datatables CSS-->
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.css" />
+	<!--Responsive Extension Datatables CSS-->
+	<link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/table_style.css') }}">  
+    
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Montserrat);
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: montserrat, arial, verdana;
+}
+
+#multistepsform {
+  margin: 50px auto;
+  text-align: center;
+  position: relative;
+}
+
+#multistepsform fieldset {
+  background: white;
+  border: 0 none;
+  border-radius: 3px;
+  box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.4);
+  padding: 20px 30px;
+  box-sizing: border-box;
+  width: 80%;
+  margin: 0 10%;
+  position: relative;
+}
+
+#multistepsform fieldset:not(:first-of-type) {
+  display: none;
+}
+
+#multistepsform input.input,
+#multistepsform select,
+#multistepsform textarea {
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: montserrat;
+  color: #2c3e50;
+  font-size: 13px;
+}
+
+#multistepsform input.input:focus,
+#multistepsform select:focus,
+#multistepsform textarea:focus {
+  border-color: #679b9b;
+  outline: none;
+  color: #637373;
+}
+
+#multistepsform .action-button {
+  width: 100px;
+  background: #810001;
+  color: #fff;
+  font-weight: bold;
+  transition: 150ms;
+  border: 0 none;
+  border-radius: 1px;
+  cursor: pointer;
+  padding: 10px 5px;
+  margin: 10px 5px;
+}
+
+#multistepsform .action-button.previous {
+    background: #ccc;
+}
+
+#multistepsform .action-button.next:hover,
+#multistepsform .action-button.next:focus {
+    box-shadow: 0 0 0 2px #790000;
+    color: #fff;
+}
+
+#multistepsform .action-button.previous:hover,
+#multistepsform .action-button.previous:focus {
+    box-shadow: 0 0 0 2px #666;
+}
+
+#multistepsform .fs-title {
+  font-size: 15px;
+  text-transform: uppercase;
+  color: #282b2e;
+  margin-bottom: 10px;
+}
+
+#multistepsform .fs-subtitle {
+  font-weight: normal;
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+#progressbar {
+  margin-bottom: 30px;
+  overflow: hidden;
+  counter-reset: step;
+}
+
+#progressbar li {
+  list-style-type: none;
+  color: #679b9b;
+  text-transform: uppercase;
+  font-size: 9px;
+  width: 33.33%;
+  float: left;
+  position: relative;
+}
+
+#progressbar li:before {
+  content: counter(step);
+  counter-increment: step;
+  width: 20px;
+  line-height: 20px;
+  display: block;
+  font-size: 10px;
+  color: #fff;
+  background: #679b9b;
+  border-radius: 3px;
+  margin: 0 auto 5px auto;
+}
+
+#progressbar li:after {
+  content: "";
+  width: 100%;
+  height: 2px;
+  background: #679b9b;
+  position: absolute;
+  left: -50%;
+  top: 9px;
+  z-index: -1;
+}
+
+#progressbar li:first-child:after {
+  content: none;
+}
+
+#progressbar li.active {
+  color: #810001;
+}
+
+#progressbar li.active:before,
+#progressbar li.active:after {
+  background: #810001;
+  color: white;
+}
+
+input[type="file"],
+input[type="file"]::-webkit-file-upload-button {
+    height:55.5px!important;
+}
+
+
+
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="p-4 sm:ml-64">
+        <!--Container-->
+        <div class="container w-full md:w-4/5 xl:w-3/5 mx-auto px-2 mt-20">
+            <!-- multistep form -->
+            <div id="multistepsform">
+                <form id="programForm" action="" enctype="multipart/form-data" method="post">
+                    {{ form.hidden_tag() }}
+                    <!-- progressbar -->
+                    <ul id="progressbar">
+                        <li class="active">Extension Program</li>
+                        <li>Project</li>
+                        <li>Activity</li>
+                    </ul>
+                    <!-- fieldsets -->
+                    <fieldset>
+                        <h2 class="fs-title font-semibold">Create extension program</h2>
+                        <h3 class="fs-subtitle"></h3>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="col-span-2 text-left flex flex-col">
+                                <!-- name -->
+                                <label for="{{ form.extension_program.program_name.id }}">{{ form.extension_program.program_name.label }}</label>
+                                {{ form.extension_program.program_name(class="input")}}
+                                <ol>
+                                    {% for error in form.extension_program.program_name.errors %}
+                                    <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                                    {% endfor %}
+                                </ol>
+                            </div>
+                            <div class="col-span-2 sm:col-span-1 text-left flex flex-col">
+                                <!-- agenda -->
+                                <label for="{{ form.extension_program.agenda.id }}">{{ form.extension_program.agenda.label }}</label>
+                                {{ form.extension_program.agenda(class="input")}}
+                                <ol>
+                                    {% for error in form.extension_program.agenda.errors %}
+                                    <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                                    {% endfor %}
+                                </ol>
+                            </div>
+                            <div class="col-span-2 sm:col-span-1 text-left flex flex-col">
+                                <!-- collaborator -->
+                                <label for="{{ form.extension_program.collaborator.id }}">{{ form.extension_program.collaborator.label }}</label>
+                                {{ form.extension_program.collaborator(class="input")}}
+                                <ol>
+                                    {% for error in form.extension_program.collaborator.errors %}
+                                    <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                                    {% endfor %}
+                                </ol>
+                            </div>
+                            <div class="col-span-2 text-left flex flex-col">
+                                <!-- image -->
+                                <label for="{{ form.extension_program.image.id }}">{{ form.extension_program.image.label }}</label>
+                                {{ form.extension_program.image(class=" w-full text-sm text-gray-900 border border-gray-300 rounded-sm cursor-pointer")}}
+                                <ol>
+                                    {% for error in form.extension_program.image.errors %}
+                                    <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                                    {% endfor %}
+                                </ol>
+                            </div>
+                            <div class="col-span-2 sm:col-span-1 text-left flex flex-col">
+                                <!-- proposed budget -->
+                                <label for="{{ form.extension_program.proposed_budget.id }}">{{ form.extension_program.proposed_budget.label }}</label>
+                                {{ form.extension_program.proposed_budget(class="input")}}
+                            </div>
+                            <div class="col-span-2 sm:col-span-1 text-left flex flex-col">
+                                <!-- approved budget -->
+                                <label for="{{ form.extension_program.approved_budget.id }}">{{ form.extension_program.approved_budget.label }}</label>
+                                {{ form.extension_program.approved_budget(class="input")}}
+                            </div>
+                            <div class="col-span-2 sm:col-span-1 text-left flex flex-col">
+                                <!-- program -->
+                                <label for="{{ form.extension_program.program.id }}">{{ form.extension_program.program.label }}</label>
+                                {{ form.extension_program.program(class="input")}}
+                                <ol>
+                                    {% for error in form.extension_program.program.errors %}
+                                    <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                                    {% endfor %}
+                                </ol>
+                            </div>
+                            <div class="col-span-2 sm:col-span-1 text-left flex flex-col">
+                                <!-- status -->
+                                <label for="{{ form.extension_program.status.id }}">{{ form.extension_program.status.label }}</label>
+                                {{ form.extension_program.status(class="input")}}
+                                <ol>
+                                    {% for error in form.extension_program.status.errors %}
+                                    <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                                    {% endfor %}
+                                </ol>
+                            </div>
+                            <div class="col-span-2 sm:col-span-1 text-left flex flex-col">
+                                <!-- date approved -->
+                                <label for="{{ form.extension_program.date_approved.id }}">{{ form.extension_program.date_approved.label }}</label>
+                                {{ form.extension_program.date_approved(class="input")}}
+                                <ol>
+                                    {% for error in form.extension_program.date_approved.errors %}
+                                    <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                                    {% endfor %}
+                                </ol>
+                            </div>
+                            <div class="col-span-2 sm:col-span-1 text-left flex flex-col">
+                                <!-- implementation date -->
+                                <label for="{{ form.extension_program.implementation_date.id }}">{{ form.extension_program.implementation_date.label }}</label>
+                                {{ form.extension_program.implementation_date(class="input")}}
+                                <ol>
+                                    {% for error in form.extension_program.implementation_date.errors %}
+                                    <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                                    {% endfor %}
+                                </ol>
+                            </div>
+                        </div>
+                        <input type="button" name="next" class="next action-button" value="Next" />
+                    </fieldset>
+            
+                    <fieldset>
+                        <h2 class="fs-title  font-semibold">Project</h2>
+                        <h3 class="fs-subtitle"></h3>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="col-span-2 text-left">
+                                <!-- name -->
+                                <label for="{{ form.project.project_name.id }}">{{ form.project.project_name.label }}</label>
+                                {{ form.project.project_name(class="input")}}
+                                <ol>
+                                    {% for error in form.project.project_name.errors %}
+                                    <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                                    {% endfor %}
+                                </ol>
+                            </div>
+                            <div class="col-span-2 sm:col-span-1 text-left flex flex-col">
+                                <!-- image -->
+                                <label for="{{ form.project.image.id }}">{{ form.project.image.label }}</label>
+                                {{ form.project.image(class="mt-1 mb-2 w-full text-sm text-gray-900 border border-gray-300 rounded-sm cursor-pointer")}}
+                                <ol>
+                                    {% for error in form.project.image.errors %}
+                                    <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                                    {% endfor %}
+                                </ol>
+                            </div>
+                            <div class="col-span-2 sm:col-span-1 text-left">
+                                <!-- status -->
+                                <label for="{{ form.project.status.id }}">{{ form.project.status.label }}</label>
+                                {{ form.project.status(class="input")}}
+                                <ol>
+                                    {% for error in form.project.status.errors %}
+                                    <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                                    {% endfor %}
+                                </ol>
+                            </div>
+                            <div class="col-span-2 sm:col-span-1 text-left">
+                                <!-- project type -->
+                                <label for="{{ form.project.project_type.id }}">{{ form.project.project_type.label }}</label>
+                                {{ form.project.project_type(class="input")}}
+                                <ol>
+                                    {% for error in form.project.project_type.errors %}
+                                    <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                                    {% endfor %}
+                                </ol>
+                            </div>
+                            <div class="col-span-2 sm:col-span-1 text-left">
+                                <!-- start date -->
+                                <label for="{{ form.project.start_date.id }}">{{ form.project.start_date.label }}</label>
+                                {{ form.project.start_date(class="input")}}
+                                <ol>
+                                    {% for error in form.project.start_date.errors %}
+                                    <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                                    {% endfor %}
+                                </ol>
+                            </div>
+                            <div class="col-span-2 text-left">
+                                <!-- rationale -->
+                                <label for="{{ form.project.rationale.id }}">{{ form.project.rationale.label }}</label>
+                                {{ form.project.rationale(class="input")}}
+                                <ol>
+                                    {% for error in form.project.rationale.errors %}
+                                    <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                                    {% endfor %}
+                                </ol>
+                            </div>
+                            <div class="col-span-2 text-left">
+                                <!-- objectives -->
+                                <label for="{{ form.project.objectives.id }}">{{ form.project.objectives.label }}</label>
+                                {{ form.project.objectives(class="input")}}
+                                <ol>
+                                    {% for error in form.project.objectives.errors %}
+                                    <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                                    {% endfor %}
+                                </ol>
+                            </div>
+                            <div class="col-span-2 sm:col-span-1 text-left">
+                                <!-- number of target beneficiaries -->
+                                <label for="{{ form.project.num_of_beneficiaries.id }}">{{ form.project.num_of_beneficiaries.label }}</label>
+                                {{ form.project.num_of_beneficiaries(class="input")}}
+                                <ol>
+                                    {% for error in form.project.num_of_beneficiaries.errors %}
+                                    <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                                    {% endfor %}
+                                </ol>
+                            </div>
+                            <div class="col-span-2 sm:col-span-1 text-left">
+                                <!-- beneficiaries classications -->
+                                <label for="{{ form.project.beneficiaries_classifications.id }}">{{ form.project.beneficiaries_classifications.label }}</label>
+                                {{ form.project.beneficiaries_classifications(class="input")}}
+                                <ol>
+                                    {% for error in form.project.beneficiaries_classifications.errors %}
+                                    <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                                    {% endfor %}
+                                </ol>
+                            </div>
+                            <div class="col-span-2 text-left">
+                                <!-- project scope -->
+                                <label for="{{ form.project.project_scope.id }}">{{ form.project.project_scope.label }}</label>
+                                {{ form.project.project_scope(class="input")}}
+                                <ol>
+                                    {% for error in form.project.project_scope.errors %}
+                                    <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                                    {% endfor %}
+                                </ol>
+                            </div>
+                        </div>
+                        <input type="button" name="previous" class="previous action-button" value="Previous" />
+                        <input type="button" name="next" class="next action-button" value="Next" />
+                    </fieldset>
+
+                <fieldset>
+                <h2 class="fs-title font-semibold">Activity</h2>
+                <h3 class="fs-subtitle"></h3>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="col-span-2 text-left">
+                        <!-- name -->
+                        <label for="{{ form.activity.activity_name.id }}">{{ form.activity.activity_name.label }}</label>
+                        {{ form.activity.activity_name(class="input")}}
+                        <ol>
+                            {% for error in form.activity.activity_name.errors %}
+                            <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                            {% endfor %}
+                        </ol>
+                    </div>
+                    <div class="col-span-2 text-left">
+                        <!--date -->
+                        <label for="{{ form.activity.date.id }}">{{ form.activity.date.label }}</label>
+                        {{ form.activity.date(class="input")}}
+                        <ol>
+                            {% for error in form.activity.date.errors %}
+                            <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                            {% endfor %}
+                        </ol>
+                    </div>
+                    <div class="col-span-2 sm:col-span-1 text-left">
+                        <!-- start time -->
+                        <label for="{{ form.activity.start_time.id }}">{{ form.activity.start_time.label }}</label>
+                        {{ form.activity.start_time(class="input")}}
+                        <ol>
+                            {% for error in form.activity.start_time.errors %}
+                            <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                            {% endfor %}
+                        </ol>
+                    </div>
+                    <div class="col-span-2 sm:col-span-1 text-left">
+                        <!-- end time -->
+                        <label for="{{ form.activity.end_time.id }}">{{ form.activity.end_time.label }}</label>
+                        {{ form.activity.end_time(class="input")}}
+                        <ol>
+                            {% for error in form.activity.end_time.errors %}
+                            <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                            {% endfor %}
+                        </ol>
+                    </div>
+                    <div class="col-span-2 text-left">
+                        <!-- description -->
+                        <label for="{{ form.activity.activity_description.id }}">{{ form.activity.activity_description.label }}</label>
+                        {{ form.activity.activity_description(class="input") }}
+                        <ol>
+                            {% for error in form.activity.activity_description.errors %}
+                            <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                            {% endfor %}
+                        </ol>
+                    </div>
+                    <div class="col-span-2 text-left flex flex-col">
+                        <!-- image -->
+                        <label for="{{ form.activity.image.id }}">{{ form.activity.image.label }}</label>
+                        {{ form.activity.image(class="mt-1 mb-2 w-full text-sm text-gray-900 border border-gray-300 rounded-sm cursor-pointer")}}
+                        <ol>
+                            {% for error in form.activity.image.errors %}
+                            <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                            {% endfor %}
+                        </ol>
+                    </div>
+                </div>
+                <input type="button" name="previous" class="previous action-button" value="Previous" />
+                <input type="submit" name="submit" class="submit action-button" value="Submit" />
+            </fieldset>
+        </form>
+            </div>
+        </div>
+        <!--/container-->
+    </div>
+{% endblock %}
+
+{% block script %}
+<script>
+
+   var current_fs, next_fs, previous_fs;
+var left, opacity, scale;
+var animating;
+
+$(".next").click(function () {
+  if (animating) return false;
+  animating = true;
+
+  current_fs = $(this).parent();
+  next_fs = $(this).parent().next();
+  $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+  var requiredFields = $(this).parent().find("input[required]", "textarea[required]");
+var filledOut = true;
+
+// Check if all required fields in the current form are filled out
+requiredFields.each(function() {
+if ($(this).val() === "") {
+    filledOut = false;
+    return false; // exit the loop early if a required field is empty
+}
+});
+
+if (!filledOut) {
+    toastr.error("Please fill out all the fields.");
+animating = false;
+return;
+}
+  next_fs.show();
+  current_fs.animate(
+    { opacity: 0 },
+    {
+      step: function (now, mx) {
+        scale = 1 - (1 - now) * 0.2;
+        left = now * 50 + "%";
+        opacity = 1 - now;
+        current_fs.css({
+          transform: "scale(" + scale + ")",
+          position: "absolute"
+        });
+        next_fs.css({ left: left, opacity: opacity });
+      },
+      duration: 300,
+      complete: function () {
+        current_fs.hide();
+        animating = false;
+      },
+      easing: "swing"
+    }
+  );
+});
+
+$(".previous").click(function () {
+  if (animating) return false;
+  animating = true;
+
+  current_fs = $(this).parent();
+  previous_fs = $(this).parent().prev();
+  $("#progressbar li")
+    .eq($("fieldset").index(current_fs))
+    .removeClass("active");
+
+  previous_fs.show();
+  current_fs.animate(
+    { opacity: 0 },
+    {
+      step: function (now, mx) {
+        scale = 0.8 + (1 - now) * 0.2;
+        left = (1 - now) * 50 + "%";
+        opacity = 1 - now;
+        current_fs.css({ left: left });
+        previous_fs.css({
+          transform: "scale(" + scale + ")",
+          opacity: opacity
+        });
+      },
+      duration: 300,
+      complete: function () {
+        current_fs.hide();
+        animating = false;
+      },
+      easing: "swing"
+    }
+  );
+});
+
+
+$("form").on("submit", function (e) {
+   e.preventDefault();
+   var requiredFields = $(this).parent().find("input[required]", "textarea[required]");
+    var filledOut = true;
+
+    // Check if all required fields in the current form are filled out
+    requiredFields.each(function() {
+    if ($(this).val() === "") {
+        filledOut = false;
+        return false; // exit the loop early if a required field is empty
+    }
+    });
+
+    if (!filledOut) {
+        toastr.error("Please fill out all the fields.");
+    animating = false;
+    return;
+    }
+   $( this ).submit(); 
+});
+    </script>
+    
+{% endblock %}
