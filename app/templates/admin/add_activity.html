@@ -20,8 +20,8 @@
                 <div class="grid grid-cols-6 gap-6">
                     <div class="col-span-6">
                         <!-- name -->
-                        {{ activity_form.name.label(class="block mb-2 text-sm font-medium text-gray-900") }}
-                        {{ activity_form.name(class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5", value=activity.ActivityName if activity)}}
+                        {{ activity_form.activity_name.label(class="block mb-2 text-sm font-medium text-gray-900") }}
+                        {{ activity_form.activity_name(class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5", value=activity.ActivityName if activity)}}
                     </div>
                     <div class="col-span-6">
                         <!--date -->
@@ -42,8 +42,8 @@
                     </div>
                     <div class="col-span-6">
                         <!-- description -->
-                        {{ activity_form.description.label(class="block mb-2 text-sm font-medium text-gray-900") }}
-                        <textarea name="{{ activity_form.description.name }}" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5">{{ activity.Description if activity }}</textarea>
+                        {{ activity_form.activity_description.label(class="block mb-2 text-sm font-medium text-gray-900") }}
+                        <textarea name="{{ activity_form.activity_description.name }}" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5">{{ activity.Description if activity }}</textarea>
                     </div>
                     <div class="col-span-6">
                         <!-- image -->
