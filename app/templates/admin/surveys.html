@@ -1,0 +1,134 @@
+{% extends 'admin/base.html' %}
+
+{% block head %}
+    <title>Extension Programs Budget</title>
+    <!--Regular Datatables CSS-->
+	<link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
+	<!--Responsive Extension Datatables CSS-->
+	<link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="sm:ml-64 p-4 mt-16">
+    <!--Container-->
+    <div class="container w-full md:w-4/5 xl:w-3/5  mx-auto px-2">
+        <a href="{{ url_for('programs.addSurvey') }}">Add Survey</a>
+        <!--Title-->
+        <h1 class="flex items-center font-bold break-normal px-2 py-4 text-xl md:text-2xl">
+            Draft Surveys
+        </h1>
+        <!--Card-->
+        <div class="p-8 mt-6 lg:mt-0 rounded shadow bg-white">
+            <table id="draft" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
+                <thead>
+                    <tr>
+                        <th data-priority="1">Name</th>
+                        <th data-priority="2">Activity</th>
+                        <th data-priority="3">Created</th>
+                        <th data-priority="4"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for survey in draft_surveys %}
+                    <tr>
+                        <td>{{ survey.Name }}</td>
+                        <td>{{ survey.Activity.ActivityName }}</td>
+                        <td>{{ survey.CreatedAt.strftime("%d/%m/%Y %H:%M") }}</td>
+                        <td><a class="" href="{{ url_for('programs.questions') }}"><i class="fa fa-trash"></i></a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!--/Card-->
+
+        <!--Title-->
+        <h1 class="flex items-center font-bold break-normal px-2 py-4 text-xl md:text-2xl">
+            Active Surveys
+        </h1>
+        <!--Card-->
+        <div class="p-8 mt-6 lg:mt-0 rounded shadow bg-white">
+            <table id="active" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
+                <thead>
+                    <tr>
+                        <th data-priority="1">Name</th>
+                        <th data-priority="2">Activity</th>
+                        <th data-priority="3">Created</th>
+                        <th data-priority="4"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for survey in activity_surveys %}
+                    <tr>
+                        <td>{{ survey.Name }}</td>
+                        <td>{{ survey.Activity.ActivityName }}</td>
+                        <td>{{ survey.CreatedAt.strftime("%d/%m/%Y %H:%M") }}</td>
+                        <td><a class="" href="{{ url_for('programs.questions') }}"><i class="fa fa-trash"></i></a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!--/Card-->
+
+        <!--Title-->
+        <h1 class="flex items-center font-bold break-normal px-2 py-4 text-xl md:text-2xl">
+            Closed Surveys
+        </h1>
+        <!--Card-->
+        <div class="p-8 mt-6 lg:mt-0 rounded shadow bg-white">
+            <table id="closed" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
+                <thead>
+                    <tr>
+                        <th data-priority="1">Name</th>
+                        <th data-priority="2">Activity</th>
+                        <th data-priority="3">Created</th>
+                        <th data-priority="4"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for survey in inactive_surveys %}
+                    <tr>
+                        <td>{{ survey.Name }}</td>
+                        <td>{{ survey.Activity.ActivityName }}</td>
+                        <td>{{ survey.CreatedAt.strftime("%d/%m/%Y %H:%M") }}</td>
+                        <td><a class="" href="{{ url_for('programs.questions') }}"><i class="fa fa-trash"></i></a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!--/Card-->
+    </div>
+    <!--/container-->
+</div>
+{% endblock %}
+
+{% block script %}
+
+    <!--Datatables -->
+	<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
+    <script>
+
+        $(document).ready(function() {
+
+        var draft_table = $('#draft').DataTable({
+                responsive: true
+            })
+            .columns.adjust()
+            .responsive.recalc()
+        var active_table = $('#active').DataTable({
+                responsive: true
+            })
+            .columns.adjust()
+            .responsive.recalc()
+        var inactive_table = $('#closed').DataTable({
+                responsive: true
+            })
+            .columns.adjust()
+            .responsive.recalc()
+        });
+
+    </script>
+{% endblock %}

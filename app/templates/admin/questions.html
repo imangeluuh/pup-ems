@@ -1,0 +1,104 @@
+{% extends 'admin/base.html' %}
+
+{% block head %}
+    <title>Extension Programs Budget</title>
+    <!--Regular Datatables CSS-->
+	<link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
+	<!--Responsive Extension Datatables CSS-->
+	<link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="sm:ml-64 p-4 mt-16">
+        <!--Container-->
+        <div class="container w-full md:w-4/5 xl:w-3/5  mx-auto px-2">
+            <a href="{{ url_for('programs.addQuestions') }}">Add Questions</a>
+            <!--Title-->
+            <h1 class="flex items-center font-bold break-normal px-2 py-4 text-xl md:text-2xl">
+                Mandatory Question Pool
+            </h1>
+            <!--Card-->
+            <div class="p-8 mt-6 lg:mt-0 rounded shadow bg-white">
+                <table id="questions" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
+                    <thead>
+                        <tr>
+                            <th data-priority="1">Question</th>
+                            <th data-priority="2">Type</th>
+                            <th data-priority="3">Responses</th>
+                            <th data-priority="4"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for question in mandatory_questions %}
+                        <tr>
+                            <td>{{ question.Text }}</td>
+                            <td>{% if question.Type == 1%}MCQ</td>
+                            <td>{% for response in question.responsesList() %} {{ loop.index }}. {{ response }} {{ "// " if not loop.last }} {% endfor %} {% else %}Text</td>
+                            <td>-- Free response -- {% endif %}</td>
+                            <td><a class="" href="{{ url_for('programs.questions') }}"><i class="fa fa-trash"></i></a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!--/Card-->
+
+            <!--Title-->
+            <h1 class="flex items-center font-bold break-normal px-2 py-4 text-xl md:text-2xl">
+                Optional Question Pool
+            </h1>
+            <!--Card-->
+            <div class="p-8 mt-6 lg:mt-0 rounded shadow bg-white">
+                <table id="responses" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
+                    <thead>
+                        <tr>
+                            <th data-priority="1">Question</th>
+                            <th data-priority="2">Type</th>
+                            <th data-priority="3">Responses</th>
+                            <th data-priority="4"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for question in optional_questions %}
+                        <tr>
+                            <td>{{ question.text }}</td>
+                            <td>{% if question.Type == 1%}MCQ</td>
+                            <td>{% for response in question.responsesList() %} {{ loop.index }}. {{ response }} {{ "// " if not loop.last }} {% endfor %} {% else %}Text</td>
+                            <td>-- Free response -- {% endif %}</td>
+                            <td><a class="" href="{{ url_for('programs.questions') }}"><i class="fa fa-trash"></i></a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!--/Card-->
+        </div>
+	    <!--/container-->
+    </div>
+{% endblock %}
+
+{% block script %}
+
+    <!-- jQuery -->
+	<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	<!--Datatables -->
+	<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
+    <script>
+
+        $(document).ready(function() {
+
+        var table = $('#questions').DataTable({
+                responsive: true
+            })
+            .columns.adjust()
+            .responsive.recalc()
+        var response_table = $('#responses').DataTable({
+                responsive: true
+            })
+            .columns.adjust()
+            .responsive.recalc()
+        });
+
+    </script>
+{% endblock %}

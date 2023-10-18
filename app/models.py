@@ -4,6 +4,7 @@ from flask_login import UserMixin
 from datetime import datetime, timedelta
 from time import time
 from flask_jwt_extended import create_access_token, decode_token
+import ast
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -109,7 +110,6 @@ class User(PaginatedAPIMixin, db.Model):
     Registration = db.relationship('Registration', backref='User', cascade='all, delete-orphan', passive_deletes=True)
     Login = db.relationship("Login", backref='User', lazy=True, passive_deletes=True)
 
-
 class Admin(db.Model):
     __tablename__ = 'Admin'
 
@@ -129,7 +129,7 @@ class Beneficiary(db.Model):
 
     BeneficiaryId = db.Column(db.String(36), db.ForeignKey('User.UserId', ondelete='CASCADE'), primary_key=True)
     User = db.relationship("User", backref='Beneficiary', lazy=True, passive_deletes=True)
-
+    SurveyResponse = db.relationship("Response", back_populates="Beneficiary")
 
 class Student(db.Model):
     __tablename__ = 'Student'
@@ -225,6 +225,7 @@ class Activity(db.Model):
     ImageFileId = db.Column(db.Text)
     ProjectId = db.Column(db.Integer, db.ForeignKey('Project.ProjectId', ondelete='CASCADE'), nullable=False)
     Project = db.relationship('Project', backref='Activity')
+    Survey = db.relationship("Survey", back_populates='Activity', lazy=True)
 
 
 class Announcement(db.Model):
@@ -250,3 +251,51 @@ class Registration(db.Model):
     RegistrationDate = db.Column(db.Date, default=datetime.utcnow, nullable=False)
     ProjectId = db.Column(db.Integer, db.ForeignKey('Project.ProjectId', ondelete='CASCADE'), nullable=False)
     UserId = db.Column(db.String(36), db.ForeignKey('User.UserId', ondelete='CASCADE'), nullable=False)
+
+
+class Question(db.Model):
+    __tablename__ = 'Question'
+
+    QuestionId = db.Column(db.Integer, primary_key=True)
+    Text = db.Column(db.Text, nullable=False)
+    State = db.Column(db.Integer, nullable=False)
+    Type = db.Column(db.Integer, nullable=False)
+    Required = db.Column(db.Integer, nullable=False)
+    Responses = db.Column(db.Text, nullable=False)
+    Response = db.relationship("Response", back_populates="Question")
+
+    def responsesList(self):
+        return ast.literal_eval(self.Responses)
+
+
+class Survey(db.Model):
+    __tablename__ = 'Survey'
+
+    SurveyId = db.Column(db.Integer, primary_key=True)
+    SurveyName = db.Column(db.Text, nullable=False)
+    ActivityId = db.Column(db.Integer, db.ForeignKey('Activity.ActivityId', ondelete='CASCADE'), nullable=False)
+    State = db.Column(db.Integer, nullable=False)
+    Questions = db.Column(db.Text, nullable=False)
+    CreatedAt = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
+    Activity = db.relationship("Activity", back_populates="Survey")
+    Response = db.relationship("Response", back_populates="Survey")
+
+    def questionsList(self):
+        return ast.literal_eval(self.Questions)
+
+
+class Response(db.Model):
+    __tablename__ = 'Response'
+
+    ResponseId = db.Column(db.Integer, primary_key=True)
+    BeneficiaryId = db.Column(db.String(36), db.ForeignKey('Beneficiary.BeneficiaryId'), nullable=False)
+    SurveyId = db.Column(db.Integer, db.ForeignKey('Survey.SurveyId'), nullable=False)
+    QuestionId = db.Column(db.Integer, db.ForeignKey('Question.QuestionId'), nullable=False)
+    Text = db.Column(db.Text)
+    Num = db.Column(db.Integer)
+    Beneficiary = db.relationship("Beneficiary", back_populates="SurveyResponse")
+    Survey = db.relationship("Survey", back_populates="Response")
+    Question = db.relationship("Question", back_populates="Response")
+
+    def responsesList(self):
+        return ast.literal_eval(self.Responses)

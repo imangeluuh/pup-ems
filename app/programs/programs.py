@@ -1,7 +1,7 @@
 from app.programs import bp
 from flask import render_template, url_for, request, redirect, flash, current_app
 from flask_login import current_user
-from ..models import Project, ExtensionProgram, Program, Registration, Agenda, ExtensionProgram, Activity
+from ..models import Project, ExtensionProgram, Program, Registration, Agenda, ExtensionProgram, Activity, Question, Survey
 from .forms import ProgramForm, ProjectForm, ActivityForm, CombinedForm
 import calendar
 from datetime import datetime
@@ -23,7 +23,6 @@ def programs():
     programs = None
     if response.status_code == 200:
         programs = response.json()
-        print(programs)
     else:
         flash('Error')
     
@@ -138,6 +137,7 @@ def insertExtensionProgram():
                                         ImageFileId=str_image_file_id)
         db.session.add(activity_to_create)
         db.session.commit()
+        flash('Extension program is successfully inserted.', category='success')
         return redirect(url_for('programs.programs'))
     if form.errors != {}: # If there are errors from the validations
         for err_msg in form.errors.values():
@@ -374,11 +374,11 @@ def insertActivity():
             if os.path.exists(imagepath):
                 os.remove(imagepath)
                 
-        activity_to_create = Activity(ActivityName=form.name.data,
+        activity_to_create = Activity(ActivityName=form.activity_name.data,
                                         Date=form.date.data,
                                         StartTime=form.start_time.data,
                                         EndTime=form.end_time.data,
-                                        Description=form.description.data,
+                                        Description=form.activity_description.data,
                                         ProjectId=form.project.data,
                                         ImageUrl=str_image_url,
                                         ImageFileId=str_image_file_id)
@@ -416,9 +416,9 @@ def updateActivity(id):
             # Delete file from local storage
             if os.path.exists(imagepath):
                 os.remove(imagepath)
-        activity.ActivityName=form.name.data
+        activity.ActivityName=form.activity_name.data
         activity.Date=form.date.data
-        activity.Description=form.description.data
+        activity.Description=form.activity_description.data
         activity.StartTime=form.start_time.data
         activity.EndTime=form.end_time.data
         db.session.commit()
@@ -456,8 +456,98 @@ def budgetAllocation():
         float_total_approved_budget += ext_program.ApprovedBudget
     return render_template('admin/budget_allocation.html', ext_programs=ext_programs, float_total_approved_budget=float_total_approved_budget, float_total_proposed_budget=float_total_proposed_budget)
 
+@bp.route('/questions')
+@login_required(role=["Admin"])
+def questions():
+    mandatory_questions = Question.query.filter_by(State = 1, Required = 1).all()
+    optional_questions = Question.query.filter_by(State = 1, Required = 0).all()
+
+    return render_template('admin/questions.html', mandatory_questions=mandatory_questions, optional_questions=optional_questions)
+
+@bp.route('/questions/add', methods=['GET', 'POST'])
+@login_required(role=["Admin"])
+def addQuestions():
+    if request.method == "POST":
+        question_text = request.form["question"]
+        responses = list(filter(None, request.form.getlist("responses")))
+        question_type = 1
+        if request.form["type"] == 'Text':
+            question_type = 2
+            responses = []
+        required = 1
+        if request.form['optional'] == '1':
+            required = 0
+
+        if question_text.isspace() or question_text == "" or question_type == 1 and (len(responses) < 2 or all(responses[i].isspace() for i in range(0, len(responses)-1))):
+            flash('Please complete all required fields.', category='error')
+            return render_template("addQuestion.html")
+        
+        if not question_type in range(1,3):
+            flash('The application could not complete your request at this moment. Please try again later.', category='error')
+            return render_template("addQuestion.html")
+        
+        try:
+            question_to_add = Question(Text=question_text, State=1, Type=question_type, Required=required, Responses=str(responses))
+            db.session.add(question_to_add)
+            db.session.commit()
+            flash('Your question has been successfully added to the pool.', category='success')
+        except:
+            flash('An error occured whilst adding your question to the pool. Please try again later.', category='error')
+    return render_template("admin/add_question.html")
 
 
+@bp.route('/surveys')
+@login_required(role=["Admin"])
+def survey():
+    draft_surveys = None
+    active_surveys = None
+    inactive_surveys = None
+
+    if current_user.Role.RoleId == 1:
+        draft_surveys = Survey.query.filter_by(State = 1).all()
+        activity_surveys = Survey.query.filter_by(State = 2).all()
+        inactive_surveys = Survey.query.filter_by(State = 0).all()
+    else:
+        list_activities = [r.Project.Activity for r in Registration.query.filter_by(UserId=current_user.User[0].UserId).all()]
+        # Initialize an empty list to store the ActivityIds
+        list_activity_ids = []
+
+        # Iterate through the outer list
+        for sublist in list_activities:
+            # Iterate through the inner list
+            for activity in sublist:
+                list_activity_ids.append(activity.ActivityId)  
+                
+        draft_surveys = Survey.query.filter(Survey.ActivityId.in_(list_activity_ids)).filter_by(State = 0).all()
+        active_surveys = Survey.query.filter(Survey.ActivityId.in_(list_activity_ids)).filter_by(State = 1).all()
+        inactive_surveys = Survey.query.filter(Survey.ActivityId.in_(list_activity_ids)).filter_by(State = 2).all()
+    
+    return render_template("admin/surveys.html", draft_surveys=draft_surveys, active_surveys=active_surveys, inactive_surveys=inactive_surveys)
+
+
+@bp.route('/surveys/add', methods=['GET', 'POST'])
+@login_required(role=["Admin"])
+def addSurvey():
+    questions = Question.query.filter_by(State = 1).all()
+    activities = Activity.query.all()
+    if request.method == "POST":
+
+        survey_name = request.form["name"]
+        survey_activity = request.form["activity"]
+        survey_questions = request.form.getlist("questions")
+
+        if survey_name.isspace() or survey_name == "" or not survey_questions or not survey_activity:
+            flash('Please complete all required fields.', category='error')
+
+        try:
+            survey_to_add = Survey(SurveyName=survey_name, ActivityId=survey_activity, State=1, Questions=str(survey_questions))
+            db.session.add(survey_to_add)
+            db.session.commit()
+            flash('Survey is successfully created.', category='success')
+        except:
+            flash('An error occured whilst creating your survey. Please try again later.', category='error')
+
+    return render_template('admin/add_survey.html', questions=questions, activities=activities)
 
 # ======================= User views ======================
 
@@ -508,7 +598,7 @@ def filters():
 @bp.route('/registration/<int:project_id>', methods=['GET', 'POST'])
 def registration(project_id):
     project = Project.query.get_or_404(project_id)
-    user_id = current_user.UserLogin[0].UserId if current_user.is_authenticated else None
+    user_id = current_user.User[0].UserId if current_user.is_authenticated else None
     bool_is_registered = True if Registration.query.filter_by(ProjectId=project_id, UserId=user_id).first() else False
     if request.method == 'POST':
         registration_to_create = Registration(ProjectId = project_id,
@@ -527,7 +617,7 @@ def registration(project_id):
 @bp.route('/registration/cancel/<int:project_id>', methods=['POST'])
 def cancelRegistration(project_id):
     project = Project.query.get_or_404(project_id)
-    user_id = current_user.UserLogin[0].UserId if current_user.is_authenticated else None
+    user_id = current_user.User[0].UserId if current_user.is_authenticated else None
     registration = Registration.query.filter_by(ProjectId=project_id, UserId=user_id).first()
 
     try:

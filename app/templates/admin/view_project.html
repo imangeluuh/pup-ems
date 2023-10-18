@@ -288,8 +288,8 @@
                                 <td>{{ user.User.FirstName }}</td>
                                 <td>{{ user.User.MiddleName if user.User.MiddleName else 'N/A' }}</td>
                                 <td>{{ user.User.LastName }}</td>
-                                <td>{{ user.User.UserLogin.Email }}</td>
-                                <td>{{ user.User.UserLogin.Role.RoleName }}</td>
+                                <td>{{ user.User.Login.Email }}</td>
+                                <td>{{ user.User.Login.Role.RoleName }}</td>
                                 {% if current_user.Role.RoleName == 'Admin' %}
                                 <td class="flex justify-center"><a href="{{ url_for('admin.viewUser', id=user.User.UserId) }}" class="bg-green-100 text-green-800 text-base font-medium mr-2 px-2.5 py-0.5 rounded">View</a></td>
                                 {% endif %}
@@ -303,8 +303,9 @@
         </div>
         <!-- ./tabs -->
     </div>
+{% endblock %}
 
-
+{% block script %}
 
 <!-- jQuery -->
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>

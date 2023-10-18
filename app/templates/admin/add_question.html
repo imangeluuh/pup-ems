@@ -1,0 +1,156 @@
+{% extends 'admin/base.html' %}
+
+{% block head %}
+    <title>Extension Programs Budget</title>
+    <!--Regular Datatables CSS-->
+	<link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
+	<!--Responsive Extension Datatables CSS-->
+	<link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="sm:ml-64 p-4 mt-16">
+        <!--Container-->
+        <div class="container w-full flex justify-center md:w-4/5 xl:w-3/5  mx-auto px-2">
+            <!-- Card -->
+            <div class="p-8 w-fit bg-white border border-gray-200 rounded-lg shadow">
+                <h2 class="flex items-center text-2xl font-semibold mb-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M19 12.998h-6v6h-2v-6H5v-2h6v-6h2v6h6z"/>
+                    </svg>
+                    Add a new Question
+                </h2>
+                <form class="" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <fieldset id="formFields">
+                        <div class="flex mb-3">
+                            <label>Question text</label>
+                            <textarea  name="question" placeholder="Question text" required class="block p-2.5 mx-3 text-sm text-gray-900 bg-gray-50 rounded border border-gray-300"></textarea>
+                            <span class="">* required</span>
+                        </div>
+                        <div class="flex items-center mb-3">
+                            <label class="mr-5">Question type</label>
+                            <input type="radio" name="optional" class="mr-1" value="1"> Optional &nbsp;&nbsp;&nbsp;
+                            <input type="radio" name="optional" class="mr-1" value="0" checked> Mandatory
+                        </div>
+                        <div class="flex items-center mb-3">
+                            <label class="mr-4">Response type</label>
+                            <input type="radio" name="type" class="mr-1" value="MCQ" onchange="hideText()" checked> Multiple Choice &nbsp;&nbsp;&nbsp;
+                            <input type="radio" name="type" class="mr-1" value="Text" onchange="hideMCQ()"> Text
+                        </div>
+                        <br>
+                        <div id="MCQ">
+                            <div id="1" class="flex items-center mb-3">
+                                <label>Response 1</label>
+                                <input type="text" name="responses" class="mx-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded">
+                                <span class="">* required</span>
+                            </div>
+                            <div id="2" class="flex items-center mb-3">
+                                <label>Response 2</label>
+                                <input type="text" name="responses" class="mx-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded">
+                                <span class="">* required</span>
+                            </div>
+                            <div id="addInput" class=" flex">
+                                <label></label>
+                                <a class="text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 font-medium rounded-lg px-3 py-1.5 mr-2 mb-2" onclick="addInput()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24">
+                                        <path fill="currentColor" d="M19 12.998h-6v6h-2v-6H5v-2h6v-6h2v6h6z"/>
+                                    </svg>
+                                </a>
+                                <a class="text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 font-medium rounded-lg px-3 py-1.5 mr-2 mb-2" onclick="yesNo()">Yes/No</a>
+                                <a class="text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 font-medium rounded-lg px-3 py-1.5 mr-2 mb-2" onclick="likert()">Likert scale</a>
+                                <a class="text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 font-medium rounded-lg px-3 py-1.5 mr-2 mb-2" onclick="resetForm()">Reset</a>
+                            </div>
+                        </div>
+    
+                        <div id="TEXT" style="display:none;">
+                            <div class="flex items-center mb-3">
+                                <label>Response</label>
+                                <input type="text" class="mx-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded" placeholder="Free response field" disabled>
+                            </div>
+                        </div>
+    
+                        <div class="">
+                            <button type="submit" name="bt" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2">Add question</button>
+                        </div>
+    
+                    </fieldset>
+                </form>
+            </div>
+            <!-- /Card -->
+
+            
+
+
+            
+        </div>
+	    <!--/container-->
+    </div>
+{% endblock %}
+
+{% block script %}
+<script>
+var number = 3;
+function addInput(){
+
+    var container = document.getElementById("MCQ");
+    var div = document.getElementById("2").cloneNode(true);
+    div.id = "clone"+number;
+    div.children[0].innerHTML = "Response " + number;
+    div.children[1].value = "";
+    div.removeChild(div.children[2]);
+
+    container.insertBefore(div, document.getElementById("addInput"));
+
+    number++;
+}
+
+function yesNo(){
+
+    var rem = document.querySelectorAll("[id*='clone']");
+    for (var i = 0; i < rem.length; i++)
+        rem[i].parentNode.removeChild(rem[i]);
+    document.getElementById("1").children[1].value = "Yes";
+    document.getElementById("2").children[1].value = "No";
+
+    number = 3;
+}
+
+function likert(){
+
+    yesNo();
+    addInput();
+    addInput();
+    addInput();
+    document.getElementById("1").children[1].value = "Strongly agree";
+    document.getElementById("2").children[1].value = "Agree";
+    document.getElementById("clone3").children[1].value = "Neutral";
+    document.getElementById("clone4").children[1].value = "Disagree";
+    document.getElementById("clone5").children[1].value = "Strongly disagree";
+
+}
+
+function resetForm(){
+
+    yesNo();
+    document.getElementById("1").children[1].value = "";
+    document.getElementById("2").children[1].value = "";
+
+}
+
+function hideMCQ(){
+
+    document.getElementById("MCQ").style.display = "none"
+    document.getElementById("TEXT").style.display = "initial";
+
+}
+
+function hideText(){
+
+    resetForm();
+    document.getElementById("MCQ").style.display = "initial"
+    document.getElementById("TEXT").style.display = "none";
+
+}
+    </script>
+{% endblock %}
