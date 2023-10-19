@@ -1,0 +1,47 @@
+{% extends 'admin/base.html' %}
+
+{% block head %}
+    <title>Extension Programs Budget</title>
+    <!--Regular Datatables CSS-->
+	<link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
+	<!--Responsive Extension Datatables CSS-->
+	<link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="sm:ml-64 p-4 mt-16">
+        <!--Container-->
+        <div class="container w-full flex justify-center md:w-4/5 xl:w-3/5  mx-auto px-2">
+            <!-- Card -->
+            <div class="p-8 w-fit bg-white border border-gray-200 rounded-lg shadow">
+                
+                {% if survey.State == 2 %}
+                <h2 class="flex items-center text-2xl font-semibold mb-5">
+                    Please complete the survey below
+                </h2>
+                <form class="pure-form pure-form-stacked" method="POST">
+                    <fieldset>
+                        {% for question in questions %}
+                        <legend>{{ question.Text }} {% if question.Required %}<span class="pure-form-message-inline">* required</span>{% endif %}</legend>
+                            {% if question.Type == 1 %}
+                                {% for response in question.responsesList() %}
+                                    <input name="{{ question.QuestionId }}" type="radio" value="{{ loop.index }}"> {{ response }}</input><br>
+                                {% endfor %}
+                                <br>
+                            {% else %}
+                                <textarea class="pure-input-1-2" name="{{ question.QuestionId }}" placeholder="Please enter your response..."></textarea><br>
+                            {% endif %}
+                        {% endfor %}
+                        <button type="submit" name="bt" class="pure-button pure-button-primary">Submit response</button>
+                    </fieldset>
+                </form>
+                {%else%}
+                <p>This survey is no longer accepting responses.</p>
+                {% endif %}
+
+            </div>
+            <!-- /Card -->
+        </div>
+	    <!--/container-->
+    </div>
+{% endblock %}

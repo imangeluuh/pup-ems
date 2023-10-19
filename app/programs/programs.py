@@ -1,7 +1,7 @@
 from app.programs import bp
 from flask import render_template, url_for, request, redirect, flash, current_app
 from flask_login import current_user
-from ..models import Project, ExtensionProgram, Program, Registration, Agenda, ExtensionProgram, Activity, Question, Survey
+from ..models import Project, ExtensionProgram, Program, Registration, Agenda, ExtensionProgram, Activity, Question, Survey, Response, Beneficiary
 from .forms import ProgramForm, ProjectForm, ActivityForm, CombinedForm
 import calendar
 from datetime import datetime
@@ -497,31 +497,34 @@ def addQuestions():
 
 
 @bp.route('/surveys')
-@login_required(role=["Admin"])
-def survey():
+@login_required(role=["Admin", "Beneficiary"])
+def surveys():
     draft_surveys = None
     active_surveys = None
     inactive_surveys = None
 
     if current_user.Role.RoleId == 1:
         draft_surveys = Survey.query.filter_by(State = 1).all()
-        activity_surveys = Survey.query.filter_by(State = 2).all()
+        active_surveys = Survey.query.filter_by(State = 2).all()
         inactive_surveys = Survey.query.filter_by(State = 0).all()
     else:
         list_activities = [r.Project.Activity for r in Registration.query.filter_by(UserId=current_user.User[0].UserId).all()]
         # Initialize an empty list to store the ActivityIds
         list_activity_ids = []
-
+        
         # Iterate through the outer list
         for sublist in list_activities:
             # Iterate through the inner list
             for activity in sublist:
                 list_activity_ids.append(activity.ActivityId)  
-                
+        
         draft_surveys = Survey.query.filter(Survey.ActivityId.in_(list_activity_ids)).filter_by(State = 0).all()
         active_surveys = Survey.query.filter(Survey.ActivityId.in_(list_activity_ids)).filter_by(State = 1).all()
         inactive_surveys = Survey.query.filter(Survey.ActivityId.in_(list_activity_ids)).filter_by(State = 2).all()
-    
+        print(draft_surveys)
+        print(active_surveys)
+        print(inactive_surveys)
+
     return render_template("admin/surveys.html", draft_surveys=draft_surveys, active_surveys=active_surveys, inactive_surveys=inactive_surveys)
 
 
@@ -540,7 +543,7 @@ def addSurvey():
             flash('Please complete all required fields.', category='error')
 
         try:
-            survey_to_add = Survey(SurveyName=survey_name, ActivityId=survey_activity, State=1, Questions=str(survey_questions))
+            survey_to_add = Survey(SurveyName=survey_name, ActivityId=survey_activity, State=2, Questions=str(survey_questions))
             db.session.add(survey_to_add)
             db.session.commit()
             flash('Survey is successfully created.', category='success')
@@ -548,6 +551,86 @@ def addSurvey():
             flash('An error occured whilst creating your survey. Please try again later.', category='error')
 
     return render_template('admin/add_survey.html', questions=questions, activities=activities)
+
+#survey page - allows responses to be collected
+@bp.route("/survey/<id>", methods=["GET", "POST"])
+def survey(id):
+    
+    if not current_user.Role.RoleId == 2: return redirect(url_for('programs.surveys'))
+    #check whether student is enrolled in course and hasn't already taken survey
+    list_activities = [r.Project.Activity for r in Registration.query.filter_by(UserId=current_user.User[0].UserId).all()]
+    # Initialize an empty list to store the ActivityIds
+    list_activity_ids = []
+    
+    # Iterate through the outer list
+    for sublist in list_activities:
+        # Iterate through the inner list
+        for activity in sublist:
+            list_activity_ids.append(activity.ActivityId)  
+
+    survey = Survey.query.filter_by(SurveyId=id).first()
+    print('survey', survey.__dict__)
+    if survey.ActivityId not in list_activity_ids:
+        return redirect(url_for('programs.surveys'))
+
+    if not survey: 
+        flash('The survey you have requested does not exist. Please check your link is correct.', category='error')
+        return render_template("admin/survey.html")
+
+    if Response.query.filter_by(SurveyId=id, BeneficiaryId=current_user.User[0].UserId).first():
+        flash('Your response has been recorded successfully.\nSurvey results will be made available to you through your dashboard when the survey closes.', category='success')
+        return render_template("admin/survey.html", survey=survey)
+
+    questions = []
+    print('questions', survey.questionsList())
+    for question_id in survey.questionsList():
+        question = Question.query.filter_by(QuestionId=question_id).first()
+        questions.append(question)
+
+    if request.method == "POST":
+        error = 0
+
+        #check for required fields
+        for question in questions:
+            response = request.form.get(str(question.id))
+            if question.required and (response == None or response.isspace() or response == ""):
+                return render_template("admin/survey.html", survey=survey, questions=questions, error=1)
+
+        #submit responses
+        for question in questions:
+            response = request.form.get(str(question.id))
+
+            if not response is None and not response.isspace() and response != "":
+                if question.type == 1:
+                    if not save_response(id, current_user.User[0].UserId, question.QuestionId, None, int(response)):
+                        error = 1
+                        break
+
+                elif question.type == 2:
+                    if not save_response(id, current_user.User[0].UserId, question.QuestionId, response, None):
+                        error = 1
+                        break
+
+        if not error:
+            flash('Your response has been recorded successfully.\nSurvey results will be made available to you through your dashboard when the survey closes.', category='success')
+        else:
+            flash('An error occured whilst recording your response. Please try again later.', category='error')
+        
+    return render_template("admin/survey.html", survey=survey, questions=questions)
+
+def save_response(self, survey_id, user_id, question_id, text, num):
+    if (text is None and num is None):
+        return 0 #failure
+    if not Survey.query.filter_by(id=survey_id).first():
+        return 0 #failure: invalid survey id
+    if not Beneficiary.query.filter_by(id=user_id).first():
+        return 0 #failure: invalid user id
+    if not Question.query.filter_by(id=question_id).first():
+        return 0 #failure: invalid question id
+
+    newR = Response(s_id=survey_id, u_id=user_id, q_id=question_id, text=text, num=num)
+    db.session.add(newR)
+    db.session.commit()
 
 # ======================= User views ======================
 

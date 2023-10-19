@@ -31,10 +31,10 @@
                 <tbody>
                     {% for survey in draft_surveys %}
                     <tr>
-                        <td>{{ survey.Name }}</td>
+                        <td>{{ survey.SurveyName }}</td>
                         <td>{{ survey.Activity.ActivityName }}</td>
                         <td>{{ survey.CreatedAt.strftime("%d/%m/%Y %H:%M") }}</td>
-                        <td><a class="" href="{{ url_for('programs.questions') }}"><i class="fa fa-trash"></i></a></td>
+                        <td><a class="button" href="survey/{{ survey.SurveyId }}"><i class="fa fa-external-link"></i>Launch Survey</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -58,12 +58,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for survey in activity_surveys %}
+                    {% for survey in active_surveys %}
                     <tr>
-                        <td>{{ survey.Name }}</td>
+                        <td>{{ survey.SurveyName }}</td>
                         <td>{{ survey.Activity.ActivityName }}</td>
                         <td>{{ survey.CreatedAt.strftime("%d/%m/%Y %H:%M") }}</td>
-                        <td><a class="" href="{{ url_for('programs.questions') }}"><i class="fa fa-trash"></i></a></td>
+                        <td><a class="button" href="survey/{{ survey.SurveyId }}"><i class="fa fa-external-link"></i>Launch Survey</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -89,10 +89,10 @@
                 <tbody>
                     {% for survey in inactive_surveys %}
                     <tr>
-                        <td>{{ survey.Name }}</td>
+                        <td>{{ survey.SurveyName }}</td>
                         <td>{{ survey.Activity.ActivityName }}</td>
                         <td>{{ survey.CreatedAt.strftime("%d/%m/%Y %H:%M") }}</td>
-                        <td><a class="" href="{{ url_for('programs.questions') }}"><i class="fa fa-trash"></i></a></td>
+                        <td><a class="button" href="survey/{{ survey.SurveyId }}"><i class="fa fa-external-link"></i>Launch Survey</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
