@@ -499,13 +499,11 @@ def addQuestions():
 @bp.route('/surveys')
 @login_required(role=["Admin", "Beneficiary"])
 def surveys():
-    draft_surveys = None
     active_surveys = None
     inactive_surveys = None
 
     if current_user.Role.RoleId == 1:
-        draft_surveys = Survey.query.filter_by(State = 1).all()
-        active_surveys = Survey.query.filter_by(State = 2).all()
+        active_surveys = Survey.query.filter_by(State = 1).all()
         inactive_surveys = Survey.query.filter_by(State = 0).all()
     else:
         list_activities = [r.Project.Activity for r in Registration.query.filter_by(UserId=current_user.User[0].UserId).all()]
@@ -518,14 +516,10 @@ def surveys():
             for activity in sublist:
                 list_activity_ids.append(activity.ActivityId)  
         
-        draft_surveys = Survey.query.filter(Survey.ActivityId.in_(list_activity_ids)).filter_by(State = 0).all()
         active_surveys = Survey.query.filter(Survey.ActivityId.in_(list_activity_ids)).filter_by(State = 1).all()
-        inactive_surveys = Survey.query.filter(Survey.ActivityId.in_(list_activity_ids)).filter_by(State = 2).all()
-        print(draft_surveys)
-        print(active_surveys)
-        print(inactive_surveys)
+        inactive_surveys = Survey.query.filter(Survey.ActivityId.in_(list_activity_ids)).filter_by(State = 0).all()
 
-    return render_template("admin/surveys.html", draft_surveys=draft_surveys, active_surveys=active_surveys, inactive_surveys=inactive_surveys)
+    return render_template("admin/surveys.html", active_surveys=active_surveys, inactive_surveys=inactive_surveys)
 
 
 @bp.route('/surveys/add', methods=['GET', 'POST'])
@@ -554,9 +548,9 @@ def addSurvey():
 
 #survey page - allows responses to be collected
 @bp.route("/survey/<id>", methods=["GET", "POST"])
+@login_required(role=["Beneficiary"])
 def survey(id):
     
-    if not current_user.Role.RoleId == 2: return redirect(url_for('programs.surveys'))
     #check whether student is enrolled in course and hasn't already taken survey
     list_activities = [r.Project.Activity for r in Registration.query.filter_by(UserId=current_user.User[0].UserId).all()]
     # Initialize an empty list to store the ActivityIds
@@ -582,7 +576,6 @@ def survey(id):
         return render_template("admin/survey.html", survey=survey)
 
     questions = []
-    print('questions', survey.questionsList())
     for question_id in survey.questionsList():
         question = Question.query.filter_by(QuestionId=question_id).first()
         questions.append(question)
@@ -592,25 +585,25 @@ def survey(id):
 
         #check for required fields
         for question in questions:
-            response = request.form.get(str(question.id))
-            if question.required and (response == None or response.isspace() or response == ""):
-                return render_template("admin/survey.html", survey=survey, questions=questions, error=1)
+            response = request.form.get(str(question.QuestionId))
+            if question.Required and (response == None or response.isspace() or response == ""):
+                flash('Please fill out all the required fields', category='error')
+                return render_template("admin/survey.html", survey=survey, questions=questions)
 
         #submit responses
         for question in questions:
-            response = request.form.get(str(question.id))
+            response = request.form.get(str(question.QuestionId))
 
             if not response is None and not response.isspace() and response != "":
-                if question.type == 1:
+                if question.Type == 1:
                     if not save_response(id, current_user.User[0].UserId, question.QuestionId, None, int(response)):
                         error = 1
                         break
 
-                elif question.type == 2:
+                elif question.Type == 2:
                     if not save_response(id, current_user.User[0].UserId, question.QuestionId, response, None):
                         error = 1
                         break
-
         if not error:
             flash('Your response has been recorded successfully.\nSurvey results will be made available to you through your dashboard when the survey closes.', category='success')
         else:
@@ -618,19 +611,70 @@ def survey(id):
         
     return render_template("admin/survey.html", survey=survey, questions=questions)
 
-def save_response(self, survey_id, user_id, question_id, text, num):
+def save_response(survey_id, user_id, question_id, text, num):
     if (text is None and num is None):
         return 0 #failure
-    if not Survey.query.filter_by(id=survey_id).first():
+    if not Survey.query.filter_by(SurveyId=survey_id).first():
         return 0 #failure: invalid survey id
-    if not Beneficiary.query.filter_by(id=user_id).first():
+    if not Beneficiary.query.filter_by(BeneficiaryId=user_id).first():
         return 0 #failure: invalid user id
-    if not Question.query.filter_by(id=question_id).first():
+    if not Question.query.filter_by(QuestionId=question_id).first():
         return 0 #failure: invalid question id
 
-    newR = Response(s_id=survey_id, u_id=user_id, q_id=question_id, text=text, num=num)
-    db.session.add(newR)
+    response_to_add = Response(SurveyId=survey_id, BeneficiaryId=user_id, QuestionId=question_id, Text=text, Num=num)
+    db.session.add(response_to_add)
     db.session.commit()
+
+#close survey - makes survey inactive and redirects to surveys page
+@bp.route("/surveys/close/<id>")
+@login_required(role=["Admin"])
+def closeSurvey(id):
+    survey = Survey.query.filter_by(SurveyId=id).first()
+
+    try:
+        if survey:
+            survey.State = 0
+            db.session.commit()
+            flash('The survey has been closed successfully.')
+    except:
+        flash('The survey could not be closed. Please try again later.')
+
+    return redirect(url_for("programs.surveys"))
+
+#results page - show survey results
+@bp.route("/results/<id>")
+@login_required(["Beneficiary", "Admin"])
+def results(id):
+
+    list_activities = [r.Project.Activity for r in Registration.query.filter_by(UserId=current_user.User[0].UserId).all()]
+    # Initialize an empty list to store the ActivityIds
+    list_activity_ids = []
+    
+    # Iterate through the outer list
+    for sublist in list_activities:
+        # Iterate through the inner list
+        for activity in sublist:
+            list_activity_ids.append(activity.ActivityId) 
+
+    survey = Survey.query.filter_by(SurveyId=id).first()
+
+    if not survey: 
+        flash('The survey you have requested does not exist. Please check your link is correct.', category='error')
+        return render_template("admin/results.html")
+
+    # if survey.ActivityId not in list_activity_ids:
+    #     if session['user_type'] != 3:
+    #         return redirect(url_for('index'))
+
+
+    questions = []
+    for question_id in survey.questionsList():
+        question = Question.query.filter_by(QuestionId=question_id).first()
+        questions.append(question)
+
+    responses = Response.query.filter_by(SurveyId=id).all()
+
+    return render_template("admin/results.html", survey=survey, questions=questions, responses=responses)
 
 # ======================= User views ======================
 
@@ -681,6 +725,7 @@ def filters():
 @bp.route('/registration/<int:project_id>', methods=['GET', 'POST'])
 def registration(project_id):
     project = Project.query.get_or_404(project_id)
+    list_activities = project.Activity
     user_id = current_user.User[0].UserId if current_user.is_authenticated else None
     bool_is_registered = True if Registration.query.filter_by(ProjectId=project_id, UserId=user_id).first() else False
     if request.method == 'POST':
@@ -690,11 +735,11 @@ def registration(project_id):
             db.session.add(registration_to_create)
             db.session.commit()
             flash('Registration Successful!', category='success')
-        except  Exception as e:
+        except:
             flash('There was an issue during registration.', category='error')
 
         return redirect(url_for('programs.registration', project_id=project_id))
-    return render_template("programs/project_reg.html", project=project, bool_is_registered=bool_is_registered)
+    return render_template("programs/project_reg.html", project=project, list_activities=list_activities, bool_is_registered=bool_is_registered)
 
 
 @bp.route('/registration/cancel/<int:project_id>', methods=['POST'])

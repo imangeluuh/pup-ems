@@ -180,10 +180,10 @@
                             <div class="col-span-5 ml-5">
                                 <div class="flex justify-between">
                                     <h1 class="text-black text-xl font-bold mb-4">{{ activity.ActivityName }}</h1>
-                                    {% if activity.Survey %}
+                                    {% if activity.Survey and activity.Survey[0].State == 1 %}
                                     <div class="flex">
-                                        <a href="{{ url_for('programs.survey' if activity.Survey[0].State == 1 else 'programs.results', id=activity.Survey[0].SurveyId)}}" class="flex items-center text-white text-sm bg-green-600 rounded-lg mr-4 p-2">
-                                            {{ 'Take the survey' if activity.Survey[0].State == 1 else 'View Results'}}
+                                        <a href="{{ url_for('programs.survey', id=activity.Survey[0].SurveyId)}}" class="flex items-center text-white text-sm bg-green-600 rounded-lg mr-4 p-2">
+                                            Take the survey
                                         </a>
                                     </div>
                                     {% endif %}

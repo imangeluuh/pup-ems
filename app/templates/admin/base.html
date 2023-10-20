@@ -28,11 +28,14 @@
         {% if current_user.is_authenticated %}
             {% include 'admin/components/sidebar.html' %}
             {% include 'admin/components/navbar.html' %}
+            <div class="sm:ml-64 p-4 mt-16">
         {% endif %}
         {% block content %}
-        
+    
         {% endblock %}
-        
+        {% if current_user.is_authenticated %}
+            </div>
+        {% endif %}
         <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>

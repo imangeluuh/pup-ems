@@ -9,38 +9,9 @@
 {% endblock %}
 
 {% block content %}
-<div class="sm:ml-64 p-4 mt-16">
     <!--Container-->
     <div class="container w-full md:w-4/5 xl:w-3/5  mx-auto px-2">
         <a href="{{ url_for('programs.addSurvey') }}">Add Survey</a>
-        <!--Title-->
-        <h1 class="flex items-center font-bold break-normal px-2 py-4 text-xl md:text-2xl">
-            Draft Surveys
-        </h1>
-        <!--Card-->
-        <div class="p-8 mt-6 lg:mt-0 rounded shadow bg-white">
-            <table id="draft" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
-                <thead>
-                    <tr>
-                        <th data-priority="1">Name</th>
-                        <th data-priority="2">Activity</th>
-                        <th data-priority="3">Created</th>
-                        <th data-priority="4"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for survey in draft_surveys %}
-                    <tr>
-                        <td>{{ survey.SurveyName }}</td>
-                        <td>{{ survey.Activity.ActivityName }}</td>
-                        <td>{{ survey.CreatedAt.strftime("%d/%m/%Y %H:%M") }}</td>
-                        <td><a class="button" href="survey/{{ survey.SurveyId }}"><i class="fa fa-external-link"></i>Launch Survey</a></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        <!--/Card-->
 
         <!--Title-->
         <h1 class="flex items-center font-bold break-normal px-2 py-4 text-xl md:text-2xl">
@@ -63,7 +34,7 @@
                         <td>{{ survey.SurveyName }}</td>
                         <td>{{ survey.Activity.ActivityName }}</td>
                         <td>{{ survey.CreatedAt.strftime("%d/%m/%Y %H:%M") }}</td>
-                        <td><a class="button" href="survey/{{ survey.SurveyId }}"><i class="fa fa-external-link"></i>Launch Survey</a></td>
+                        <td><a class="button" href="{{ url_for('programs.closeSurvey', id=survey.SurveyId)}}"><i class="fa fa-external-link"></i>Close</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -92,7 +63,7 @@
                         <td>{{ survey.SurveyName }}</td>
                         <td>{{ survey.Activity.ActivityName }}</td>
                         <td>{{ survey.CreatedAt.strftime("%d/%m/%Y %H:%M") }}</td>
-                        <td><a class="button" href="survey/{{ survey.SurveyId }}"><i class="fa fa-external-link"></i>Launch Survey</a></td>
+                        <td><a class="button" href="{{url_for('programs.results', id=survey.SurveyId)}}"><i class="fa fa-pie-chart"></i> View Results</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -101,7 +72,6 @@
         <!--/Card-->
     </div>
     <!--/container-->
-</div>
 {% endblock %}
 
 {% block script %}
@@ -112,12 +82,6 @@
     <script>
 
         $(document).ready(function() {
-
-        var draft_table = $('#draft').DataTable({
-                responsive: true
-            })
-            .columns.adjust()
-            .responsive.recalc()
         var active_table = $('#active').DataTable({
                 responsive: true
             })
