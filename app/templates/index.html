@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block content %}
+    {% if latest_announcements %}
     <section>
         <h1 class="font-bold text-4xl text-center mb-4 mt-8">Latest Announcements</h1>
         <div class="flex">
@@ -55,21 +56,26 @@
             </div>
         </div>
     </section>
-    <!-- program -->
-    <div class="mx-64 mt-8">
-        <h2 class="font-semibold text-3xl text-gray-600 mb-4">Select a Program</h2>
-        <hr class="h-1">
-        <div class="grid grid-cols-12 gap-6 mt-4">
-            {% for extension_program in extension_programs %}
-            <a href="{{ url_for('programs.projectsList', program_id=extension_program.ExtensionProgramId)}}" class="col-span-3 flex flex-col justify-center items-center h-36 bg-white rounded-xl shadow-lg p-4">
-                <div class="max-w-full flex justify-center items-center font-medium">
-                    <span class="text-center">{{ extension_program.Name }}</span>
-                </div>
-            </a>
-            {% endfor %}
+    {% endif %}
+    {% if extension_programs %}
+    <section>
+        <!-- program -->
+        <div class="mx-64 mt-8">
+            <h2 class="font-semibold text-3xl text-gray-600 mb-4">Select a Program</h2>
+            <hr class="h-1">
+            <div class="grid grid-cols-12 gap-6 mt-4">
+                {% for extension_program in extension_programs %}
+                <a href="{{ url_for('programs.projectsList', program_id=extension_program.ExtensionProgramId)}}" class="col-span-3 flex flex-col justify-center items-center h-36 bg-white rounded-xl shadow-lg p-4">
+                    <div class="max-w-full flex justify-center items-center font-medium">
+                        <span class="text-center">{{ extension_program.Name }}</span>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
         </div>
-    </div>
-    <!-- ./programs -->
+        <!-- ./programs -->
+    </section>
+    {% endif %}
     {% if not current_user.is_authenticated %}
     <div class="bg-blue-100 py-12 mt-16">  
         <div class=""> 
@@ -81,24 +87,26 @@
         </div>
     </div>
     {% endif %}
-    <!-- events -->
-    <div class="mx-64 mt-8">
-        <h2 class="font-semibold text-3xl text-gray-600 mb-4">Upcoming Events</h2>
-        <hr class="h-1">
-        <div class="grid grid-cols-3 mt-4">
-            <div class="col-span-2">
-                {% include 'admin/components/calendar.html' %}
-            </div>
-            <div class="col-span-1">
-                {% if events_list %}
+    {% if events_list %}
+    <section>
+        <!-- events -->
+        <div class="mx-64 mt-8">
+            <h2 class="font-semibold text-3xl text-gray-600 mb-4">Upcoming Events</h2>
+            <hr class="h-1">
+            <div class="grid grid-cols-3 mt-4">
+                <div class="col-span-2">
+                    {% include 'admin/components/calendar.html' %}
+                </div>
+                <div class="col-span-1">
                     {% for event in events_list %}
                     {% include 'components/_event.html' %}
                     {% endfor %}
-                {% endif %}
+                </div>
             </div>
         </div>
-    </div>
-    <!-- /events -->
+        <!-- /events -->
+    </section>
+    {% endif%}
 
 
 
