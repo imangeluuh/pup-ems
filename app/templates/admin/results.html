@@ -15,31 +15,54 @@
 {% endblock %}
 
 {% block content %}
+<div class="p-4 bg-white flex ">
+    <!-- Breadcrumb -->
+    <a href="{{ url_for('programs.surveys' )}}" class="flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
+        <svg class="w-5 h-5 mx-1"aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 5H1m0 0 4 4M1 5l4-4"></path>
+        </svg>
+    </a>
+    <nav class="justify-between px-4 py-3 ml-4 text-gray-700 border border-gray-200 rounded-lg sm:flex sm:px-5 bg-gray-50 w-full" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center mb-3 space-x-1 md:space-x-3 sm:mb-0">
+            <li>
+                <div class="flex items-center">
+                <a href="{{ url_for('programs.surveys') }}" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2">Surveys</a>
+                </div>
+            </li>
+            <li aria-current="page">
+                <div class="flex items-center">
+                <svg class="w-3 h-3 mx-1 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                </svg>
+                <span class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2">{{ survey.SurveyName }} Result</span>
+                </div>
+            </li>
+        </ol>
+    </nav>
+</div>
         <!--Container-->
-        <div class="container w-full flex justify-center md:w-4/5 xl:w-3/5  mx-auto px-2">
+        <div class="container w-full flex justify-center  mx-auto p-8">
             <!-- Card -->
             <div class="p-8 mt-6 lg:mt-0 rounded-lg shadow w-1/2 bg-white">
-                
-                <div class="header">
-                    <h1>{{ survey.SurveyName }}</h1>
-                    <h2>{{ survey.Activity.ActivityName }}</h2>
+                <div class="">
+                    <h1 class="text-2xl text-center font-semibold">{{ survey.SurveyName }}</h1>
+                    <h2 class="text-center text-gray-400">{{ survey.Activity.ActivityName }}</h2>
                 </div>
-                <div class="content">
-        
-                    <h2 class="content-subhead"><i class="fa fa-pie-chart"></i> Survey Results</h2>
-        
+                <hr class="my-2">
+                <div class="content mt-6">
+                    <h2 class="text-xl flex items-center my-3"><iconify-icon icon="teenyicons:pie-chart-solid" class="mr-2"></iconify-icon> Survey Results</h2>
                     {% if (survey.State == 2 and current_user.Role.RoleId == 1) or survey.State == 0 %}
-        
                     <br>
-                    <form class="pure-form pure-form-stacked">
+                    <form class="">
                         <fieldset>
                             {% for question in questions %}
-                            <legend>{{ question.Text }} {% if question.Required %}<span class="pure-form-message-inline">* required</span>{% endif %}</legend>
+                            <legend>{{ question.Text }} {% if question.Required %}<span class="text-sm text-red-500 ml-2 align-super">* required</span>{% endif %}</legend>
+                                <hr class="mt-1 mb-4">
                                 <p><i>Total Responses:</i> {{ responses|selectattr("QuestionId", "equalto", question.QuestionId)|list|length }}</p>
         
                                 {% if responses|selectattr("QuestionId", "equalto", question.QuestionId)|list|length > 0 %}
                                     {% if question.Type == 1 %}
-                                        <div id="{{ question.QuestionId }}"></div>
+                                        <div id="{{ question.QuestionId }}" class="mt-2"></div>
                                         <script> var data{{ question.QuestionId }} = [['Option', 'Responses']];</script>
                                         {% for option in question.responsesList() %}
                                             {% for response in responses if response.QuestionId == question.QuestionId and response.Num == loop.index  %}
@@ -58,7 +81,7 @@
                                         </script>
         
                                     {% else %}
-                                        <table class="pure-table-striped" style="width:100%;">
+                                        <table class="" style="width:100%;">
                                             <tbody>
                                                 {% for response in responses if response.QuestionId == question.QuestionId %}
                                                     <tr><td>{{ response.Text }}</td></tr>
@@ -78,10 +101,7 @@
                    <p>Results for this survey are not available yet.</p>
                    {% endif %}
                    <br>
-                   <a href="/">Click here to return to your Dashboard.</a>
-        
                 </div>
-
             </div>
             <!-- /Card -->
         </div>

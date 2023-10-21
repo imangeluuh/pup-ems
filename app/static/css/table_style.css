@@ -49,28 +49,32 @@ table.dataTable.display tbody tr:hover {
     /*shadow*/
     font-weight: 700;
     /*font-bold*/
-    border-radius: .25rem;
+    border-radius: .5rem;
     /*rounded*/
-    background: #667eea !important;
+    background:black !important;
     /*bg-indigo-500*/
     border: 1px solid transparent;
     /*border border-transparent*/
 }
 
 /*Pagination Buttons - Hover */
-.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover{
     color: #fff !important;
     /*text-white*/
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px 0 rgba(0, 0, 0, .06);
+    /* box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px 0 rgba(0, 0, 0, .06); */
     /*shadow*/
     font-weight: 700;
     /*font-bold*/
-    border-radius: .25rem;
+    border-radius: .5rem;
     /*rounded*/
-    background: #667eea !important;
+    background: rgb(209, 213, 219) !important;
     /*bg-indigo-500*/
-    border: 1px solid transparent;
+    border: 1px solid transparent !important;
     /*border border-transparent*/
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:active{
+    color: #fff !important;
 }
 
 /*Add padding to bottom border */

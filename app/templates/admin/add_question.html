@@ -9,13 +9,37 @@
 {% endblock %}
 
 {% block content %}
-    <div class="sm:ml-64 p-4 mt-16">
+<div class="p-4 bg-white flex ">
+    <!-- Breadcrumb -->
+    <a href="{{ url_for('programs.questions' )}}" class="flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
+        <svg class="w-5 h-5 mx-1"aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 5H1m0 0 4 4M1 5l4-4"></path>
+        </svg>
+    </a>
+    <nav class="justify-between px-4 py-3 ml-4 text-gray-700 border border-gray-200 rounded-lg sm:flex sm:px-5 bg-gray-50 w-full" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center mb-3 space-x-1 md:space-x-3 sm:mb-0">
+            <li>
+                <div class="flex items-center">
+                <a href="{{ url_for('programs.questions') }}" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2">Survey Questions</a>
+                </div>
+            </li>
+            <li aria-current="page">
+                <div class="flex items-center">
+                <svg class="w-3 h-3 mx-1 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                </svg>
+                <span class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2">Add Question</span>
+                </div>
+            </li>
+        </ol>
+    </nav>
+</div>
         <!--Container-->
-        <div class="container w-full flex justify-center md:w-4/5 xl:w-3/5  mx-auto px-2">
+        <div class="container w-full flex justify-center mx-auto py-8">
             <!-- Card -->
-            <div class="p-8 w-fit bg-white border border-gray-200 rounded-lg shadow">
+            <div class="py-8 px-12 w-fit bg-white border border-gray-200 rounded-lg shadow">
                 <h2 class="flex items-center text-2xl font-semibold mb-5">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                    <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                         <path fill="currentColor" d="M19 12.998h-6v6h-2v-6H5v-2h6v-6h2v6h6z"/>
                     </svg>
                     Add a new Question
@@ -23,34 +47,46 @@
                 <form class="" method="POST">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <fieldset id="formFields">
-                        <div class="flex mb-3">
-                            <label>Question text</label>
-                            <textarea  name="question" placeholder="Question text" required class="block p-2.5 mx-3 text-sm text-gray-900 bg-gray-50 rounded border border-gray-300"></textarea>
-                            <span class="">* required</span>
+                        <div class="grid grid-cols-4 mb-3">
+                            <label class="col-span-4 sm:col-span-1 sm:order-1">Question text</label>
+                            <span class="col-span-4 sm:col-span-1 sm:order-3 text-red-500 text-sm">* required</span>
+                            <textarea  name="question" placeholder="Question text" required class="col-span-4 sm:col-span-2 sm:order-2 p-2.5 mx-3 text-sm text-gray-900 bg-gray-50 rounded border border-gray-300"></textarea>
                         </div>
-                        <div class="flex items-center mb-3">
-                            <label class="mr-5">Question type</label>
-                            <input type="radio" name="optional" class="mr-1" value="1"> Optional &nbsp;&nbsp;&nbsp;
-                            <input type="radio" name="optional" class="mr-1" value="0" checked> Mandatory
+                        <div class="grid grid-cols-3 items-center mb-3">
+                            <div class="col-span-3 sm:col-span-1">
+                                <label class="mr-5">Question type</label>
+                            </div>
+                            <div class="col-span-3 sm:col-span-1">
+                                <input type="radio" name="optional" class="mr-1" value="1"> Optional &nbsp;&nbsp;&nbsp;
+                            </div>
+                            <div class="col-span-3 sm:col-span-1">
+                                <input type="radio" name="optional" class="mr-1" value="0" checked> Mandatory
+                            </div>
                         </div>
-                        <div class="flex items-center mb-3">
-                            <label class="mr-4">Response type</label>
-                            <input type="radio" name="type" class="mr-1" value="MCQ" onchange="hideText()" checked> Multiple Choice &nbsp;&nbsp;&nbsp;
-                            <input type="radio" name="type" class="mr-1" value="Text" onchange="hideMCQ()"> Text
+                        <div class="grid grid-cols-3 items-center mb-3">
+                            <div class="col-span-3 sm:col-span-1">
+                                <label class="mr-4">Response type</label>
+                            </div>
+                            <div class="col-span-3 sm:col-span-1">
+                                <input type="radio" name="type" class="mr-1" value="MCQ" onchange="hideText()" checked> Multiple Choice &nbsp;&nbsp;&nbsp;
+                            </div>
+                            <div class="col-span-3 sm:col-span-1">
+                                <input type="radio" name="type" class="mr-1" value="Text" onchange="hideMCQ()"> Text
+                            </div>
                         </div>
                         <br>
                         <div id="MCQ">
-                            <div id="1" class="flex items-center mb-3">
-                                <label>Response 1</label>
-                                <input type="text" name="responses" class="mx-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded">
-                                <span class="">* required</span>
+                            <div id="1" class="grid grid-cols-4 items-center mb-3">
+                                <label class="col-span-4 sm:col-span-1">Response 1</label>
+                                <input type="text" name="responses" class="col-span-4 sm:col-span-2 mx-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded">
+                                <span class="col-span-4 sm:col-span-1 text-sm text-red-500">* required</span>
                             </div>
-                            <div id="2" class="flex items-center mb-3">
-                                <label>Response 2</label>
-                                <input type="text" name="responses" class="mx-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded">
-                                <span class="">* required</span>
+                            <div id="2" class="grid grid-cols-4 items-center mb-3">
+                                <label class="col-span-4 sm:col-span-1">Response 2</label>
+                                <input type="text" name="responses" class="col-span-4 sm:col-span-2 mx-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded">
+                                <span class="col-span-4 sm:col-span-1 text-sm text-red-500">* required</span>
                             </div>
-                            <div id="addInput" class=" flex">
+                            <div id="addInput" class="flex mt-5">
                                 <label></label>
                                 <a class="text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 font-medium rounded-lg px-3 py-1.5 mr-2 mb-2" onclick="addInput()">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24">
@@ -64,13 +100,13 @@
                         </div>
     
                         <div id="TEXT" style="display:none;">
-                            <div class="flex items-center mb-3">
-                                <label>Response</label>
-                                <input type="text" class="mx-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded" placeholder="Free response field" disabled>
+                            <div class="grid grid-cols-4 items-center mb-3">
+                                <label class="col-span-4 sm:col-span-1">Response</label>
+                                <input type="text" class="col-span-4 sm:col-span-3 mx-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded" placeholder="Free response field" disabled>
                             </div>
                         </div>
     
-                        <div class="">
+                        <div class=" my-2">
                             <button type="submit" name="bt" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2">Add question</button>
                         </div>
     
@@ -78,14 +114,8 @@
                 </form>
             </div>
             <!-- /Card -->
-
-            
-
-
-            
         </div>
 	    <!--/container-->
-    </div>
 {% endblock %}
 
 {% block script %}

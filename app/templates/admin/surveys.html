@@ -6,25 +6,30 @@
 	<link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
 	<!--Responsive Extension Datatables CSS-->
 	<link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/table_style.css') }}">  
 {% endblock %}
 
 {% block content %}
     <!--Container-->
-    <div class="container w-full md:w-4/5 xl:w-3/5  mx-auto px-2">
-        <a href="{{ url_for('programs.addSurvey') }}">Add Survey</a>
-
-        <!--Title-->
-        <h1 class="flex items-center font-bold break-normal px-2 py-4 text-xl md:text-2xl">
-            Active Surveys
-        </h1>
+    <div class="container w-full md:w-4/5 xl:w-3/5 mx-auto p-8">
+        <div class="flex justify-between mb-4">
+            <h1 class="flex items-center font-bold break-normal px-2 text-xl sm:text-2xl">
+                Surveys
+            </h1>
+            <a href="{{ url_for('programs.addSurvey') }}" class="text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Add Survey</a>
+        </div>
         <!--Card-->
-        <div class="p-8 mt-6 lg:mt-0 rounded shadow bg-white">
+        <div class="p-8 my-6 lg:mt-0 rounded shadow bg-white">
+            <!--Title-->
+            <h1 class="flex items-center font-bold break-normal pb-8 text-red-800 text-xl">
+                Active Surveys
+            </h1>
             <table id="active" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
                 <thead>
                     <tr>
-                        <th data-priority="1">Name</th>
-                        <th data-priority="2">Activity</th>
-                        <th data-priority="3">Created</th>
+                        <th data-priority="1" class="text-left">Name</th>
+                        <th data-priority="2" class="text-left">Activity</th>
+                        <th data-priority="3" class="text-left">Created</th>
                         <th data-priority="4"></th>
                     </tr>
                 </thead>
@@ -34,7 +39,11 @@
                         <td>{{ survey.SurveyName }}</td>
                         <td>{{ survey.Activity.ActivityName }}</td>
                         <td>{{ survey.CreatedAt.strftime("%d/%m/%Y %H:%M") }}</td>
-                        <td><a class="button" href="{{ url_for('programs.closeSurvey', id=survey.SurveyId)}}"><i class="fa fa-external-link"></i>Close</a></td>
+                        <td>
+                            <a href="{{ url_for('programs.closeSurvey', id=survey.SurveyId)}}" class="w-fit flex items-center text-sm text-white bg-red-700 hover:bg-red-800 font-medium rounded-md p-2 text-center" href="{{ url_for('programs.questions') }}">
+                                <iconify-icon icon="subway:error" class="mr-1"></iconify-icon> Close
+                            </a>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -42,18 +51,18 @@
         </div>
         <!--/Card-->
 
-        <!--Title-->
-        <h1 class="flex items-center font-bold break-normal px-2 py-4 text-xl md:text-2xl">
-            Closed Surveys
-        </h1>
         <!--Card-->
-        <div class="p-8 mt-6 lg:mt-0 rounded shadow bg-white">
+        <div class="p-8 my-6 lg:mt-0 rounded shadow bg-white">
+            <!--Title-->
+            <h1 class="flex items-center font-bold break-normal pb-8 text-red-800 text-xl">
+                Closed Surveys
+            </h1>
             <table id="closed" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
                 <thead>
                     <tr>
-                        <th data-priority="1">Name</th>
-                        <th data-priority="2">Activity</th>
-                        <th data-priority="3">Created</th>
+                        <th data-priority="1" class="text-left">Name</th>
+                        <th data-priority="2" class="text-left">Activity</th>
+                        <th data-priority="3" class="text-left">Created</th>
                         <th data-priority="4"></th>
                     </tr>
                 </thead>
@@ -63,7 +72,10 @@
                         <td>{{ survey.SurveyName }}</td>
                         <td>{{ survey.Activity.ActivityName }}</td>
                         <td>{{ survey.CreatedAt.strftime("%d/%m/%Y %H:%M") }}</td>
-                        <td><a class="button" href="{{url_for('programs.results', id=survey.SurveyId)}}"><i class="fa fa-pie-chart"></i> View Results</a></td>
+                        <td>
+                            <a href="{{url_for('programs.results', id=survey.SurveyId)}}" class="w-fit flex items-center text-sm text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-md p-2 text-center" >
+                                <iconify-icon icon="teenyicons:pie-chart-solid" class="mr-1"></iconify-icon> View Results</a>
+                            </td>
                     </tr>
                     {% endfor %}
                 </tbody>

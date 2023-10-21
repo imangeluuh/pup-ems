@@ -446,7 +446,7 @@ def deleteActivity(id):
     return redirect(url_for('programs.viewProject', id=project_id))
 
 @bp.route('/budget-allocation')
-@login_required(role=["Admin"])
+@login_required(role=["Admin", "Faculty"])
 def budgetAllocation():
     ext_programs = ExtensionProgram.query.all()
     float_total_proposed_budget = 0
@@ -457,15 +457,30 @@ def budgetAllocation():
     return render_template('admin/budget_allocation.html', ext_programs=ext_programs, float_total_approved_budget=float_total_approved_budget, float_total_proposed_budget=float_total_proposed_budget)
 
 @bp.route('/questions')
-@login_required(role=["Admin"])
+@login_required(role=["Admin", "Faculty"])
 def questions():
     mandatory_questions = Question.query.filter_by(State = 1, Required = 1).all()
     optional_questions = Question.query.filter_by(State = 1, Required = 0).all()
 
     return render_template('admin/questions.html', mandatory_questions=mandatory_questions, optional_questions=optional_questions)
 
+#delete question - deletest question from pool and redirects back to questions
+@bp.route("/questions/delete/<id>")
+@login_required(role=["Admin", "Faculty"])
+def deleteQuestion(id):
+
+    question = Question.query.filter_by(QuestionId=id).first()
+
+    if question:
+        question.State = 0
+        db.session.commit()
+
+    flash('The question has been deleted successfully.', category='success')
+    return redirect(url_for("programs.questions"))
+
+
 @bp.route('/questions/add', methods=['GET', 'POST'])
-@login_required(role=["Admin"])
+@login_required(role=["Admin", "Faculty"])
 def addQuestions():
     if request.method == "POST":
         question_text = request.form["question"]
@@ -480,11 +495,11 @@ def addQuestions():
 
         if question_text.isspace() or question_text == "" or question_type == 1 and (len(responses) < 2 or all(responses[i].isspace() for i in range(0, len(responses)-1))):
             flash('Please complete all required fields.', category='error')
-            return render_template("addQuestion.html")
+            return render_template("admin/add_question.html")
         
         if not question_type in range(1,3):
             flash('The application could not complete your request at this moment. Please try again later.', category='error')
-            return render_template("addQuestion.html")
+            return render_template("admin/add_question.html")
         
         try:
             question_to_add = Question(Text=question_text, State=1, Type=question_type, Required=required, Responses=str(responses))
@@ -497,7 +512,7 @@ def addQuestions():
 
 
 @bp.route('/surveys')
-@login_required(role=["Admin", "Beneficiary"])
+@login_required(role=["Admin", "Faculty"])
 def surveys():
     active_surveys = None
     inactive_surveys = None
@@ -523,7 +538,7 @@ def surveys():
 
 
 @bp.route('/surveys/add', methods=['GET', 'POST'])
-@login_required(role=["Admin"])
+@login_required(role=["Admin", "Faculty"])
 def addSurvey():
     questions = Question.query.filter_by(State = 1).all()
     activities = Activity.query.all()
@@ -627,7 +642,7 @@ def save_response(survey_id, user_id, question_id, text, num):
 
 #close survey - makes survey inactive and redirects to surveys page
 @bp.route("/surveys/close/<id>")
-@login_required(role=["Admin"])
+@login_required(role=["Admin", "Faculty"])
 def closeSurvey(id):
     survey = Survey.query.filter_by(SurveyId=id).first()
 
@@ -643,7 +658,7 @@ def closeSurvey(id):
 
 #results page - show survey results
 @bp.route("/results/<id>")
-@login_required(["Beneficiary", "Admin"])
+@login_required(["Admin", "Faculty"])
 def results(id):
 
     list_activities = [r.Project.Activity for r in Registration.query.filter_by(UserId=current_user.User[0].UserId).all()]
@@ -661,11 +676,6 @@ def results(id):
     if not survey: 
         flash('The survey you have requested does not exist. Please check your link is correct.', category='error')
         return render_template("admin/results.html")
-
-    # if survey.ActivityId not in list_activity_ids:
-    #     if session['user_type'] != 3:
-    #         return redirect(url_for('index'))
-
 
     questions = []
     for question_id in survey.questionsList():

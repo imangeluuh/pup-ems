@@ -14,29 +14,36 @@
 
 {% block content %}
     <!--Container-->
-    <div class="container w-full flex justify-center md:w-4/5 xl:w-3/5  mx-auto px-2">
+    <div class="container w-full flex justify-center  mx-auto p-8">
         <!-- Card -->
-        <div class="p-8 w-fit bg-white border border-gray-200 rounded-lg shadow">
-            
+        <div class="p-8 px-12 w-fit bg-white border border-gray-200 rounded-lg shadow">
+            <div class="">
+                <h1 class="text-2xl text-center font-semibold">{{ survey.SurveyName }}</h1>
+                <h2 class="text-center text-gray-400">{{ survey.Activity.ActivityName }}</h2>
+            </div>
+            <hr class="my-2">
             {% if survey.State == 1 %}
-            <h2 class="flex items-center text-2xl font-semibold mb-5">
+            <h2 class="text-xl flex items-center my-3 text-gray-500">
+                <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                    <path fill="currentColor" d="M8 1c4.418 0 8 2.91 8 6.5S12.418 14 8 14c-.424 0-.841-.027-1.247-.079c-1.718 1.718-3.77 2.027-5.753 2.072v-.421c1.071-.525 2-1.48 2-2.572a3.01 3.01 0 0 0-.034-.448C1.157 11.36 0 9.54 0 7.5C0 3.91 3.582 1 8 1z"/>
+                </svg>
                 Please complete the survey below
             </h2>
-            <form class="pure-form pure-form-stacked" method="POST">
+            <form class="" method="POST">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <fieldset>
                     {% for question in questions %}
-                    <legend>{{ question.Text }} {% if question.Required %}<span class="pure-form-message-inline">* required</span>{% endif %}</legend>
+                    <legend class="my-1">{{ question.Text }} {% if question.Required %}<span class="text-sm text-red-500 align-super ml-2">* required</span>{% endif %}</legend>
+                        <hr class="mb-4">
                         {% if question.Type == 1 %}
                             {% for response in question.responsesList() %}
                                 <input name="{{ question.QuestionId }}" type="radio" value="{{ loop.index }}" {{ 'required' if question.Required }}> {{ response }}</input><br>
                             {% endfor %}
-                            <br>
                         {% else %}
-                            <textarea class="pure-input-1-2" name="{{ question.QuestionId }}" placeholder="Please enter your response..."></textarea><br>
+                            <textarea class="" name="{{ question.QuestionId }}" placeholder="Please enter your response..."></textarea><br>
                         {% endif %}
                     {% endfor %}
-                    <button type="submit" name="bt" class="pure-button pure-button-primary">Submit response</button>
+                    <button type="submit" name="bt" class="w-fit flex items-center text-sm text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-md p-2 text-center mt-4">Submit response</button>
                 </fieldset>
             </form>
             {%else%}

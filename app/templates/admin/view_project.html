@@ -7,15 +7,14 @@
     <link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
     <!--Responsive Extension Datatables CSS-->
     <link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/table_style.css') }}">  
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/table_style.css') }}">  
 {% endblock %}
 
 {% block content %}
-<div class="p-0 mt-14">
-    <div class="ml-8 md:ml-64 p-4 bg-white flex ">
+    <div class="p-4 bg-white flex ">
         <!-- Breadcrumb -->
         <a href="{{ url_for('programs.programs' )}}" class="flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
-            <svg class="w-5 h-5 mx-2"aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+            <svg class="w-5 h-5 mx-1"aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 5H1m0 0 4 4M1 5l4-4"></path>
             </svg>
         </a>
@@ -37,7 +36,7 @@
             </ol>
         </nav>
     </div>
-    <div class="ml-8 md:ml-72 md:mr-10 mt-6 p-4 shadow rounded-md bg-white">
+    <div class="ml-8 md:mr-10 mt-6 p-4 shadow rounded-md bg-white">
         <!-- Image -->
         {% if project.ImageUrl %}
         <div class="flex">
@@ -201,9 +200,9 @@
                     </div>
                 </div>
             </div>
-        </form>
-        {% include 'admin/delete_project.html' %}
-        {% include 'admin/add_activity.html' %}
+            </form>
+            {% include 'admin/delete_project.html' %}
+            {% include 'admin/add_activity.html' %}
             <div class="hidden p-4" id="activity-outline" role="tabpanel" aria-labelledby="activity-outline-tab">
                 <div class="activity-content">
                     <h1 class="text-black text-3xl font-bold mb-8">Activity Outline</h1>
