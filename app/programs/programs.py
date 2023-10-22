@@ -578,17 +578,16 @@ def survey(id):
             list_activity_ids.append(activity.ActivityId)  
 
     survey = Survey.query.filter_by(SurveyId=id).first()
-    print('survey', survey.__dict__)
     if survey.ActivityId not in list_activity_ids:
         return redirect(url_for('programs.surveys'))
 
     if not survey: 
         flash('The survey you have requested does not exist. Please check your link is correct.', category='error')
         return render_template("admin/survey.html")
-
+    
     if Response.query.filter_by(SurveyId=id, BeneficiaryId=current_user.User[0].UserId).first():
-        flash('Your response has been recorded successfully.\nSurvey results will be made available to you through your dashboard when the survey closes.', category='success')
-        return render_template("admin/survey.html", survey=survey)
+        survey_taken = True
+        return render_template("admin/survey.html", survey=survey, survey_taken=survey_taken)
 
     questions = []
     for question_id in survey.questionsList():
