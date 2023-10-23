@@ -75,6 +75,15 @@ def calendar():
     
     return render_template('admin/activity_calendar.html', projects=projects, events=activities, selected_project_id=selected_project_id)
 
+@bp.route('/extension-program')
+@login_required(role=["Admin"])
+def extensionProgram():
+    program_abbreviation = request.args.get('program')
+    program = Program.query.filter_by(Abbreviation=program_abbreviation).first()
+    print(program.ExtensionPrograms)
+    ext_programs = [ext_program for ext_program in program.ExtensionPrograms]
+    return render_template('admin/ext_program_options.html', ext_programs=ext_programs)
+
 
 @bp.route('/announcement/<string:project>')
 @bp.route('/announcement', defaults={'project': None})
