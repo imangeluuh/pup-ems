@@ -2,7 +2,7 @@ from app.admin import bp
 from flask import render_template, url_for, request, redirect, flash, session
 from flask_login import current_user, login_user, login_required, logout_user
 from .forms import LoginForm, AnnouncementForm
-from ..models import Login, Beneficiary, Project, Program, Student, Announcement, Registration, User
+from ..models import Login, Beneficiary, Project, Program, Student, Announcement, Registration, User, ExtensionProgram
 from ..Api.resources import AdminLoginApi
 from ..decorators.decorators import login_required
 from app import db, api
@@ -76,13 +76,20 @@ def calendar():
     return render_template('admin/activity_calendar.html', projects=projects, events=activities, selected_project_id=selected_project_id)
 
 @bp.route('/extension-program')
-@login_required(role=["Admin"])
+@login_required(role=["Admin", "Faculty"])
 def extensionProgram():
     program_abbreviation = request.args.get('program')
     program = Program.query.filter_by(Abbreviation=program_abbreviation).first()
-    print(program.ExtensionPrograms)
     ext_programs = [ext_program for ext_program in program.ExtensionPrograms]
     return render_template('admin/ext_program_options.html', ext_programs=ext_programs)
+
+@bp.route('/project')
+@login_required(role=["Admin", "Faculty"])
+def project():
+    ext_program_id = request.args.get('extension-program')
+    ext_program = ExtensionProgram.query.filter_by(ExtensionProgramId=ext_program_id).first()
+    projects = [project for project in ext_program.Projects]
+    return render_template('admin/project_options.html', projects=projects)
 
 
 @bp.route('/announcement/<string:project>')

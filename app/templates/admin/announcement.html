@@ -17,15 +17,15 @@
     </div>
     
     <div class="flex mb-6">
-        <select name="program" id="program" hx-trigger="change, load" hx-get="/extension-program" hx-target="#extension-program" class="mr-5 w-44 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5">
-            <option selected disabled>Program</option>
+        <select name="program" id="program" hx-trigger="change" hx-get="/admin/extension-program" hx-target="#extension-program" class="mr-5 w-44 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5">
+            <option selected disabled></option>
             {% for program in programs %}
             <option value="{{program.Abbreviation}}">{{program.Abbreviation}}</option>
             {% endfor %}
         </select>
-        <select name="extension-program" id="extension-program" class="mr-5 w-44 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5">
+        <select name="extension-program" id="extension-program" hx-trigger="change" hx-get="/admin/project" hx-target="#project" class="mr-5 w-44 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5">
         </select>
-        <select name="project" id="project" hx-trigger="" class="mr-5 w-44 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5">
+        <select name="project" id="project" class="mr-5 w-44 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5">
         </select>
     </div>
     <div class="">
