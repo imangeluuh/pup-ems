@@ -91,33 +91,27 @@ def project():
     projects = [project for project in ext_program.Projects]
     return render_template('admin/project_options.html', projects=projects)
 
-
-@bp.route('/announcement/<string:project>')
-@bp.route('/announcement', defaults={'project': None})
-@login_required(role=["Admin"])
-def announcement(project):
-    page = request.args.get('page', 1, type=int)
-    if project is not None:
-        project_id = Project.query.filter_by(Name=project).first()
-        published_announcements = Announcement.query.filter_by(IsLive=True, ProjectId=project_id.ProjectId).order_by(Announcement.Updated.desc()).paginate(page=page, per_page=3, error_out=False)
-        draft_announcements = Announcement.query.filter_by(IsLive=False, ProjectId=project_id.ProjectId).order_by(Announcement.Updated.desc()).paginate(page=page, per_page=3, error_out=False)
+@bp.route('/announcement')
+@login_required(role=["Admin", "Faculty"])
+def filterAnnouncement():
+    project_id = request.args.get('project')
+    if project_id:
+        published_announcements = Announcement.query.filter_by(IsLive=True, ProjectId=project_id).order_by(Announcement.Updated.desc()).all()
+        draft_announcements = Announcement.query.filter_by(IsLive=False, ProjectId=project_id).order_by(Announcement.Updated.desc()).all()
     else:
-        published_announcements = Announcement.query.filter_by(IsLive=True).order_by(Announcement.Updated.desc()).paginate(page=page, per_page=3, error_out=False)
-        draft_announcements = Announcement.query.filter_by(IsLive=False).order_by(Announcement.Updated.desc()).paginate(page=page, per_page=3, error_out=False)
+        published_announcements = Announcement.query.filter_by(IsLive=True).order_by(Announcement.Updated.desc()).all()
+        draft_announcements = Announcement.query.filter_by(IsLive=False).order_by(Announcement.Updated.desc()).all()
+
+    return render_template('admin/announcements_list.html', published_announcements=published_announcements, draft_announcements=draft_announcements)
     
-    published_next_url = url_for('admin.announcement', page=published_announcements.next_num) \
-        if published_announcements.has_next else None
-    published_prev_url = url_for('admin.announcement', page=published_announcements.prev_num) \
-        if published_announcements.has_prev else None
-    draft_next_url = url_for('admin.announcement', page=draft_announcements.next_num) \
-        if draft_announcements.has_next else None
-    draft_prev_url = url_for('admin.announcement', page=draft_announcements.prev_num) \
-        if draft_announcements.has_prev else None
-    
+
+
+@bp.route('/announcements/<string:project>')
+@bp.route('/announcements', defaults={'project': None})
+@login_required(role=["Admin"])
+def announcement(project):    
     programs = Program.query.all()
-    return render_template('admin/announcement.html', programs=programs, published_announcements=published_announcements.items, \
-                            draft_announcements=draft_announcements, published_next_url=published_next_url, published_prev_url=published_prev_url, \
-                                draft_next_url=draft_next_url, draft_prev_url=draft_prev_url)
+    return render_template('admin/announcement.html', programs=programs)
 
 
 @bp.route('/announcement/create', methods=['GET', 'POST'])
@@ -136,10 +130,10 @@ def createAnnouncement():
                 is_live = 1
             elif 'draft' in request.form:
                 is_live = 0
-            admin_login = current_user.AdminLogin
+            admin_login = current_user.User[0]
             announcement_to_create = Announcement(Title=form.title.data,
                                                 Content=form.content.data,
-                                                CreatorId=admin_login[0].AdminId,
+                                                CreatorId=admin_login.UserId,
                                                 IsLive=is_live,
                                                 Slug=generateSlug(form.title.data),
                                                 ProjectId=form.project.data)
