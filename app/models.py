@@ -234,14 +234,14 @@ class Announcement(db.Model):
     AnnouncementId = db.Column(db.Integer, primary_key=True)
     Title = db.Column(db.String(255), nullable=False)
     Content= db.Column(db.Text)
-    CreatorId = db.Column(db.String(36), db.ForeignKey('Admin.AdminId', ondelete='CASCADE'), nullable=False)
+    CreatorId = db.Column(db.String(36), db.ForeignKey('User.UserId', ondelete='CASCADE'), nullable=False)
     IsLive = db.Column(db.Boolean, index=True, nullable=False)
     Slug = db.Column(db.String(255), nullable=False)
     Created = db.Column(db.DateTime, default=datetime.utcnow, index=True, nullable=False)
     Updated = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, index=True, nullable=False)
     ProjectId = db.Column(db.Integer, db.ForeignKey('Project.ProjectId', ondelete='CASCADE'), nullable=False)
     Project = db.relationship('Project', backref='Announcement')
-    Creator = db.relationship('Admin', backref='Announcement')
+    Creator = db.relationship('User', backref='Announcement')
 
 
 class Registration(db.Model):
