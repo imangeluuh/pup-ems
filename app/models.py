@@ -224,9 +224,20 @@ class Activity(db.Model):
     ImageUrl = db.Column(db.Text)
     ImageFileId = db.Column(db.Text)
     ProjectId = db.Column(db.Integer, db.ForeignKey('Project.ProjectId', ondelete='CASCADE'), nullable=False)
+    SpeakerId = db.Column(db.Integer, db.ForeignKey('Speaker.SpeakerId', ondelete='CASCADE'), nullable=False)
     Project = db.relationship('Project', backref='Activity')
-    Survey = db.relationship("Survey", back_populates='Activity', lazy=True)
+    Survey = db.relationship("Survey", back_populates='Activity', cascade='all, delete-orphan', lazy=True)
+    Speaker = db.relationship('Speaker', back_populates='Activity')
 
+class Speaker(db.Model):
+    __tablename__ = 'Speaker'
+
+    SpeakerId = db.Column(db.Integer, primary_key=True)
+    FirstName = db.Column(db.String(50), nullable=False)
+    MiddleName = db.Column(db.String(50), default=None)
+    LastName = db.Column(db.String(50), nullable=False)
+    ContactDetails = db.Column(db.String(13), nullable=False)
+    Activity = db.relationship("Activity", back_populates="Speaker")
 
 class Announcement(db.Model):
     __tablename__ = 'Announcement'
@@ -277,8 +288,8 @@ class Survey(db.Model):
     State = db.Column(db.Integer, nullable=False)
     Questions = db.Column(db.Text, nullable=False)
     CreatedAt = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
-    Activity = db.relationship("Activity", back_populates="Survey")
-    Response = db.relationship("Response", back_populates="Survey")
+    Activity = db.relationship("Activity", back_populates="Survey", passive_deletes=True)
+    Response = db.relationship("Response", back_populates="Survey", cascade='all, delete-orphan')
 
     def questionsList(self):
         return ast.literal_eval(self.Questions)
@@ -289,12 +300,12 @@ class Response(db.Model):
 
     ResponseId = db.Column(db.Integer, primary_key=True)
     BeneficiaryId = db.Column(db.String(36), db.ForeignKey('Beneficiary.BeneficiaryId'), nullable=False)
-    SurveyId = db.Column(db.Integer, db.ForeignKey('Survey.SurveyId'), nullable=False)
+    SurveyId = db.Column(db.Integer, db.ForeignKey('Survey.SurveyId', ondelete='CASCADE'), nullable=False)
     QuestionId = db.Column(db.Integer, db.ForeignKey('Question.QuestionId'), nullable=False)
     Text = db.Column(db.Text)
     Num = db.Column(db.Integer)
     Beneficiary = db.relationship("Beneficiary", back_populates="SurveyResponse")
-    Survey = db.relationship("Survey", back_populates="Response")
+    Survey = db.relationship("Survey", back_populates="Response", passive_deletes=True)
     Question = db.relationship("Question", back_populates="Response")
 
     def responsesList(self):

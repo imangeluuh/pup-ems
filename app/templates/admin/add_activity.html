@@ -29,13 +29,11 @@
                         {{ activity_form.date(class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5", value=activity.Date if activity)}}
                     </div>
                     <div class="col-span-6 sm:col-span-3">
-                        {{ activity.StartTime if activity }}
                         <!-- start time -->
                         {{ activity_form.start_time.label(class="block mb-2 text-sm font-medium text-gray-900") }}
                         {{ activity_form.start_time(id="start_time", class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5", value=activity.StartTime.strftime('%H:%M') if activity, required="required" if not activity)}}
                     </div>
                     <div class="col-span-6 sm:col-span-3">
-                        {{ activity.EndTime if activity }}
                         <!-- end time -->
                         {{ activity_form.end_time.label(class="block mb-2 text-sm font-medium text-gray-900") }}
                         {{ activity_form.end_time(id="end_time", class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5", value=activity.EndTime.strftime('%H:%M') if activity, required="required" if not activity)}}
