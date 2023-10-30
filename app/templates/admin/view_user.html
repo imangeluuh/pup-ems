@@ -6,7 +6,7 @@
 	<link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
 	<!--Responsive Extension Datatables CSS-->
 	<link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('admin.static', filename='css/table_style.css') }}">  
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/table_style.css') }}">  
 {% endblock %}
 
 {% block content %}
@@ -106,10 +106,10 @@
                         <table id="projects-table" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
                             <thead>
                                 <tr>
-                                    <th data-priority="1">Name</th>
-                                    <th data-priority="2">Lead Proponent</th>
-                                    <th data-priority="3">Status</th>
-                                    <th data-priority="5">Action</th>
+                                    <th data-priority="1" class="text-left">Name</th>
+                                    <th data-priority="2" class="text-left">Lead Proponent</th>
+                                    <th data-priority="3" class="text-left">Status</th>
+                                    <th data-priority="4" class="text-left">Action</th>
                                 </tr>
                             </thead>
                             <tbody>

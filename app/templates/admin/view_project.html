@@ -206,6 +206,7 @@
             <div class="hidden p-4" id="activity-outline" role="tabpanel" aria-labelledby="activity-outline-tab">
                 <div class="activity-content">
                     <h1 class="text-black text-3xl font-bold mb-8">Activity Outline</h1>
+                    {% if project.Activity %}
                     {% for activity in project.Activity %}
                     <div class="grid grid-cols-6 mb-2">
                         <div class="col-span-1 flex justify-center">
@@ -256,6 +257,7 @@
                     {% include 'admin/delete_activity.html' %}
                     {% include 'admin/add_activity.html' %}
                     {% endfor %}
+                    {% endif %}
                 </div>
             </div>
             <!-- activity calendar -->
@@ -305,9 +307,6 @@
 {% endblock %}
 
 {% block script %}
-
-<!-- jQuery -->
-<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <!--Datatables -->
 <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>

@@ -35,20 +35,20 @@
                             <td>{{ ext_program.Name }}</td>
                             <td>{{ ext_program.Program.Abbreviation }}</td>
                             <td>{{ ext_program.FundType }}</td>
-                            <td>{{ ext_program.ProposedBudget }}</td>
-                            <td>{{ ext_program.ApprovedBudget }}</td>
+                            <td class="proposed">{{ ext_program.ProposedBudget }}</td>
+                            <td class="approved">{{ ext_program.ApprovedBudget }}</td>
                             <td class="flex"><a href="{{ url_for('programs.programs') }}" class="bg-green-100 text-green-800 text-base font-medium mr-2 px-2.5 py-0.5 rounded">View</a></td>
                         </tr>
                         {% endfor %}
+                    </tbody>
+                    <tfoot>
                         <tr>
-                            <td><strong>Total</strong></td>
-                            <td></td>
-                            <td></td>
-                            <td><strong>{{ float_total_proposed_budget }}</strong></td>
-                            <td><strong>{{ float_total_approved_budget }}</strong></td>
+                            <td class="font-bold" colspan="3" style="padding: 0.75rem!important;">Total</td>
+                            <td class="font-bold" id="total-proposed" style="padding: 0.75rem!important;"></td>
+                            <td class="font-bold" id="total-approved" style="padding: 0.75rem!important;"></td>
                             <td></td>
                         </tr>
-                    </tbody>
+                    </tfoot>
                 </table>
             </div>
             <!--/Card-->
@@ -87,10 +87,38 @@
         $(document).ready(function() {
 
         var table = $('#budget').DataTable({
-                responsive: true
+                responsive: true,
             })
             .columns.adjust()
             .responsive.recalc()
+
+        computeTotal();
+
+        table.on('draw', function() {
+            computeTotal();
+        });
+        
+        function computeTotal() {
+            var float_total_proposed = 0.00
+            $(".proposed").each(function( index ) {
+                float_total_proposed = float_total_proposed + parseFloat($( this ).text())
+                console.log($(this).text())
+                console.log(float_total_proposed)
+            });
+            // Format float_total_proposed to display two decimal places
+            float_total_proposed = float_total_proposed.toFixed(2);
+            $('#total-proposed').text(float_total_proposed)
+    
+            var float_total_approved = 0.00
+            $(".approved").each(function( index ) {
+                float_total_approved = float_total_approved + parseFloat($( this ).text())
+                console.log($(this).text())
+                console.log(float_total_approved)
+            });
+            // Format float_total_approved to display two decimal places
+            float_total_approved = float_total_approved.toFixed(2);
+            $('#total-approved').text(float_total_approved)
+        }
         });
     </script>
 {% endblock %}

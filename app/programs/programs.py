@@ -450,12 +450,7 @@ def deleteActivity(id):
 @login_required(role=["Admin", "Faculty"])
 def budgetAllocation():
     ext_programs = ExtensionProgram.query.all()
-    float_total_proposed_budget = 0
-    float_total_approved_budget = 0
-    for ext_program in ext_programs:
-        float_total_proposed_budget += ext_program.ProposedBudget
-        float_total_approved_budget += ext_program.ApprovedBudget
-    return render_template('admin/budget_allocation.html', ext_programs=ext_programs, float_total_approved_budget=float_total_approved_budget, float_total_proposed_budget=float_total_proposed_budget)
+    return render_template('admin/budget_allocation.html', ext_programs=ext_programs)
 
 @bp.route('/questions')
 @login_required(role=["Admin", "Faculty"])
