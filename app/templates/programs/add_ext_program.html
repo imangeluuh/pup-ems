@@ -452,6 +452,16 @@ input[type="file"]::-webkit-file-upload-button {
                         </ol>
                     </div>
                     <div class="col-span-2 text-left">
+                        <!-- speaker -->
+                        <label for="{{ form.activity.speaker.id }}">{{ form.activity.speaker.label }}</label>
+                        {{ form.activity.speaker(class="input")}}
+                        <ol>
+                            {% for error in form.activity.speaker.errors %}
+                            <li class="text-red-500 text-sm mb-4 mt-0 p-0">{{ error }}</li>
+                            {% endfor %}
+                        </ol>
+                    </div>
+                    <div class="col-span-2 text-left">
                         <!-- description -->
                         <label for="{{ form.activity.activity_description.id }}">{{ form.activity.activity_description.label }}</label>
                         {{ form.activity.activity_description(class="input") }}

@@ -1827,6 +1827,10 @@ video {
   padding-right: 4rem;
 }
 
+.pr-2 {
+  padding-right: 0.5rem;
+}
+
 .pr-4 {
   padding-right: 1rem;
 }
@@ -1865,10 +1869,6 @@ video {
 
 .pt-6 {
   padding-top: 1.5rem;
-}
-
-.pl-1 {
-  padding-left: 0.25rem;
 }
 
 .text-left {
@@ -2018,6 +2018,11 @@ video {
 .text-gray-900 {
   --tw-text-opacity: 1;
   color: rgb(17 24 39 / var(--tw-text-opacity));
+}
+
+.text-green-700 {
+  --tw-text-opacity: 1;
+  color: rgb(21 128 61 / var(--tw-text-opacity));
 }
 
 .text-green-800 {

@@ -3,7 +3,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, DateField, SelectField, SubmitField, TextAreaField, IntegerField, HiddenField, TimeField, FormField
 from wtforms.validators import DataRequired, Optional
 from flask_wtf.file import FileField, FileAllowed
-from ..models import Agenda, Program, Collaborator
+from ..models import Agenda, Program, Collaborator, Speaker
 
 class ProgramForm(FlaskForm):
     program_name = StringField('Extension Program Name', validators=[DataRequired()])
@@ -55,12 +55,19 @@ class ProjectForm(FlaskForm):
 class ActivityForm(FlaskForm):
     activity_name = StringField("Activity Name", validators=[DataRequired()])
     date = DateField("Date", validators=[DataRequired()])
+    speaker = SelectField('Speaker', validators=[DataRequired()])
     start_time = TimeField("Start Time", format='%H:%M', validators=[DataRequired()])
     end_time = TimeField('End Time', format='%H:%M', validators=[DataRequired()])
     activity_description = TextAreaField('Description', validators=[DataRequired()])
     image = FileField('Upload Image', validators=[FileAllowed(['jpg', 'png', 'jpeg', 'gif'])])
     project = HiddenField()
     save = SubmitField("Save Activity") 
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        with current_app.app_context():
+            self.speaker.choices = [(speaker.SpeakerId, speaker.FirstName + " " + speaker.LastName) for speaker in Speaker.query.all()]
 
 class CombinedForm(FlaskForm):
     extension_program = FormField(ProgramForm)

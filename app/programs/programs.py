@@ -1,7 +1,7 @@
 from app.programs import bp
 from flask import render_template, url_for, request, redirect, flash, current_app
 from flask_login import current_user
-from ..models import Project, ExtensionProgram, Program, Registration, Agenda, ExtensionProgram, Activity, Question, Survey, Response, Beneficiary
+from ..models import Project, ExtensionProgram, Program, Registration, Agenda, ExtensionProgram, Activity, Question, Survey, Response, Beneficiary, Attendance
 from .forms import ProgramForm, ProjectForm, ActivityForm, CombinedForm
 import calendar
 from datetime import datetime
@@ -131,6 +131,7 @@ def insertExtensionProgram():
                                         Date=form.activity.date.data,
                                         StartTime=form.activity.start_time.data,
                                         EndTime=form.activity.end_time.data,
+                                        SpeakerId=form.activity.speaker.data,
                                         Description=form.activity.activity_description.data,
                                         ProjectId=int_project_id,
                                         ImageUrl=str_image_url,
@@ -378,6 +379,7 @@ def insertActivity():
                                         Date=form.date.data,
                                         StartTime=form.start_time.data,
                                         EndTime=form.end_time.data,
+                                        SpeakerId=form.speaker.data,
                                         Description=form.activity_description.data,
                                         ProjectId=form.project.data,
                                         ImageUrl=str_image_url,
@@ -557,6 +559,137 @@ def addSurvey():
 
     return render_template('admin/add_survey.html', questions=questions, activities=activities)
 
+#close survey - makes survey inactive and redirects to surveys page
+@bp.route("/surveys/close/<id>")
+@login_required(role=["Admin", "Faculty"])
+def closeSurvey(id):
+    survey = Survey.query.filter_by(SurveyId=id).first()
+
+    try:
+        if survey:
+            survey.State = 0
+            db.session.commit()
+            flash('The survey has been closed successfully.')
+    except:
+        flash('The survey could not be closed. Please try again later.')
+
+    return redirect(url_for("programs.surveys"))
+
+#results page - show survey results
+@bp.route("/results/<id>")
+@login_required(["Admin", "Faculty"])
+def results(id):
+
+    list_activities = [r.Project.Activity for r in Registration.query.filter_by(UserId=current_user.User[0].UserId).all()]
+    # Initialize an empty list to store the ActivityIds
+    list_activity_ids = []
+    
+    # Iterate through the outer list
+    for sublist in list_activities:
+        # Iterate through the inner list
+        for activity in sublist:
+            list_activity_ids.append(activity.ActivityId) 
+
+    survey = Survey.query.filter_by(SurveyId=id).first()
+
+    if not survey: 
+        flash('The survey you have requested does not exist. Please check your link is correct.', category='error')
+        return render_template("admin/results.html")
+
+    questions = []
+    for question_id in survey.questionsList():
+        question = Question.query.filter_by(QuestionId=question_id).first()
+        questions.append(question)
+
+    responses = Response.query.filter_by(SurveyId=id).all()
+
+    return render_template("admin/results.html", survey=survey, questions=questions, responses=responses)
+
+# =========================================================
+# ||                      USER VIEWS                     ||
+# =========================================================
+
+@bp.route('/programs')
+def programsList():
+    extension_programs = ExtensionProgram.query.all()
+    programs = Program.query.all()
+    agendas = Agenda.query.all()
+    return render_template('programs/programs.html', extension_programs=extension_programs, programs=programs, agendas=agendas)
+
+
+@bp.route('/projects/<int:program_id>', methods=['GET', 'POST'])
+def projectsList(program_id):
+    extension_program = ExtensionProgram.query.filter_by(ExtensionProgramId=program_id).first()
+    projects = Project.query.filter_by(ExtensionProgramId=program_id).all()
+    return render_template('programs/projects_list.html', extension_program=extension_program, projects=projects)
+    
+
+@bp.route('/filters')
+def filters():
+    # Retrieve only the names from the program table
+    extension_programs = ExtensionProgram.query.with_entities(ExtensionProgram.Name).all()
+    programs = Program.query.with_entities(Program.ProgramName).all()
+
+    # Convert the query result into a list of names
+    list_extension_programs = [extension_program[0] for extension_program in extension_programs]
+    list_programs = [program[0] for program in programs]
+
+    # Get the current month
+    current_month = datetime.now().month
+
+    # Create a list of months from current month to December
+    list_months = [calendar.month_name[i] for i in range(current_month, 13)]
+
+    dict_filters = {
+        'Extension Program': list_extension_programs,
+        'Program': list_programs,
+        'Month': list_months,
+    }
+
+    str_filter = request.args.get('filter')
+
+    list_filter = dict_filters[str_filter]
+
+    return render_template('programs/filters.html',list_filter=list_filter)
+
+
+@bp.route('/registration/<int:project_id>', methods=['GET', 'POST'])
+def registration(project_id):
+    project = Project.query.get_or_404(project_id)
+    current_date = datetime.utcnow()
+    list_activities = project.Activity
+    user_id = current_user.User[0].UserId if current_user.is_authenticated else None
+    bool_is_registered = True if Registration.query.filter_by(ProjectId=project_id, UserId=user_id).first() else False
+    if request.method == 'POST':
+        registration_to_create = Registration(ProjectId = project_id,
+                                            UserId=user_id)
+        try:
+            db.session.add(registration_to_create)
+            db.session.commit()
+            flash('Registration Successful!', category='success')
+        except:
+            flash('There was an issue during registration.', category='error')
+
+        return redirect(url_for('programs.registration', project_id=project_id))
+    return render_template("programs/project_reg.html", project=project, list_activities=list_activities, bool_is_registered=bool_is_registered, current_date=current_date)
+
+
+@bp.route('/registration/cancel/<int:project_id>', methods=['POST'])
+def cancelRegistration(project_id):
+    project = Project.query.get_or_404(project_id)
+    user_id = current_user.User[0].UserId if current_user.is_authenticated else None
+    registration = Registration.query.filter_by(ProjectId=project_id, UserId=user_id).first()
+
+    try:
+        db.session.delete(registration)
+        db.session.commit()
+        flash('Registration is successfully canceled.', category='success')
+    except:
+        flash('There was an issue canceling the registration.', category='error')
+
+    return redirect(url_for('programs.registration', project_id=project_id))
+
+
 #survey page - allows responses to be collected
 @bp.route("/survey/<id>", methods=["GET", "POST"])
 @login_required(role=["Beneficiary"])
@@ -615,7 +748,11 @@ def survey(id):
                         error = 1
                         break
         if not error:
-            flash('Your response has been recorded successfully.\nSurvey results will be made available to you through your dashboard when the survey closes.', category='success')
+            attendance = Attendance(HasAttended = True, BeneficiaryId=current_user.User[0].UserId, ActivityId = survey.ActivityId)
+            db.session.add(attendance)
+            db.session.commit()
+            flash('Your response has been recorded successfully. Survey results will be made available to you through your dashboard when the survey closes.', category='success')
+            return redirect(url_for('programs.survey', id=id))
         else:
             flash('An error occured whilst recording your response. Please try again later.', category='error')
         
@@ -634,133 +771,7 @@ def save_response(survey_id, user_id, question_id, text, num):
     response_to_add = Response(SurveyId=survey_id, BeneficiaryId=user_id, QuestionId=question_id, Text=text, Num=num)
     db.session.add(response_to_add)
     db.session.commit()
-
-#close survey - makes survey inactive and redirects to surveys page
-@bp.route("/surveys/close/<id>")
-@login_required(role=["Admin", "Faculty"])
-def closeSurvey(id):
-    survey = Survey.query.filter_by(SurveyId=id).first()
-
-    try:
-        if survey:
-            survey.State = 0
-            db.session.commit()
-            flash('The survey has been closed successfully.')
-    except:
-        flash('The survey could not be closed. Please try again later.')
-
-    return redirect(url_for("programs.surveys"))
-
-#results page - show survey results
-@bp.route("/results/<id>")
-@login_required(["Admin", "Faculty"])
-def results(id):
-
-    list_activities = [r.Project.Activity for r in Registration.query.filter_by(UserId=current_user.User[0].UserId).all()]
-    # Initialize an empty list to store the ActivityIds
-    list_activity_ids = []
-    
-    # Iterate through the outer list
-    for sublist in list_activities:
-        # Iterate through the inner list
-        for activity in sublist:
-            list_activity_ids.append(activity.ActivityId) 
-
-    survey = Survey.query.filter_by(SurveyId=id).first()
-
-    if not survey: 
-        flash('The survey you have requested does not exist. Please check your link is correct.', category='error')
-        return render_template("admin/results.html")
-
-    questions = []
-    for question_id in survey.questionsList():
-        question = Question.query.filter_by(QuestionId=question_id).first()
-        questions.append(question)
-
-    responses = Response.query.filter_by(SurveyId=id).all()
-
-    return render_template("admin/results.html", survey=survey, questions=questions, responses=responses)
-
-# ======================= User views ======================
-
-@bp.route('/programs')
-def programsList():
-    extension_programs = ExtensionProgram.query.all()
-    programs = Program.query.all()
-    agendas = Agenda.query.all()
-    return render_template('programs/programs.html', extension_programs=extension_programs, programs=programs, agendas=agendas)
-
-
-@bp.route('/projects/<int:program_id>', methods=['GET', 'POST'])
-def projectsList(program_id):
-    extension_program = ExtensionProgram.query.filter_by(ExtensionProgramId=program_id).first()
-    projects = Project.query.filter_by(ExtensionProgramId=program_id).all()
-    return render_template('programs/projects_list.html', extension_program=extension_program, projects=projects)
-    
-
-@bp.route('/filters')
-def filters():
-    # Retrieve only the names from the program table
-    extension_programs = ExtensionProgram.query.with_entities(ExtensionProgram.Name).all()
-    programs = Program.query.with_entities(Program.ProgramName).all()
-
-    # Convert the query result into a list of names
-    list_extension_programs = [extension_program[0] for extension_program in extension_programs]
-    list_programs = [program[0] for program in programs]
-
-    # Get the current month
-    current_month = datetime.now().month
-
-    # Create a list of months from current month to December
-    list_months = [calendar.month_name[i] for i in range(current_month, 13)]
-
-    dict_filters = {
-        'Extension Program': list_extension_programs,
-        'Program': list_programs,
-        'Month': list_months,
-    }
-
-    str_filter = request.args.get('filter')
-
-    list_filter = dict_filters[str_filter]
-
-    return render_template('programs/filters.html',list_filter=list_filter)
-
-
-@bp.route('/registration/<int:project_id>', methods=['GET', 'POST'])
-def registration(project_id):
-    project = Project.query.get_or_404(project_id)
-    list_activities = project.Activity
-    user_id = current_user.User[0].UserId if current_user.is_authenticated else None
-    bool_is_registered = True if Registration.query.filter_by(ProjectId=project_id, UserId=user_id).first() else False
-    if request.method == 'POST':
-        registration_to_create = Registration(ProjectId = project_id,
-                                            UserId=user_id)
-        try:
-            db.session.add(registration_to_create)
-            db.session.commit()
-            flash('Registration Successful!', category='success')
-        except:
-            flash('There was an issue during registration.', category='error')
-
-        return redirect(url_for('programs.registration', project_id=project_id))
-    return render_template("programs/project_reg.html", project=project, list_activities=list_activities, bool_is_registered=bool_is_registered)
-
-
-@bp.route('/registration/cancel/<int:project_id>', methods=['POST'])
-def cancelRegistration(project_id):
-    project = Project.query.get_or_404(project_id)
-    user_id = current_user.User[0].UserId if current_user.is_authenticated else None
-    registration = Registration.query.filter_by(ProjectId=project_id, UserId=user_id).first()
-
-    try:
-        db.session.delete(registration)
-        db.session.commit()
-        flash('Registration is successfully canceled.', category='success')
-    except:
-        flash('There was an issue canceling the registration.', category='error')
-
-    return redirect(url_for('programs.registration', project_id=project_id))
+    return 1
 
 # Define a new function to fetch activities based on the selected project
 def fetch_activities(selected_project_id=None):

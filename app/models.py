@@ -130,6 +130,7 @@ class Beneficiary(db.Model):
     BeneficiaryId = db.Column(db.String(36), db.ForeignKey('User.UserId', ondelete='CASCADE'), primary_key=True)
     User = db.relationship("User", backref='Beneficiary', lazy=True, passive_deletes=True)
     SurveyResponse = db.relationship("Response", back_populates="Beneficiary")
+    Attendance = db.relationship("Attendance", back_populates="Beneficiary")
 
 class Student(db.Model):
     __tablename__ = 'Student'
@@ -228,6 +229,7 @@ class Activity(db.Model):
     Project = db.relationship('Project', backref='Activity')
     Survey = db.relationship("Survey", back_populates='Activity', cascade='all, delete-orphan', lazy=True)
     Speaker = db.relationship('Speaker', back_populates='Activity')
+    Attendance = db.relationship('Attendance', back_populates='Activity', cascade='all, delete-orphan')
 
 class Speaker(db.Model):
     __tablename__ = 'Speaker'
@@ -310,3 +312,13 @@ class Response(db.Model):
 
     def responsesList(self):
         return ast.literal_eval(self.Responses)
+    
+class Attendance(db.Model):
+    __tablename__ = 'Attendance'
+
+    AttendanceId = db.Column(db.Integer, primary_key=True)
+    HasAttended = db.Column(db.Boolean, default=False)
+    BeneficiaryId = db.Column(db.String(36), db.ForeignKey('Beneficiary.BeneficiaryId'), nullable=False)
+    ActivityId = db.Column(db.Integer, db.ForeignKey('Activity.ActivityId', ondelete='CASCADE'), nullable=False)
+    Activity = db.relationship("Activity", back_populates="Attendance", passive_deletes=True)
+    Beneficiary = db.relationship("Beneficiary", back_populates="Attendance")
