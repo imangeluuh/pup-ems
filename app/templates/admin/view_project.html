@@ -268,6 +268,9 @@
             </div>
             <!-- ./activity calendar -->
             <div class="hidden p-4" id="registered" role="tabpanel" aria-labelledby="registered-tab">
+                <div class="flex mb-2">
+                    <a href="{{url_for('programs.cert', id=project.ProjectId)}}" type="button" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">Release Certificates</a>
+                </div>
                 <!--Container-->
                 <div class="container w-full md:w-4/5 xl:w-3/5  mx-auto px-2">
                     <table id="users" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">

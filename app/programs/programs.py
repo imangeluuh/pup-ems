@@ -1,7 +1,7 @@
 from app.programs import bp
 from flask import render_template, url_for, request, redirect, flash, current_app
 from flask_login import current_user
-from ..models import Project, ExtensionProgram, Program, Registration, Agenda, ExtensionProgram, Activity, Question, Survey, Response, Beneficiary, Attendance
+from ..models import Project, ExtensionProgram, Program, Registration, Agenda, ExtensionProgram, Activity, Question, Survey, Response, Beneficiary, Attendance, User, Certificate
 from .forms import ProgramForm, ProjectForm, ActivityForm, CombinedForm
 import calendar
 from datetime import datetime
@@ -604,6 +604,79 @@ def results(id):
     responses = Response.query.filter_by(SurveyId=id).all()
 
     return render_template("admin/results.html", survey=survey, questions=questions, responses=responses)
+
+from fillpdf import fillpdfs
+
+@bp.route('/cert/<int:id>', methods=['GET', 'POST'])
+@login_required(role=["Admin", "Faculty"])
+def cert(id):
+    fillpdfs.get_form_fields("C:\\Users\\angel\\Desktop\\e-cert (beneficiary) (FILLABLE).pdf")
+    fillpdfs.print_form_fields("C:\\Users\\angel\\Desktop\\e-cert (beneficiary) (FILLABLE).pdf")
+    
+    # Get all the registered beneficiaries in the project
+    beneficiaries_id = [registration.UserId for registration in Registration.query.filter_by(ProjectId=id).all()]
+    registered_beneficiaries = [User.query.filter_by(UserId=beneficiary_id).first() for beneficiary_id in beneficiaries_id]
+    
+    # Get the project proponent's name for the certificate
+    project = Project.query.filter_by(ProjectId=id).first()
+    project_proponent = User.query.filter_by(UserId=project.LeadProponentId).first()
+    proponent_name = project_proponent.FirstName + ' '
+    if project_proponent.MiddleName:
+        proponent_name += project_proponent.MiddleName[0] + '. '
+    proponent_name += project_proponent.LastName
+
+    # Get the extension program's name for the certificate
+    extension_program = ExtensionProgram.query.filter_by(ExtensionProgramId=project.ExtensionProgramId).first()
+    
+    # Generate certificate for each beneficiary registered in the project
+    for beneficiary in registered_beneficiaries:
+        # Get the name of the beneficiary for the certificate
+        beneficiary_name = beneficiary.FirstName + ' '
+        if beneficiary.MiddleName:
+            beneficiary_name += beneficiary.MiddleName[0] + '. '
+        beneficiary_name += beneficiary.LastName
+        print(beneficiary_name)
+        data_dict = {'Text-n_L-ntAGRy': beneficiary_name,
+                    'Text-Pnb29VfGWk': extension_program.Name,
+                    'Date-jWSJ8ZAYJ_': datetime.utcnow(),
+                    'Text-tf2etyjp87': proponent_name,
+                    'Text-bcixq7yk8z': 'Jaime P. Gutierrez, Jr.'}
+        
+        # Get the initials of the beneficiary
+        beneficiary_initials = ''.join([word[0] for word in beneficiary_name.split()])
+        # Fill the pdf with the required information
+        filepath = os.path.join(current_app.root_path, "media") + "\\" + extension_program.Name + "-" + beneficiary_initials + " CERTIFICATE.pdf"
+        fillpdfs.write_fillable_pdf("C:\\Users\\angel\\Desktop\\e-cert (beneficiary) (FILLABLE).pdf", filepath, data_dict, flatten=True)
+
+        # Upload cert pdf to cloud
+        status = uploadImage(filepath, extension_program.Name + "-" + beneficiary_initials + " CERTIFICATE.pdf")
+
+        # Get the url and file id of the uploaded certificate
+        str_cert_url = None
+        str_cert_file_id = None
+        if status.error is not None:
+            flash("Error in releasing certificates", category="error")
+            return url_for('programs.viewProject', id=id)
+        else:
+            str_cert_url = status.url
+            str_cert_file_id = status.file_id
+
+        # Delete file from local storage after uploading to cloud
+        if os.path.exists(filepath):
+            os.remove(filepath)
+
+        # Save certificate to database
+        cert_to_add = Certificate(CertificateUrl=str_cert_url, 
+                                CertificateFileId = str_cert_file_id, 
+                                UserId=beneficiary.UserId, 
+                                ProjectId=id)
+        
+        db.session.add(cert_to_add)
+    
+    db.session.commit()
+
+    return redirect(url_for('programs.programs'))
+
 
 # =========================================================
 # ||                      USER VIEWS                     ||

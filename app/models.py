@@ -109,6 +109,7 @@ class User(PaginatedAPIMixin, db.Model):
     LoginId = db.Column(db.String(36), db.ForeignKey('Login.LoginId', ondelete='CASCADE'), nullable=False)
     Registration = db.relationship('Registration', backref='User', cascade='all, delete-orphan', passive_deletes=True)
     Login = db.relationship("Login", backref='User', lazy=True, passive_deletes=True)
+    Certificate = db.relationship("Certificate", back_populates="User")
 
 class Admin(db.Model):
     __tablename__ = 'Admin'
@@ -182,6 +183,7 @@ class Project(db.Model):
     ExtensionProgram = db.relationship("ExtensionProgram", back_populates='Projects', lazy=True, passive_deletes=True)
     Registration = db.relationship('Registration', backref='Project', cascade='all, delete-orphan', passive_deletes=True)
     LeadProponent = db.relationship('User', backref='Project', lazy=True, passive_deletes=True)
+    Certificate = db.relationship('Certificate', back_populates='Project')
     # CommunityAssessment =
     # MOU/MOAAssessment = 
 
@@ -322,3 +324,15 @@ class Attendance(db.Model):
     ActivityId = db.Column(db.Integer, db.ForeignKey('Activity.ActivityId', ondelete='CASCADE'), nullable=False)
     Activity = db.relationship("Activity", back_populates="Attendance", passive_deletes=True)
     Beneficiary = db.relationship("Beneficiary", back_populates="Attendance")
+
+class Certificate(db.Model):
+    __tablename__ = 'Certificate'
+
+    CertificateId = db.Column(db.Integer, primary_key=True)
+    CertificateUrl = db.Column(db.Text)
+    CertificateFileId = db.Column(db.Text)
+    UserId = db.Column(db.String(36), db.ForeignKey('User.UserId'), nullable=False)
+    ProjectId = db.Column(db.Integer, db.ForeignKey('Project.ProjectId', ondelete='CASCADE'), nullable=False)
+    User = db.relationship("User", back_populates="Certificate", passive_deletes=True)
+    Project = db.relationship("Project", back_populates="Certificate")
+
