@@ -67,6 +67,9 @@ def create_app(config_class=Config):
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp)
 
+    from .user import bp as user_bp
+    app.register_blueprint(user_bp, url_prefix='/')
+
     return app
 
 

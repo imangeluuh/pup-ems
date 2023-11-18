@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block head %}
+    <title>Certificate</title>
+    <!--Regular Datatables CSS-->
+    <link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
+    <!--Responsive Extension Datatables CSS-->
+    <link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/table_style.css') }}">  
+{% endblock %}
+{% block content %}
+    <div class="flex justify-center">
+        <div class="bg-white w-3/4 m-5 rounded-md">
+            <div class="border-b border-gray-400 font-extrabold text-lg text-red-500 p-3">
+                {{ current_user.User[0].LastName|upper }}, {{ current_user.User[0].FirstName|upper }} {{ current_user.User[0].MiddleName|upper if current_user.User[0].MiddleName }}
+            </div>
+            <div class="grid grid-cols-4 gap-2 p-3">
+                <div class="col-span-1">
+                    ID
+                </div>
+                <div class="col-span-3 font-bold">
+                    {{ current_user.User[0].UserId }}
+                </div>
+                <div class="col-span-1">
+                    Name
+                </div>
+                <div class="col-span-3 font-bold">
+                    {{ current_user.User[0].LastName|upper }}, {{ current_user.User[0].FirstName|upper }} {{ current_user.User[0].MiddleName|upper if current_user.User[0].MiddleName }}
+                </div>
+                <div class="col-span-1">
+                    Gender
+                </div>
+                <div class="col-span-3 font-bold">
+                    {{ current_user.User[0].Gender }}
+                </div>
+                <div class="col-span-1">
+                    Date of Birth
+                </div>
+                <div class="col-span-3 font-bold">
+                    {{ current_user.User[0].Birthdate.strftime('%B %d, %Y') }}
+                </div>
+                <div class="col-span-1">
+                    Contact Details
+                </div>
+                <div class="col-span-3 font-bold">
+                    {{ current_user.User[0].ContactDetails }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flex justify-center pt-10">
+        <!--Container-->
+        <div class="bg-white w-3/4 mx-auto p-3">
+            <table id="projects" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
+                <thead>
+                    <tr>
+                        <th data-priority="1">Project Name</th>
+                        <th data-priority="2">Extension Program</th>
+                        <th data-priority="3">Status</th>
+                        <th data-priority="4">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if projects %}
+                        {% for project in projects %}
+                        <!-- project[0] = project, project[1] = certificate -->
+                        <tr>
+                            <td>{{ project[0].Name }}</td>
+                            <td>{{ project[0].ExtensionProgram.Name }}</td>
+                            <td>{{ project[0].Status }}</td>
+                            <td>
+                                <a href="" class="bg-green-500">View</a>
+                                {% if project[1] %}
+                                <a href="{{project[1].CertificateUrl}}" class="bg-green-500">Certificate</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table>   
+        </div>
+        <!--/container-->
+    </div>
+{% endblock %}
+{% block script %}
+<!--Datatables -->
+<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var table = $('#projects').DataTable({
+                responsive: true
+        })
+    });
+</script>
+{% endblock %}
+
