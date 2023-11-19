@@ -550,7 +550,7 @@ def addSurvey():
             flash('Please complete all required fields.', category='error')
 
         try:
-            survey_to_add = Survey(SurveyName=survey_name, ActivityId=survey_activity, State=2, Questions=str(survey_questions))
+            survey_to_add = Survey(SurveyName=survey_name, ActivityId=survey_activity, State=1, Questions=str(survey_questions))
             db.session.add(survey_to_add)
             db.session.commit()
             flash('Survey is successfully created.', category='success')
