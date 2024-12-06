@@ -553,9 +553,9 @@ def addSurvey():
             survey_to_add = Survey(SurveyName=survey_name, ActivityId=survey_activity, State=1, Questions=str(survey_questions))
             db.session.add(survey_to_add)
             db.session.commit()
-            flash('Survey is successfully created.', category='success')
+            flash('Evaluation is successfully created.', category='success')
         except:
-            flash('An error occured whilst creating your survey. Please try again later.', category='error')
+            flash('An error occured whilst creating your evaluation. Please try again later.', category='error')
 
     return render_template('admin/add_survey.html', questions=questions, activities=activities)
 
@@ -569,9 +569,9 @@ def closeSurvey(id):
         if survey:
             survey.State = 0
             db.session.commit()
-            flash('The survey has been closed successfully.')
+            flash('The evaluation has been closed successfully.')
     except:
-        flash('The survey could not be closed. Please try again later.')
+        flash('The evaluation could not be closed. Please try again later.')
 
     return redirect(url_for("programs.surveys"))
 
@@ -593,7 +593,7 @@ def results(id):
     survey = Survey.query.filter_by(SurveyId=id).first()
 
     if not survey: 
-        flash('The survey you have requested does not exist. Please check your link is correct.', category='error')
+        flash('The evaluation you have requested does not exist. Please check if your link is correct.', category='error')
         return render_template("admin/results.html")
 
     questions = []
